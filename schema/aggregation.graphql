@@ -1,0 +1,56 @@
+enum NumericAggregation {
+    min
+    max
+    count
+    average
+    sum
+}
+
+enum TextAggregation {
+    min
+    max
+    count
+}
+
+enum DateTimeAggregation {
+    min
+    max
+    count
+    average
+    sum
+}
+
+input NumericAggregationFilter {
+    agg :NumericAggregation
+    op  :NumericFilterOperator
+    val :JSON
+}
+
+type NumericAggregationFilterResult {
+    agg:NumericAggregation
+    resultInt :Int
+    resultFloat :Float
+}
+
+input TextAggregationFilter {
+    agg :TextAggregation
+    op  :TextFilterOperation
+    val :String
+}
+
+type TextAggregationFilterResult {
+    agg:TextAggregation
+    resultInt :Int
+    resultFloat :Float
+}
+
+input DateTimeAggregationFilter {
+    agg :DateTimeAggregation
+    op  :NumericFilterOperator
+    val :String
+}
+
+type DateTimeAggregationFilterResult {
+    agg:DateTimeAggregation
+    result :DateTime
+}

@@ -1,0 +1,14 @@
+scalar Time
+scalar Text
+scalar DateTime
+scalar JSON
+scalar Long
+scalar Url
+
+scalar IP
+scalar GeoPoint
+
+directive @relation(mappingType: String) on FIELD_DEFINITION
+directive @key(fields: [String!]!, name: String) on OBJECT
+directive @model on OBJECT
+

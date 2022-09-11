@@ -1,0 +1,89 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# sample queries
+
+# this query [q1] brings all books that have authors that name starts with J.R.R and born after 01.01.1900
+# result will contain the book's title and the author's nationality
+query q1{
+    book(filter:
+    {
+        author: {
+            name: { op:STARTS_WITH,val: "J.R.R"},
+            born: { op: GT , val: "01.01.1900"},
+        }
+    }) {
+        ISBN,
+        title
+        author {
+            nationality
+        }
+    }
+}
+# this query [q2] brings all authors that have books published in 1995
+# result will contain the author's name and nationality plus his publish book's titles
+query q2{
+    author(filter: {
+        books: {
+            published: { op: IN, val: [1995,2000] }
+        }
+    }) {
+        name
+        nationality
+        books {
+            ISBN
+            title
+        }
+    }
+}
+# this query [q3] brings all authors that have books published in 1995 or had the term 1995 in the book's titlw
+# result will contain the author's name
+query q3{
+    author(filter: {
+        books: {
+            published: {op: IN, val: 1995 }
+            OR:[{ title: { op: CONTAINS, val: "1995"} }]
+        }
+    }) {
+        name
+    }
+}
+# this query [q4] brings all authors that written more than 5 book during 2022
+# result will contain the author's name and books names
+query q4{
+    author(filter: {
+        books: {
+            published: {op: IN, val: 2022 }
+        }
+    }, aggFilter: {
+        booksCount: { agg: count, op: GTE, val: 5 }
+    }) {
+        name
+    }
+}
+
+# this query [q5] brings most productive author for 2020
+# result will contain the author's name and books count -
+query q5{
+    author(filter: {
+        books: {
+            published: {op: IN, val: 2020 }
+        }
+    }, aggFilter: {
+        booksCount: { agg: max }
+    }) {
+        name
+    }
+}
+
+# this query [q6] brings the average number of books published in  1999
+# result will contain the average books count -
+query q5{
+    author(filter: {
+        books: {
+            published: {op: IN, val: 1999 }
+        }
+    }, aggFilter: {
+        booksCount: { agg: average }
+    }) {
+        name
+    }
+}
