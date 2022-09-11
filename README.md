@@ -28,6 +28,8 @@ The simple-schema plugin-Library presents a large feature set for interacting wi
 
 ### Documentation
 
+Read the [documentation](https://github.com/opensearch-project/simple-schema/docs
+
 ## Quick start
 
 Once you have installed opensearch, you can install simple-schema from a remote URL or a local file.
@@ -42,10 +44,15 @@ Once you have installed opensearch, you can install simple-schema from a remote 
 
 Read the [installation](https://github.com/opensearch-project/simple-schema/docs/installation) docs for more details.
 
+-------------
 
 ## Next steps
 
-Read the [documentation](https://github.com/opensearch-project/simple-schema/docs/basic-usage) to learn about [entity models](https://github.com/opensearch-project/simple-schema/docs/entity-models),
+Read the [documentation](https://github.com/opensearch-project/simple-schema/docs/basic-usage) to learn about 
+ - [entity models](https://github.com/opensearch-project/simple-schema/docs/entity-models)
+ - [index auto generation](https://github.com/opensearch-project/simple-schema/docs/index-provider)
+ - [query syntax](https://github.com/opensearch-project/simple-schema/docs/query-sytax)
+ - [endpoint](https://github.com/opensearch-project/simple-schema/docs/endpoint)
 
 
 ## Security
