@@ -28,7 +28,7 @@ The simple-schema plugin-Library presents a large feature set for interacting wi
 
 ### Documentation
 
-Read the [documentation](https://github.com/opensearch-project/simple-schema/docs
+Read the [documentation](https://github.com/opensearch-project/simple-schema/docs)
 
 ## Quick start
 
