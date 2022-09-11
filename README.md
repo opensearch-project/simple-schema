@@ -49,7 +49,7 @@ Read the [installation](https://github.com/opensearch-project/simple-schema/blob
 ## Next steps
 
 Read the [documentation](https://github.com/opensearch-project/simple-schema/blob/main/docs/basic-usage.md) to learn about 
- - [entity models](https://github.com/opensearch-project/simple-schema/blob/main/docs/entity-models.md)
+ - [entity models](https://github.com/opensearch-project/simple-schema/blob/main/docs/entity-model.md)
  - [index auto generation](https://github.com/opensearch-project/simple-schema/blob/main/docs/index-provider.md)
  - [query syntax](https://github.com/opensearch-project/simple-schema/blob/main/docs/query-sytax.md)
  - [endpoint](https://github.com/opensearch-project/simple-schema/blob/main/docs/endpoint.md)
