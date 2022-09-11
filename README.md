@@ -42,17 +42,17 @@ Once you have installed opensearch, you can install simple-schema from a remote 
 
 `opensearch-plugin install https://github.com/opensearch-project/simple-schema/releases-0.1-opensearch-2.4.zip`
 
-Read the [installation](https://github.com/opensearch-project/simple-schema/docs/installation) docs for more details.
+Read the [installation](https://github.com/opensearch-project/simple-schema/docs/installation.md) docs for more details.
 
 -------------
 
 ## Next steps
 
-Read the [documentation](https://github.com/opensearch-project/simple-schema/docs/basic-usage) to learn about 
- - [entity models](https://github.com/opensearch-project/simple-schema/docs/entity-models)
- - [index auto generation](https://github.com/opensearch-project/simple-schema/docs/index-provider)
- - [query syntax](https://github.com/opensearch-project/simple-schema/docs/query-sytax)
- - [endpoint](https://github.com/opensearch-project/simple-schema/docs/endpoint)
+Read the [documentation](https://github.com/opensearch-project/simple-schema/docs/basic-usage.md) to learn about 
+ - [entity models](https://github.com/opensearch-project/simple-schema/docs/entity-models.md)
+ - [index auto generation](https://github.com/opensearch-project/simple-schema/docs/index-provider.md)
+ - [query syntax](https://github.com/opensearch-project/simple-schema/docs/query-sytax.md)
+ - [endpoint](https://github.com/opensearch-project/simple-schema/docs/endpoint.md)
 
 
 ## Security

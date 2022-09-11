@@ -1,0 +1,92 @@
+type Book {
+    ISBN: ID!
+    title: String!
+    author: Author!
+    published: DateTime!
+}
+type Author {
+    name: String!
+    born: DateTime!
+    died: DateTime
+    nationality: String!
+    books: [Book]
+}
+#-----------------------------------------------------------------------------------------------------------------------
+# auto generated author filter
+input AuthorFilter {
+    name:TextFilter
+    born :TimeFilter
+    died :TimeFilter
+    nationality :TextFilter
+    books:[BookFilter]
+
+    AND : [AuthorFilter]
+    OR : [AuthorFilter]
+}
+
+# auto generated book filter
+input BookFilter {
+    ISBN:TextFilter
+    title:TextFilter
+    published:TimeFilter
+    author:AuthorFilter
+
+    AND : [BookFilter]
+    OR : [BookFilter]
+}
+
+# auto generated book aggregation filter
+input BookAggregationFilter {
+    ISBN:TextAggregationFilter
+    title:TextAggregationFilter
+    published:DateTimeAggregationFilter
+    author:DateTimeAggregationFilter
+
+    AND : [BookAggregationFilter]
+    OR : [BookAggregationFilter]
+}
+# auto generated book aggregation filter results
+type BookAggregationResults {
+    ISBN:TextAggregationFilterResult
+    title:TextAggregationFilterResult
+    published:DateTimeAggregationFilterResult
+    author:DateTimeAggregationFilterResult
+}
+
+# auto generated author aggregation filter
+input AuthorAggregationFilter {
+    name:TextAggregationFilter
+    born :DateTimeAggregationFilter
+    died :DateTimeAggregationFilter
+    nationality :TextAggregationFilter
+    # for each array filter a ***Count field is generated
+    booksCount:NumericAggregationFilter
+
+    AND : [AuthorAggregationFilter]
+    OR : [AuthorAggregationFilter]
+}
+
+# auto generated author aggregation filter
+type AuthorAggregationResult {
+    name:TextAggregationFilterResult
+    born :DateTimeAggregationFilterResult
+    died :DateTimeAggregationFilterResult
+    nationality :TextAggregationFilterResult
+    # for each array filter a ***Count field is generated
+    booksCount:Int
+}
+# auto generated book results
+type BookResults {
+    results:[Book]
+    aggResults:[BookAggregationResults]
+}
+# auto generated book results
+type AuthorResults {
+    results:[Author]
+    aggResults:[AuthorAggregationResult]
+}
+# auto generated queries
+type Query {
+    book(filter:BookFilter, aggFilter:BookAggregationFilter) : [Book]
+    author(filter:AuthorFilter, aggFilter:AuthorAggregationFilter) : [Author]
+}

@@ -1,0 +1,60 @@
+enum UnaryFilterOperation {
+    EMPTY
+    NOT_EMPTY
+}
+
+enum NumericFilterOperator {
+    EQUAL
+    NOT_EQUAL
+
+    LT
+    LTE
+    GTE
+    GT
+
+    #  applicable for ranges
+    IN
+    NOT_IN
+}
+
+enum TextFilterOperation {
+    STARTS_WITH
+    NOT_STARTS_WITH
+    ENDS_WITH
+    NOT_ENDS_WITH
+    CONTAINS
+    NOT_CONTAINS
+    #  applicable for ranges
+    IN
+    NOT_IN
+}
+
+enum ArrayFilterOperation {
+    CONTAINS
+    NOT_CONTAINS
+}
+
+input NumericFilter {
+    op : NumericFilterOperator
+    val : [String]
+}
+
+input NumericArrayFilter {
+    op : NumericFilterOperator
+    val : [String]
+}
+
+input TextFilter {
+    op : TextFilterOperation
+    val : String
+}
+
+input TimeFilter {
+    op : NumericFilterOperator
+    val : JSON
+}
+
+input TextArrayFilter {
+    op : TextFilterOperation
+    val : String
+}
