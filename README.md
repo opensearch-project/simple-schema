@@ -55,11 +55,76 @@ Read the [documentation](https://github.com/opensearch-project/simple-schema/doc
  - [endpoint](https://github.com/opensearch-project/simple-schema/docs/endpoint.md)
 
 
+## Code Summary
+
+### OpenSearch-SimpleSchema
+
+|                              |                                                                                                                                              |
+| ---------------------------- |----------------------------------------------------------------------------------------------------------------------------------------------|
+| Test and build               | [![Simple-Schema OpenSearch Build CI][opensearch-build-badge]][opensearch-build-link]                                                        |
+| Code coverage                | [![codecov][opensearch-codecov-badge]][codecov-link]                                                                                         |
+| Distribution build tests     | [![OpenSearch IT tests][opensearch-it-badge]][opensearch-it-link] [![OpenSearch IT code][opensearch-it-code-badge]][opensearch-it-code-link] |
+| Backward compatibility tests | [![BWC tests][bwc-tests-badge]][bwc-tests-link]                                                                                              |
+
+### Issues
+
+|                                                                |
+| -------------------------------------------------------------- |
+| [![good first issues open][good-first-badge]][good-first-link] |
+| [![features open][feature-badge]][feature-link]                |
+| [![enhancements open][enhancement-badge]][enhancement-link]    |
+| [![bugs open][bug-badge]][bug-link]                            |
+| [![untriaged open][untriaged-badge]][untriaged-link]           |
+| [![nolabel open][nolabel-badge]][nolabel-link]                 |
+
+[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml/badge.svg
+[opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml
+
+[opensearch-codecov-badge]: https://codecov.io/gh/opensearch-project/simple-schema/branch/main/graphs/badge.svg?flag=opensearch-simple-schema
+[codecov-link]: https://codecov.io/gh/opensearch-project/simple-schema
+[opensearch-it-badge]: https://img.shields.io/badge/OpenSearch%20Plugin%20IT%20tests-in%20progress-yellow
+[opensearch-it-link]: https://github.com/opensearch-project/opensearch-build/issues/1124
+[opensearch-it-code-badge]: https://img.shields.io/badge/OpenSearch%20IT%20code-blue
+[opensearch-it-code-link]: https://github.com/opensearch-project/simple-schema/blob/main/opensearch-simple-schema/src/test/org/opensearch/simple-schema/SimpleSearchPluginIT.java
+[bwc-tests-badge]: https://img.shields.io/badge/BWC%20tests-in%20progress-yellow
+[bwc-tests-link]: https://github.com/opensearch-project/simple-schema/issues/276
+[good-first-badge]: https://img.shields.io/github/issues/opensearch-project/simple-schema/good%20first%20issue.svg
+[good-first-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+
+[feature-badge]: https://img.shields.io/github/issues/opensearch-project/simple-schema/feature.svg
+[feature-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+label%3Afeature
+[bug-badge]: https://img.shields.io/github/issues/opensearch-project/simple-schema/bug.svg
+[bug-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+label%3Abug+
+[enhancement-badge]: https://img.shields.io/github/issues/opensearch-project/simple-schema/enhancement.svg
+[enhancement-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement+
+[untriaged-badge]: https://img.shields.io/github/issues/opensearch-project/simple-schema/untriaged.svg
+[untriaged-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+label%3Auntriaged+
+[nolabel-badge]: https://img.shields.io/github/issues-search/opensearch-project/simple-schema?color=yellow&label=no%20label%20issues&query=is%3Aopen%20is%3Aissue%20no%3Alabel
+[nolabel-link]: https://github.com/opensearch-project/simple-schema/issues?q=is%3Aopen+is%3Aissue+no%3Alabel+
+
+
+
+## Contributing
+
+See [developer guide](DEVELOPER_GUIDE.md) and [how to contribute to this project](CONTRIBUTING.md).
+
+## Getting Help
+
+If you find a bug, or have a feature request, please don't hesitate to open an issue in this repository.
+
+For more information, see [project website](https://opensearch.org/) and [documentation](https://opensearch.org/docs). If you need help and are unsure where to open an issue, try [forums](https://discuss.opendistrocommunity.dev/).
+
+## Code of Conduct
+
+This project has adopted the [Amazon Open Source Code of Conduct](CODE_OF_CONDUCT.md). For more information see the [Code of Conduct FAQ](https://aws.github.io/code-of-conduct-faq), or contact [opensource-codeofconduct@amazon.com](mailto:opensource-codeofconduct@amazon.com) with any additional questions or comments.
+
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public GitHub issue.
 
 ## License
 
-This project is licensed under the Apache-2.0 License.
+This project is licensed under the [Apache v2.0 License](LICENSE).
 
+## Copyright
+
+Copyright OpenSearch Contributors. See [NOTICE](NOTICE) for details.
