@@ -28,7 +28,7 @@ The simple-schema plugin-Library presents a large feature set for interacting wi
 
 ### Documentation
 
-Read the [documentation](https://github.com/opensearch-project/simple-schema/docs)
+Read the [documentation](https://github.com/opensearch-project/simple-schema/blob/main/docs)
 
 ## Quick start
 
@@ -42,17 +42,17 @@ Once you have installed opensearch, you can install simple-schema from a remote 
 
 `opensearch-plugin install https://github.com/opensearch-project/simple-schema/releases-0.1-opensearch-2.4.zip`
 
-Read the [installation](https://github.com/opensearch-project/simple-schema/docs/installation.md) docs for more details.
+Read the [installation](https://github.com/opensearch-project/simple-schema/blob/main/docs/installation.md) docs for more details.
 
 -------------
 
 ## Next steps
 
-Read the [documentation](https://github.com/opensearch-project/simple-schema/docs/basic-usage.md) to learn about 
- - [entity models](https://github.com/opensearch-project/simple-schema/docs/entity-models.md)
- - [index auto generation](https://github.com/opensearch-project/simple-schema/docs/index-provider.md)
- - [query syntax](https://github.com/opensearch-project/simple-schema/docs/query-sytax.md)
- - [endpoint](https://github.com/opensearch-project/simple-schema/docs/endpoint.md)
+Read the [documentation](https://github.com/opensearch-project/simple-schema/blob/main/docs/basic-usage.md) to learn about 
+ - [entity models](https://github.com/opensearch-project/simple-schema/blob/main/docs/entity-model.md)
+ - [index auto generation](https://github.com/opensearch-project/simple-schema/blob/main/docs/index-provider.md)
+ - [query syntax](https://github.com/opensearch-project/simple-schema/blob/main/docs/query-sytax.md)
+ - [endpoint](https://github.com/opensearch-project/simple-schema/blob/main/docs/endpoint.md)
 
 
 ## Code Summary
