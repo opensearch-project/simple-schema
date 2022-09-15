@@ -40,7 +40,7 @@ Once you have installed opensearch, you can install simple-schema from a remote 
 
 **Example**:
 
-`opensearch-plugin install https://github.com/opensearch-project/simple-schema/releases-0.1-opensearch-2.4.zip`
+`opensearch-plugin install https://github.com/opensearch-project/simple-schema/releases-2.4.zip`
 
 Read the [installation](https://github.com/opensearch-project/simple-schema/blob/main/docs/installation.md) docs for more details.
 

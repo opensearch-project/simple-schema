@@ -17,9 +17,9 @@ import org.opensearch.simpleschema.util.stringList
  */
 internal data class IndexProvider(
     val type: String,
-    val name: String?,
-    val description: String?,
-    val indices: List<String>?,
+    val name: String?,//nullable
+    val description: String?,//nullable
+    val indices: List<String>?,//nullable
     val ontology: String,
     val content: String,
 ) : BaseObjectData {
@@ -50,9 +50,9 @@ internal data class IndexProvider(
          */
         fun parse(parser: XContentParser): IndexProvider {
             var type = "Undefined"
-            var name: String? = null
-            var description: String? = null
-            var indices: List<String>? = null
+            var name: String? = null //nullable
+            var description: String? = null //nullable
+            var indices: List<String>? = null //nullable
             var ontology = "Undefined"
             var content = "{}"
             XContentParserUtils.ensureExpectedToken(
@@ -96,9 +96,9 @@ internal data class IndexProvider(
      */
     constructor(input: StreamInput) : this(
         type = input.readString(),
-        name = input.readString(),
-        description = input.readString(),
-        indices = input.readStringList(),
+        name = input.readOptionalString(),//nullable
+        description = input.readOptionalString(),//nullable
+        indices = input.readOptionalStringList(),//nullable
         ontology = input.readString(),
         content = input.readString(),
     )
@@ -108,9 +108,9 @@ internal data class IndexProvider(
      */
     override fun writeTo(output: StreamOutput) {
         output.writeString(type)
-        output.writeString(name)
-        output.writeString(description)
-        output.writeStringCollection(indices)
+        output.writeOptionalString(name) //nullable
+        output.writeOptionalString(description) //nullable
+        output.writeOptionalStringCollection(indices) //nullable
         output.writeString(ontology)
         output.writeString(content)
     }
@@ -122,9 +122,9 @@ internal data class IndexProvider(
         builder!!
         builder.startObject()
             .field(TYPE_TAG, type)
-            .fieldIfNotNull(NAME_TAG, name)
-            .fieldIfNotNull(DESCRIPTION_TAG, description)
-            .field(INDICES_TAG, indices)
+            .fieldIfNotNull(NAME_TAG, name) //nullable
+            .fieldIfNotNull(DESCRIPTION_TAG, description) //nullable
+            .fieldIfNotNull(INDICES_TAG, indices) //nullable
             .field(ONTOLOGY_TAG, ontology)
             .field(CONTENT_TAG, content)
         return builder.endObject()

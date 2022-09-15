@@ -19,9 +19,6 @@ yarn-error.log
 .history/
 .eslintcache
 
-# OpenSearch Dashboards
-.empty
-
 ### Java ###
 # Compiled class file
 *.class

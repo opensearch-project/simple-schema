@@ -148,19 +148,15 @@ class TABackwardCompatibilityIT : PluginRestTestCase() {
         Assert.assertNotNull("Id should be generated", id)
         Thread.sleep(100)
     }
-
-
-
-
     private fun verifyOntologyExists() {
-        val listNotebooks = executeRequest(
+        val listOntologies = executeRequest(
             RestRequest.Method.GET.name,
             "$BASE_SIMPLESCHEMA_URI/object?objectType=ontology",
             "",
             RestStatus.OK.status
         )
-        val totalHits = listNotebooks.get("totalHits").asInt
-        assertTrue("Actual notebooks counts ($totalHits) should be equal to (1)", totalHits == 1)
+        val totalHits = listOntologies.get("totalHits").asInt
+        assertTrue("Actual items counts ($totalHits) should be equal to (1)", totalHits == 1)
     }
 
     private fun verifyIndexProviderExists() {

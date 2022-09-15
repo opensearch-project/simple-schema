@@ -162,9 +162,6 @@ internal object PluginSettings {
      */
     private val DEFAULT_IGNORED_ROLES = listOf(
         "own_index",
-        "opensearch_dashboards_user",
-        "notebooks_full_access",
-        "notebooks_read_access"
     )
 
     /**
@@ -230,10 +227,10 @@ internal object PluginSettings {
 
     /**
      * Enum for types of filterBy options
-     * NoFilter -> everyone see each other's notebooks
-     * User -> notebooks are visible to only themselves
-     * Roles -> notebooks are visible to users having any one of the role of creator
-     * BackendRoles -> notebooks are visible to users having any one of the backend role of creator
+     * NoFilter -> everyone see each other's items
+     * User -> items are visible to only themselves
+     * Roles -> items are visible to users having any one of the role of creator
+     * BackendRoles -> items are visible to users having any one of the backend role of creator
      */
     internal enum class FilterBy { NoFilter, User, Roles, BackendRoles }
 

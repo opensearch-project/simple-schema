@@ -95,12 +95,12 @@ internal class GetSimpleSchemaObjectResponseTests {
                     "createdTimeMs":1638482208790,
                     "tenant":"test-tenant",
                     "access":["test-access"],
-                    "type":"timestamp",
-                    "timestamp":{
-                        "name":"test object",
-                        "index":"opensearch_dashboards_sample_data_logs",
-                        "type":"timestamp",
-                        "dsl_type":"date"
+                    "type":"schemaEntityType",
+                    "schemaEntityType":   {
+                        "type":"test schema entity type",
+                        "name":"test schema entity type",
+                        "catalog":["a","b"],
+                        "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
                     }
                 }
             ],
@@ -120,18 +120,18 @@ internal class GetSimpleSchemaObjectResponseTests {
         val jsonString = """
         {
             "simpleSchemaObjectList":[
-                {
-                    "objectId":"test-id",
+                 {
+                   "objectId":"test-id",
                     "lastUpdatedTimeMs":1638482208790,
                     "createdTimeMs":1638482208790,
                     "tenant":"test-tenant",
                     "access":["test-access"],
-                    "type":"timestamp",
-                    "timestamp":{
-                        "name":"test object",
-                        "index":"opensearch_dashboards_sample_data_logs",
-                        "type":"timestamp",
-                        "dsl_type":"date"
+                    "type":"schemaEntityType",
+                    "schemaEntityType":   {
+                        "type":"test schema entity type",
+                        "name":"test schema entity type",
+                        "catalog":["a","b"],
+                        "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
                     }
                 }
             ]

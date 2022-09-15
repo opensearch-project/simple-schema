@@ -5,16 +5,11 @@
 ##
 
 # configuration file for the simpleschema plugin
-opensearch.notebooks:
+opensearch.simplesearch:
   general:
     operationTimeoutMs: 60000 # 60 seconds, Minimum 100ms
     defaultItemsQueryCount: 100 # default number of items to query
-  polling:
-    jobLockDurationSeconds: 300 # 5 Minutes, Minimum 10 seconds
-    minPollingDurationSeconds: 300 # 5 Minutes, Minimum 60 seconds
-    maxPollingDurationSeconds: 900 # 15 Minutes, Minimum 5 Minutes
-    maxLockRetries: 1 # Max number of retries to retry locking
-  access:
+   access:
     adminAccess: "AllSimpleSchemaObjects"
     # adminAccess values:
     ## Standard -> Admin user access follows standard user

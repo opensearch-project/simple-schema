@@ -17,8 +17,8 @@ import org.opensearch.simpleschema.util.stringList
 internal data class Ontology(
     val type: String,
     val name: String,
-    val description: String?,
-    val namespace: List<String>?,
+    val description: String?, //nullable
+    val namespace: List<String>?, //nullable
     val content: String,
 ) : BaseObjectData {
 
@@ -49,8 +49,8 @@ internal data class Ontology(
             var type = "Undefined"
             var name = "Undefined"
             var content = "{}"
-            var description: String? = null
-            var namespace: List<String>? = null
+            var description: String? = null //nullable
+            var namespace: List<String>? = null //nullable
 
             XContentParserUtils.ensureExpectedToken(
                 XContentParser.Token.START_OBJECT,
@@ -93,8 +93,8 @@ internal data class Ontology(
     constructor(input: StreamInput) : this(
         type = input.readString(),
         name = input.readString(),
-        description = input.readString(),
-        namespace = input.readStringList(),
+        description = input.readOptionalString(),// nullable
+        namespace = input.readOptionalStringList(), // nullable
         content = input.readString(),
     )
 
@@ -104,8 +104,8 @@ internal data class Ontology(
     override fun writeTo(output: StreamOutput) {
         output.writeString(type)
         output.writeString(name)
-        output.writeString(description)
-        output.writeStringCollection(namespace)
+        output.writeOptionalString(description) //nullable
+        output.writeOptionalStringCollection(namespace) //nullable
         output.writeString(content)
     }
 
@@ -117,9 +117,9 @@ internal data class Ontology(
         builder.startObject()
             .field(TYPE_TAG, type)
             .field(NAME_TAG, name)
-            .fieldIfNotNull(DESCRIPTION_TAG, description)
-            .fieldIfNotNull(NAMESPACE_TAG, content)
-            .fieldIfNotNull(CONTENT_TAG, content)
+            .fieldIfNotNull(DESCRIPTION_TAG, description) //nullable
+            .fieldIfNotNull(NAMESPACE_TAG, namespace) //nullable
+            .field(CONTENT_TAG, content)
         return builder.endObject()
     }
 }

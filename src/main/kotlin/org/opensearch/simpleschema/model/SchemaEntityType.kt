@@ -16,9 +16,9 @@ import org.opensearch.simpleschema.util.stringList
  */
 internal data class SchemaEntityType(
     val type: String,
-    val name: String?,
-    val description: String?,
-    val catalog: List<String>?,
+    val name: String?,//nullable
+    val description: String?,//nullable
+    val catalog: List<String>?,//nullable
     val content: String,
 ) : BaseObjectData {
 
@@ -48,9 +48,9 @@ internal data class SchemaEntityType(
         fun parse(parser: XContentParser): SchemaEntityType {
             var type = "Undefined"
             var content = "{}"
-            var description: String? = null
-            var catalog: List<String>? = null
-            var name: String? = null
+            var description: String? = null //nullable
+            var catalog: List<String>? = null //nullable
+            var name: String? = null //nullable
             XContentParserUtils.ensureExpectedToken(
                 XContentParser.Token.START_OBJECT,
                 parser.currentToken(),
@@ -91,9 +91,9 @@ internal data class SchemaEntityType(
      */
     constructor(input: StreamInput) : this(
         type = input.readString(),
-        name = input.readString(),
-        description = input.readString(),
-        catalog = input.readStringList(),
+        name = input.readOptionalString(), //nullable
+        description = input.readOptionalString(), //nullable
+        catalog = input.readOptionalStringList(), //nullable
         content = input.readString(),
     )
 
@@ -102,9 +102,9 @@ internal data class SchemaEntityType(
      */
     override fun writeTo(output: StreamOutput) {
         output.writeString(type)
-        output.writeString(name)
-        output.writeString(description)
-        output.writeStringCollection(catalog)
+        output.writeOptionalString(name) //nullable
+        output.writeOptionalString(description) //nullable
+        output.writeOptionalStringCollection(catalog) //nullable
         output.writeString(content)
     }
 
@@ -114,11 +114,11 @@ internal data class SchemaEntityType(
     override fun toXContent(builder: XContentBuilder?, params: ToXContent.Params?): XContentBuilder {
         builder!!
         builder.startObject()
-            .fieldIfNotNull(TYPE_TAG, type)
-            .fieldIfNotNull(NAME_TAG, name)
-            .fieldIfNotNull(DESCRIPTION_TAG, description)
-            .fieldIfNotNull(CATALOG_TAG, catalog)
-            .fieldIfNotNull(CONTENT_TAG, content)
+            .field(TYPE_TAG, type)
+            .fieldIfNotNull(NAME_TAG, name) //nullable
+            .fieldIfNotNull(DESCRIPTION_TAG, description) //nullable
+            .fieldIfNotNull(CATALOG_TAG, catalog) //nullable
+            .field(CONTENT_TAG, content)
         return builder.endObject()
     }
 }

@@ -22,39 +22,7 @@ properties:
     type: keyword
   type:
     type: keyword
-  notebook:
-    type: object
-    properties:
-      name:
-        type: text
-        fields:
-          keyword:
-            type: keyword
   savedQuery:
-    type: object
-    properties:
-      name:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-  savedVisualization:
-    type: object
-    properties:
-      name:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-  operationalPanel:
-    type: object
-    properties:
-      name:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-  application:
     type: object
     properties:
       name:

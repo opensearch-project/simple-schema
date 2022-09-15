@@ -38,16 +38,16 @@ internal class UpdateSimpleSchemaObjectRequestTests {
     }
 
     @Test
-    fun `Update object should deserialize json object using parser`() {
+    fun `Update schema object should deserialize json object using parser`() {
         val sampleObject = constructSampleSchemaObjectDoc()
         val jsonString = """
         {
             "objectId":"test-id",
-            "timestamp":{
-                "name":"test object",
-                "index":"opensearch_dashboards_sample_data_logs",
-                "type":"timestamp",
-                "dsl_type":"date"
+            "schemaEntityType":   {
+                 "type":"test schema entity type",
+                 "name":"test schema entity type",
+                 "catalog":["a","b"],
+                 "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
             }
         }
         """.trimIndent()
@@ -70,14 +70,12 @@ internal class UpdateSimpleSchemaObjectRequestTests {
         val jsonString = """
         {
             "objectId":"test-id",
-            "timestamp":{
-                "name":"test object",
-                "index":"opensearch_dashboards_sample_data_logs",
-                "type":"timestamp",
-                "dsl_type":"date",
-                "extra_field_1":["extra", "value"],
-                "extra_field_2":{"extra":"value"},
-                "extra_field_3":"extra value 3"
+            "schemaEntityType":   {
+                 "foo":"bar",
+                 "type":"test schema entity type",
+                 "name":"test schema entity type",
+                 "catalog":["a","b"],
+                 "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
             }
         }
         """.trimIndent()

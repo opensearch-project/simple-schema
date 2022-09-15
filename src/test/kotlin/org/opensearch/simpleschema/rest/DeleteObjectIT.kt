@@ -15,17 +15,17 @@ import org.opensearch.simpleschema.constructOntologyRequest
 
 class DeleteObjectIT : PluginRestTestCase() {
     private fun createOntology(name: String = "test"): String {
-        val notebookCreateRequest = constructOntologyRequest(name)
-        val notebookCreateResponse = executeRequest(
+        val createRequest = constructOntologyRequest(name)
+        val createResponse = executeRequest(
             RestRequest.Method.POST.name,
             "$BASE_SIMPLESCHEMA_URI/object",
-            notebookCreateRequest,
+            createRequest,
             RestStatus.OK.status
         )
-        val notebookId = notebookCreateResponse.get("objectId").asString
-        Assert.assertNotNull("notebookId should be generated", notebookId)
+        val id = createResponse.get("objectId").asString
+        Assert.assertNotNull("ontologyId should be generated", id)
         Thread.sleep(100)
-        return notebookId
+        return id
     }
 
     fun `test delete invalid ids`() {

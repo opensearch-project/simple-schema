@@ -86,7 +86,15 @@ internal class CreateSimpleSchemaObjectRequestTests {
     @Test
     fun `Create object should deserialize json object using parser`() {
         val jsonString =
-            "{\"timestamp\":{\"name\":\"test-timestamp\",\"index\":\"opensearch_dashboards_sample_data_logs\",\"type\":\"timestamp\",\"dsl_type\":\"date\"}}"
+            "{  \"ontology\": {\n" +
+                "    \"type\": \"test\",\n" +
+                "    \"name\": \"test\",\n" +
+                "    \"namespace\": [\n" +
+                "      \"a\",\n" +
+                "      \"b\"\n" +
+                "    ],\n" +
+                "    \"content\": \"{\\n  \\\"ont\\\": \\\"user\\\",\\n  \\\"directives\\\": [],\\n  \\\"entityTypes\\\": [\\n    {\\n      \\\"eType\\\": \\\"Geo\\\",\\n      \\\"name\\\": \\\"Geo\\\",\\n      \\\"properties\\\": [\\n        \\\"name\\\",\\n        \\\"location\\\",\\n        \\\"timezone\\\"\\n      ],\\n      \\\"abstract\\\": false\\n    },\\n  ],\\n  \\\"relationshipTypes\\\": [],\\n  \\\"properties\\\": [\\n    {\\n      \\\"pType\\\": \\\"name\\\",\\n      \\\"name\\\": \\\"name\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"STRING\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n    {\\n      \\\"pType\\\": \\\"timezone\\\",\\n      \\\"name\\\": \\\"timezone\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"STRING\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n    {\\n      \\\"pType\\\": \\\"location\\\",\\n      \\\"name\\\": \\\"location\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"GEOPOINT\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n  ]\\n}\"\n" +
+                "  }\n}"
         val recreatedObject = createObjectFromJsonString(jsonString) { CreateSimpleSchemaObjectRequest.parse(it) }
         assertEquals(sample, recreatedObject.objectData)
     }
@@ -102,7 +110,16 @@ internal class CreateSimpleSchemaObjectRequestTests {
     @Test
     fun `Create object should safely ignore extra field in json object`() {
         val jsonString =
-            "{\"timestamp\":{\"name\":\"test-timestamp\",\"index\":\"opensearch_dashboards_sample_data_logs\",\"type\":\"timestamp\",\"dsl_type\":\"date\",\"another\":\"field\"}}"
+            " { \"ontology\": {\n" +
+                "    \"foo\": \"bar\",\n" +
+                "    \"type\": \"test\",\n" +
+                "    \"name\": \"test\",\n" +
+                "    \"namespace\": [\n" +
+                "      \"a\",\n" +
+                "      \"b\"\n" +
+                "    ],\n" +
+                "    \"content\": \"{\\n  \\\"ont\\\": \\\"user\\\",\\n  \\\"directives\\\": [],\\n  \\\"entityTypes\\\": [\\n    {\\n      \\\"eType\\\": \\\"Geo\\\",\\n      \\\"name\\\": \\\"Geo\\\",\\n      \\\"properties\\\": [\\n        \\\"name\\\",\\n        \\\"location\\\",\\n        \\\"timezone\\\"\\n      ],\\n      \\\"abstract\\\": false\\n    },\\n  ],\\n  \\\"relationshipTypes\\\": [],\\n  \\\"properties\\\": [\\n    {\\n      \\\"pType\\\": \\\"name\\\",\\n      \\\"name\\\": \\\"name\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"STRING\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n    {\\n      \\\"pType\\\": \\\"timezone\\\",\\n      \\\"name\\\": \\\"timezone\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"STRING\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n    {\\n      \\\"pType\\\": \\\"location\\\",\\n      \\\"name\\\": \\\"location\\\",\\n      \\\"type\\\": {\\n        \\\"pType\\\": \\\"Primitive\\\",\\n        \\\"type\\\": \\\"GEOPOINT\\\",\\n        \\\"array\\\": false\\n      }\\n    },\\n  ]\\n}\"\n" +
+                "  }\n}"
         val recreatedObject = createObjectFromJsonString(jsonString) { CreateSimpleSchemaObjectRequest.parse(it) }
         assertEquals(sample, recreatedObject.objectData)
     }

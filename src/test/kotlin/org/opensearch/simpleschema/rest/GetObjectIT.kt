@@ -98,10 +98,10 @@ class GetObjectIT : PluginRestTestCase() {
             RestStatus.OK.status
         )
         Assert.assertEquals(4, getOntologyResponse.get("totalHits").asInt)
-        val notebooksList = getOntologyResponse.get(OBJECT_LIST_FIELD).asJsonArray
+        val list = getOntologyResponse.get(OBJECT_LIST_FIELD).asJsonArray
         Assert.assertArrayEquals(
             ontologyIds,
-            notebooksList.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
+            list.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
         )
 
         val getMultipleTypesResponse = executeRequest(
