@@ -70,7 +70,7 @@ internal class SimpleSchemaObjectRequest : ActionRequest, ToXContentObject {
 
     /**
      * constructor for creating the class
-     * @param objectIds the id of the observability object
+     * @param objectIds the id of the SimpleSchema object
      */
     constructor(objectIds: Set<String>) {
         this.objectIds = objectIds

@@ -12,7 +12,7 @@ import org.opensearch.common.xcontent.XContentParser
 import org.opensearch.simpleschema.model.RestTag.OBJECT_LIST_FIELD
 
 /**
- * ObservabilityObject search results
+ * SimpleSchemaObject search results
  */
 internal class SimpleSchemaObjectSearchResult : SearchResults<SimpleSchemaObjectDoc> {
 

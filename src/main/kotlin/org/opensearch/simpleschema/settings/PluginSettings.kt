@@ -18,14 +18,14 @@ import java.io.IOException
 import java.nio.file.Path
 
 /**
- * settings specific to observability Plugin.
+ * settings specific to SimpleSchema Plugin.
  */
 internal object PluginSettings {
 
     /**
      * Settings Key prefix for this plugin.
      */
-    private const val KEY_PREFIX = "opensearch.observability"
+    private const val KEY_PREFIX = "opensearch.simpleschema"
 
     /**
      * General settings Key prefix.

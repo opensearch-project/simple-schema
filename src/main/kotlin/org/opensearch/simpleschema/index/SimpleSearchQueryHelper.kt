@@ -30,15 +30,15 @@ internal class SimpleSearchQueryHelper(private val types: EnumSet<SimpleSchemaOb
             CREATED_TIME_FIELD
         )
 
-        // keyword and text fields are under observability object and should be prepended with type
+        // keyword and text fields are under SimpleSchema object and should be prepended with type
         private val KEYWORD_FIELDS: Set<String> = setOf()
         private val TEXT_FIELDS = setOf(
             NAME_FIELD
         )
 
         private val METADATA_FIELDS = METADATA_RANGE_FIELDS
-        private val OBSERVABILITY_OBJECT_FIELDS = KEYWORD_FIELDS.union(TEXT_FIELDS)
-        private val ALL_FIELDS = METADATA_FIELDS.union(OBSERVABILITY_OBJECT_FIELDS)
+        private val SIMPLESCHEMA_OBJECT_FIELDS = KEYWORD_FIELDS.union(TEXT_FIELDS)
+        private val ALL_FIELDS = METADATA_FIELDS.union(SIMPLESCHEMA_OBJECT_FIELDS)
 
         val FILTER_PARAMS = ALL_FIELDS.union(setOf(QUERY_FIELD))
     }
@@ -88,7 +88,7 @@ internal class SimpleSearchQueryHelper(private val types: EnumSet<SimpleSchemaOb
 
     private fun getQueryAllBuilder(queryValue: String): QueryBuilder {
         val allQuery = QueryBuilders.queryStringQuery(queryValue)
-        OBSERVABILITY_OBJECT_FIELDS.forEach {
+        SIMPLESCHEMA_OBJECT_FIELDS.forEach {
             prefixes.forEach { type -> allQuery.field("$type.$it") }
         }
         return allQuery

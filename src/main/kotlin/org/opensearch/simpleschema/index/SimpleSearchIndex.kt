@@ -42,7 +42,7 @@ import org.opensearch.simpleschema.action.GetSimpleSchemaObjectRequest
 import java.util.concurrent.TimeUnit
 
 /**
- * Class for doing OpenSearch index operation to maintain observability objects in cluster.
+ * Class for doing OpenSearch index operation to maintain SimpleSchema objects in cluster.
  */
 @Suppress("TooManyFunctions")
 internal object SimpleSearchIndex {
@@ -144,13 +144,13 @@ internal object SimpleSearchIndex {
     }
 
     /**
-     * Create observability object
+     * Create  object
      *
      * @param simpleSchemaObjectDoc
      * @param id
      * @return object id if successful, otherwise null
      */
-    fun createObservabilityObject(simpleSchemaObjectDoc: SimpleSchemaObjectDoc, id: String? = null): String? {
+    fun createSimpleSchemaObject(simpleSchemaObjectDoc: SimpleSchemaObjectDoc, id: String? = null): String? {
         createIndex()
         val xContent = simpleSchemaObjectDoc.toXContent()
         val indexRequest = IndexRequest(INDEX_NAME)
@@ -162,7 +162,7 @@ internal object SimpleSearchIndex {
         val actionFuture = client.index(indexRequest)
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
         return if (response.result != DocWriteResponse.Result.CREATED) {
-            log.warn("$LOG_PREFIX:createObservabilityObject - response:$response")
+            log.warn("$LOG_PREFIX:createSimpleSchemaObject - response:$response")
             null
         } else {
             response.id
@@ -170,44 +170,44 @@ internal object SimpleSearchIndex {
     }
 
     /**
-     * Get observability object
+     * Get  object
      *
      * @param id
      * @return [SimpleSchemaObjectDocInfo]
      */
-    fun getObservabilityObject(id: String): SimpleSchemaObjectDocInfo? {
+    fun getSimpleSchemaObject(id: String): SimpleSchemaObjectDocInfo? {
         createIndex()
         val getRequest = GetRequest(INDEX_NAME).id(id)
         val actionFuture = client.get(getRequest)
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
-        return parseObservabilityObjectDoc(id, response)
+        return parseSimpleSchemaObjectDoc(id, response)
     }
 
     /**
-     * Get multiple observability objects
+     * Get multiple  objects
      *
      * @param ids
      * @return list of [SimpleSchemaObjectDocInfo]
      */
-    fun getObservabilityObjects(ids: Set<String>): List<SimpleSchemaObjectDocInfo> {
+    fun getSimpleSchemaObjects(ids: Set<String>): List<SimpleSchemaObjectDocInfo> {
         createIndex()
         val getRequest = MultiGetRequest()
         ids.forEach { getRequest.add(INDEX_NAME, it) }
         val actionFuture = client.multiGet(getRequest)
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
-        return response.responses.mapNotNull { parseObservabilityObjectDoc(it.id, it.response) }
+        return response.responses.mapNotNull { parseSimpleSchemaObjectDoc(it.id, it.response) }
     }
 
     /**
-     * Parse observability object doc
+     * Parse object doc
      *
      * @param id
      * @param response
      * @return [SimpleSchemaObjectDocInfo]
      */
-    private fun parseObservabilityObjectDoc(id: String, response: GetResponse): SimpleSchemaObjectDocInfo? {
+    private fun parseSimpleSchemaObjectDoc(id: String, response: GetResponse): SimpleSchemaObjectDocInfo? {
         return if (response.sourceAsString == null) {
-            log.warn("$LOG_PREFIX:getObservabilityObject - $id not found; response:$response")
+            log.warn("$LOG_PREFIX:getSimpleSchemaObject - $id not found; response:$response")
             null
         } else {
             val parser = XContentType.JSON.xContent().createParser(
@@ -222,14 +222,14 @@ internal object SimpleSearchIndex {
     }
 
     /**
-     * Get all observability objects
+     * Get all  objects
      *
      * @param tenant
      * @param access
      * @param request
      * @return [SimpleSchemaObjectSearchResult]
      */
-    fun getAllObservabilityObjects(
+    fun getAllSimpleSchemaObjects(
         tenant: String,
         access: List<String>,
         request: GetSimpleSchemaObjectRequest
@@ -257,7 +257,7 @@ internal object SimpleSearchIndex {
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
         val result = SimpleSchemaObjectSearchResult(request.fromIndex.toLong(), response, searchHitParser)
         log.info(
-            "$LOG_PREFIX:getAllObservabilityObjects types:${request.types} from:${request.fromIndex}, maxItems:${request.maxItems}," +
+            "$LOG_PREFIX:getAllSimpleSchemaObjects types:${request.types} from:${request.fromIndex}, maxItems:${request.maxItems}," +
                 " sortField:${request.sortField}, sortOrder=${request.sortOrder}, filters=${request.filterParams}" +
                 " retCount:${result.objectList.size}, totalCount:${result.totalHits}"
         )
@@ -265,13 +265,13 @@ internal object SimpleSearchIndex {
     }
 
     /**
-     * Update observability object
+     * Update  object
      *
      * @param id
      * @param simpleSchemaObjectDoc
      * @return true if successful, otherwise false
      */
-    fun updateObservabilityObject(id: String, simpleSchemaObjectDoc: SimpleSchemaObjectDoc): Boolean {
+    fun updateSimpleSchemaObject(id: String, simpleSchemaObjectDoc: SimpleSchemaObjectDoc): Boolean {
         createIndex()
         val updateRequest = UpdateRequest()
             .index(INDEX_NAME)
@@ -281,18 +281,18 @@ internal object SimpleSearchIndex {
         val actionFuture = client.update(updateRequest)
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
         if (response.result != DocWriteResponse.Result.UPDATED) {
-            log.warn("$LOG_PREFIX:updateObservabilityObject failed for $id; response:$response")
+            log.warn("$LOG_PREFIX:updateSimpleSchemaObject failed for $id; response:$response")
         }
         return response.result == DocWriteResponse.Result.UPDATED
     }
 
     /**
-     * Delete observability object
+     * Delete  object
      *
      * @param id
      * @return true if successful, otherwise false
      */
-    fun deleteObservabilityObject(id: String): Boolean {
+    fun deleteSimpleSchemaObject(id: String): Boolean {
         createIndex()
         val deleteRequest = DeleteRequest()
             .index(INDEX_NAME)
@@ -300,18 +300,18 @@ internal object SimpleSearchIndex {
         val actionFuture = client.delete(deleteRequest)
         val response = actionFuture.actionGet(PluginSettings.operationTimeoutMs)
         if (response.result != DocWriteResponse.Result.DELETED) {
-            log.warn("$LOG_PREFIX:deleteObservabilityObject failed for $id; response:$response")
+            log.warn("$LOG_PREFIX:deleteSimpleSchemaObject failed for $id; response:$response")
         }
         return response.result == DocWriteResponse.Result.DELETED
     }
 
     /**
-     * Delete multiple observability objects
+     * Delete multiple  objects
      *
      * @param ids
      * @return map of id to delete status
      */
-    fun deleteObservabilityObjects(ids: Set<String>): Map<String, RestStatus> {
+    fun deleteSimpleSchemaObjects(ids: Set<String>): Map<String, RestStatus> {
         createIndex()
         val bulkRequest = BulkRequest()
         ids.forEach {
@@ -326,7 +326,7 @@ internal object SimpleSearchIndex {
         response.forEach {
             mutableMap[it.id] = it.status()
             if (it.isFailed) {
-                log.warn("$LOG_PREFIX:deleteObservabilityObjects failed for ${it.id}; response:${it.failureMessage}")
+                log.warn("$LOG_PREFIX:deleteSimpleSchemaObjects failed for ${it.id}; response:${it.failureMessage}")
             }
         }
         return mutableMap

@@ -40,7 +40,7 @@ internal object SimpleSchemaActions {
             request.type,
             request.objectData
         )
-        val docId = SimpleSearchIndex.createObservabilityObject(objectDoc, request.objectId)
+        val docId = SimpleSearchIndex.createSimpleSchemaObject(objectDoc, request.objectId)
         docId ?: throw OpenSearchStatusException(
             "Object Creation failed",
             RestStatus.INTERNAL_SERVER_ERROR
@@ -56,13 +56,13 @@ internal object SimpleSchemaActions {
     fun update(request: UpdateSimpleSchemaObjectRequest, user: User?): UpdateSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-update ${request.objectId}")
         UserAccessManager.validateUser(user)
-        val observabilityObject = SimpleSearchIndex.getObservabilityObject(request.objectId)
-        observabilityObject
+        val objectDocInfo = SimpleSearchIndex.getSimpleSchemaObject(request.objectId)
+        objectDocInfo
             ?: throw OpenSearchStatusException(
-                "ObservabilityObject ${request.objectId} not found",
+                "SimpleSchemaObject ${request.objectId} not found",
                 RestStatus.NOT_FOUND
             )
-        val currentDoc = observabilityObject.simpleSchemaObjectDoc
+        val currentDoc = objectDocInfo.simpleSchemaObjectDoc
         if (!UserAccessManager.doesUserHasAccess(user, currentDoc.tenant, currentDoc.access)) {
             throw OpenSearchStatusException(
                 "Permission denied for Object ${request.objectId}",
@@ -82,7 +82,7 @@ internal object SimpleSchemaActions {
             request.type,
             request.objectData
         )
-        if (!SimpleSearchIndex.updateObservabilityObject(request.objectId, objectDoc)) {
+        if (!SimpleSearchIndex.updateSimpleSchemaObject(request.objectId, objectDoc)) {
             throw OpenSearchStatusException("Object Update failed", RestStatus.INTERNAL_SERVER_ERROR)
         }
         return UpdateSimpleSchemaObjectResponse(request.objectId)
@@ -111,12 +111,12 @@ internal object SimpleSchemaActions {
      */
     private fun info(objectId: String, user: User?): GetSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-info $objectId")
-        val observabilityObjectDocInfo = SimpleSearchIndex.getObservabilityObject(objectId)
-        observabilityObjectDocInfo
+        val objectDocInfo = SimpleSearchIndex.getSimpleSchemaObject(objectId)
+        objectDocInfo
             ?: run {
                 throw OpenSearchStatusException("Object $objectId not found", RestStatus.NOT_FOUND)
             }
-        val currentDoc = observabilityObjectDocInfo.simpleSchemaObjectDoc
+        val currentDoc = objectDocInfo.simpleSchemaObjectDoc
         if (!UserAccessManager.doesUserHasAccess(user, currentDoc.tenant, currentDoc.access)) {
             throw OpenSearchStatusException("Permission denied for Object $objectId", RestStatus.FORBIDDEN)
         }
@@ -143,7 +143,7 @@ internal object SimpleSchemaActions {
      */
     private fun info(objectIds: Set<String>, user: User?): GetSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-info $objectIds")
-        val objectDocs = SimpleSearchIndex.getObservabilityObjects(objectIds)
+        val objectDocs = SimpleSearchIndex.getSimpleSchemaObjects(objectIds)
         if (objectDocs.size != objectIds.size) {
             val mutableSet = objectIds.toMutableSet()
             objectDocs.forEach { mutableSet.remove(it.id) }
@@ -186,7 +186,7 @@ internal object SimpleSchemaActions {
      */
     private fun getAll(request: GetSimpleSchemaObjectRequest, user: User?): GetSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-getAll")
-        val searchResult = SimpleSearchIndex.getAllObservabilityObjects(
+        val searchResult = SimpleSearchIndex.getAllSimpleSchemaObjects(
             UserAccessManager.getUserTenant(user),
             UserAccessManager.getSearchAccessInfo(user),
             request
@@ -219,23 +219,23 @@ internal object SimpleSchemaActions {
     private fun delete(objectId: String, user: User?): DeleteSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-delete $objectId")
         UserAccessManager.validateUser(user)
-        val observabilityObjectDocInfo = SimpleSearchIndex.getObservabilityObject(objectId)
-        observabilityObjectDocInfo
+        val objectDocInfo = SimpleSearchIndex.getSimpleSchemaObject(objectId)
+        objectDocInfo
             ?: run {
                 throw OpenSearchStatusException(
-                    "ObservabilityObject $objectId not found",
+                    "SimpleSchemaObject $objectId not found",
                     RestStatus.NOT_FOUND
                 )
             }
 
-        val currentDoc = observabilityObjectDocInfo.simpleSchemaObjectDoc
+        val currentDoc = objectDocInfo.simpleSchemaObjectDoc
         if (!UserAccessManager.doesUserHasAccess(user, currentDoc.tenant, currentDoc.access)) {
             throw OpenSearchStatusException(
                 "Permission denied for Object $objectId",
                 RestStatus.FORBIDDEN
             )
         }
-        if (!SimpleSearchIndex.deleteObservabilityObject(objectId)) {
+        if (!SimpleSearchIndex.deleteSimpleSchemaObject(objectId)) {
             throw OpenSearchStatusException(
                 "Object $objectId delete failed",
                 RestStatus.REQUEST_TIMEOUT
@@ -253,7 +253,7 @@ internal object SimpleSchemaActions {
     private fun delete(objectIds: Set<String>, user: User?): DeleteSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-delete $objectIds")
         UserAccessManager.validateUser(user)
-        val configDocs = SimpleSearchIndex.getObservabilityObjects(objectIds)
+        val configDocs = SimpleSearchIndex.getSimpleSchemaObjects(objectIds)
         if (configDocs.size != objectIds.size) {
             val mutableSet = objectIds.toMutableSet()
             configDocs.forEach { mutableSet.remove(it.id) }
@@ -271,7 +271,7 @@ internal object SimpleSchemaActions {
                 )
             }
         }
-        val deleteStatus = SimpleSearchIndex.deleteObservabilityObjects(objectIds)
+        val deleteStatus = SimpleSearchIndex.deleteSimpleSchemaObjects(objectIds)
         return DeleteSimpleSchemaObjectResponse(deleteStatus)
     }
 }

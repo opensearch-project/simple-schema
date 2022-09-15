@@ -3,7 +3,7 @@ package org.opensearch.simpleschema.model
 import org.opensearch.index.seqno.SequenceNumbers
 
 /**
- * Class for storing the observability object document with document properties.
+ * Class for storing the SimpleSchema object document with document properties.
  */
 data class SimpleSchemaObjectDocInfo(
     val id: String? = null,

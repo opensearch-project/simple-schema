@@ -122,7 +122,7 @@ class GetSimpleSchemaObjectRequest : ActionRequest, ToXContentObject {
 
     /**
      * constructor for creating the class
-     * @param objectIds the ids of the observability objects (other parameters are not relevant if ids are present)
+     * @param objectIds the ids of the SimpleSchema objects (other parameters are not relevant if ids are present)
      * @param fromIndex the starting index for paginated response
      * @param maxItems the maximum number of items to return for paginated response
      * @param sortField the sort field if response has many items

@@ -38,13 +38,13 @@ import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectRequest
 import java.util.EnumSet
 
 /**
- * Rest handler for observability object lifecycle management.
- * This handler uses [ObservabilityActions].
+ * Rest handler for SimpleSchema object lifecycle management.
+ * This handler uses [SimpleSchemaActions].
  */
 internal class SimpleSchemaRestHandler : BaseRestHandler() {
     companion object {
-        private const val OBSERVABILITY_ACTION = "observability_actions"
-        private const val OBSERVABILITY_URL = "$BASE_SIMPLESCHEMA_URI/object"
+        private const val SIMPLESCHEMA_ACTION = "simpleschema_actions"
+        private const val SIMPLESCHEMA_URL = "$BASE_SIMPLESCHEMA_URI/object"
         private val log by logger(SimpleSchemaRestHandler::class.java)
     }
 
@@ -52,7 +52,7 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
      * {@inheritDoc}
      */
     override fun getName(): String {
-        return OBSERVABILITY_ACTION
+        return SIMPLESCHEMA_ACTION
     }
 
     /**
@@ -62,34 +62,34 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
         return listOf(
             /**
              * Create a new object
-             * Request URL: POST OBSERVABILITY_URL
-             * Request body: Ref [org.opensearch.simpleschema.model.CreateObservabilityObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.CreateObservabilityObjectResponse]
+             * Request URL: POST SIMPLESCHEMA_URL
+             * Request body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaObjectRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaObjectResponse]
              */
-            Route(POST, OBSERVABILITY_URL),
+            Route(POST, SIMPLESCHEMA_URL),
             /**
              * Update object
-             * Request URL: PUT OBSERVABILITY_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.UpdateObservabilityObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.UpdateObservabilityObjectResponse]
+             * Request URL: PUT SIMPLESCHEMA_URL/{objectId}
+             * Request body: Ref [org.opensearch.simpleschema.model.UpdateSimpleSchemaObjectRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.UpdateSimpleSchemaObjectResponse]
              */
-            Route(PUT, "$OBSERVABILITY_URL/{$OBJECT_ID_FIELD}"),
+            Route(PUT, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
             /**
              * Get a object
-             * Request URL: GET OBSERVABILITY_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.GetObservabilityObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.GetObservabilityObjectResponse]
+             * Request URL: GET SIMPLESCHEMA_URL/{objectId}
+             * Request body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectResponse]
              */
-            Route(GET, "$OBSERVABILITY_URL/{$OBJECT_ID_FIELD}"),
-            Route(GET, OBSERVABILITY_URL),
+            Route(GET, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
+            Route(GET, SIMPLESCHEMA_URL),
             /**
              * Delete object
-             * Request URL: DELETE OBSERVABILITY_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.DeleteObservabilityObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.DeleteObservabilityObjectResponse]
+             * Request URL: DELETE SIMPLESCHEMA_URL/{objectId}
+             * Request body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectResponse]
              */
-            Route(DELETE, "$OBSERVABILITY_URL/{$OBJECT_ID_FIELD}"),
-            Route(DELETE, "$OBSERVABILITY_URL")
+            Route(DELETE, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
+            Route(DELETE, "$SIMPLESCHEMA_URL")
         )
     }
 

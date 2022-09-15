@@ -72,7 +72,7 @@ internal class DeleteSimpleSchemaObjectResponse : BaseResponse {
 
     /**
      * constructor for creating the class
-     * @param objectIdToStatus the ids of the deleted observability object with status
+     * @param objectIdToStatus the ids of the deleted SimpleSchema object with status
      */
     constructor(objectIdToStatus: Map<String, RestStatus>) {
         this.objectIdToStatus = objectIdToStatus

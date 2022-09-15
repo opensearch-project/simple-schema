@@ -71,7 +71,7 @@ internal class UpdateSimpleSchemaObjectRequest : ActionRequest, ToXContentObject
                             type = objectTypeForTag
                         } else {
                             parser.skipChildren()
-                            log.info("Unexpected field: $fieldName, while parsing CreateObservabilityObjectRequest")
+                            log.info("Unexpected field: $fieldName, while parsing CreateSimpleSchemaObjectRequest")
                         }
                     }
                 }
