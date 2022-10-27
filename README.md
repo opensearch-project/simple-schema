@@ -1,3 +1,5 @@
+<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
+
 ## Simple Schema for Open Search
 
 The purpose of this Plugin is to enhance open-search engine with user-domain schema by using GraphQL.  
