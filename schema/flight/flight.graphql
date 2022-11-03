@@ -1,5 +1,6 @@
 type Airport {
     id: ID!
+    name: String!
     city: String!
     country: String!
     location: Location!
