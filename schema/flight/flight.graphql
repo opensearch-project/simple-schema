@@ -29,33 +29,3 @@ type Delay {
     duration: Time!
     type: String
 }
-
-input KeywordQueryOperatorInput {
-    eq: String
-    in: [String]
-    notEq: String
-    notIn: [String]
-}
-
-input TimeFilterInput {
-    departureBefore: DateTime
-    departureAfter: DateTime
-}
-
-input AirportFilterInput {
-    id: KeywordQueryOperatorInput
-    city: KeywordQueryOperatorInput
-    country: KeywordQueryOperatorInput
-    weather: KeywordQueryOperatorInput
-}
-
-input FlightFilterInput {
-    time: TimeFilterInput
-    origin: AirportFilterInput
-    destination: AirportFilterInput
-}
-
-type Query {
-    flights(filter: FlightFilterInput): [Flight]!
-    flight(id: ID!): Flight
-}
