@@ -1,0 +1,27 @@
+type Airport {
+    id: ID!
+    cityName: String!
+    country: String!
+    location: Location!
+    region: String
+    weather: String
+}
+
+type Location {
+    lat: Float!
+    lon: Float!
+}
+
+type Flight {
+    id: ID!
+    flightNumber: String!
+    time: DateTime!
+    origin: Airport!
+    destination: Airport!
+    delay: Delay
+}
+
+type Delay {
+    duration: Time!
+    type: String
+}
