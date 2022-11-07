@@ -43,14 +43,30 @@ Flights follow the following schema, of which specific fields to retrieve must b
 }
 ```
 
-Queries can only be done at `/flight` and `/flights`.
-A single `/flight` can only retrieved by ID.
-A collection of `/flights` can be filtered by a `FlightFilterInput`,
-examples are available in `schema/flight/flight-example-queries.graphql`.
+Flights are accessible through the following queries.
+Concrete examples are available in `schema/flight/flight-example-queries.graphql`.
 
-The purpose of this API is to function as a transpiler.
-That is, to be able to map logical GraphQL queries to physical index queries in OpenSearch.
-For example, the following GraphQL query,
+```graphql
+query {
+    flight (id: ID)
+    flights (filter: FlightFilterInput)
+}
+```
+
+Additionally, a JSON mapping should be provided to map keys between Simple Schema and OpenSearch.
+For example, a mapping may contain the following keys:
+
+```json
+{
+  "flightNumber": "FlightNum",
+  "time": "timestamp",
+  "price": "AvgTicketPrice",
+  "origin/city": "originCityName",
+  "destination/city": "destCityName"
+}
+```
+
+Which would allow Simple Schema to translate a GraphQL query like this,
 
 ```graphql
 query FlightsFromAmsterdamToChicago {
@@ -73,19 +89,11 @@ query FlightsFromAmsterdamToChicago {
 }
 ```
 
-May be mapped to something resembling the following SQL query on the OpenSearch flights database.
+to an appropriate query on OpenSearch to efficiently retrieve the results.
+For example, it may generate the following SQL query.
 
 ```sql
 SELECT FlightNum AS flightNumber, timestamp AS time, AvgTicketPrice AS price
 FROM flights
 WHERE originCityName = 'Amsterdam' AND destCityName = 'Chicago';
-```
-
-This may be done by, for example, providing a JSON mapping similar to the following:
-
-```json
-{
-  "flightNumber": "FlightNum",
-  "origin/city": "originCityName"
-}
 ```

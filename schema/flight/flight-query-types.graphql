@@ -1,4 +1,4 @@
-input KeywordQueryOperatorInput {
+input StringFilterInput {
     eq: String
     in: [String]
     notEq: String
@@ -6,24 +6,25 @@ input KeywordQueryOperatorInput {
 }
 
 input TimeFilterInput {
-    departureBefore: DateTime
     departureAfter: DateTime
+    departureBefore: DateTime
+    departureDuring: DateTime
 }
 
 input AirportFilterInput {
-    id: KeywordQueryOperatorInput
-    city: KeywordQueryOperatorInput
-    country: KeywordQueryOperatorInput
-    weather: KeywordQueryOperatorInput
+    id: StringFilterInput
+    city: StringFilterInput
+    country: StringFilterInput
+    weather: StringFilterInput
 }
 
 input FlightFilterInput {
-    time: TimeFilterInput
-    origin: AirportFilterInput
     destination: AirportFilterInput
+    origin: AirportFilterInput
+    time: TimeFilterInput
 }
 
 type Query {
-    flights(filter: FlightFilterInput): [Flight]!
     flight(id: ID!): Flight
+    flights(filter: FlightFilterInput): [Flight]!
 }

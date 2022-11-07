@@ -21,8 +21,8 @@ type Flight {
     destination: Airport!
     price: Float
     delay: Delay
-    distanceKM: Float # Derived
-    distanceMI: Float # Derived
+    distanceKM: Float
+    distanceMI: Float
 }
 
 type Delay {
