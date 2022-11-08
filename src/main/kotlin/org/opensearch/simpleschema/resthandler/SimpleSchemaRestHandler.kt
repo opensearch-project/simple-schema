@@ -30,11 +30,14 @@ import org.opensearch.rest.RestRequest.Method.POST
 import org.opensearch.rest.RestRequest.Method.PUT
 import org.opensearch.rest.RestStatus
 import org.opensearch.search.sort.SortOrder
-import org.opensearch.simpleschema.action.*
 import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectRequest
+import org.opensearch.simpleschema.action.GetSimpleSchemaObjectAction
+import org.opensearch.simpleschema.action.GetSimpleSchemaObjectRequest
 import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectRequest
+import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectRequest
+import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectAction
 import java.util.EnumSet
 
 /**
