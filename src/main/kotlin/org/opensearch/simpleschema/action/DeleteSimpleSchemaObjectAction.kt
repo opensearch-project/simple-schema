@@ -21,12 +21,12 @@ internal class DeleteSimpleSchemaObjectAction @Inject constructor(
     client: Client,
     actionFilters: ActionFilters,
     val xContentRegistry: NamedXContentRegistry
-) : PluginBaseAction<SimpleSchemaObjectRequest, DeleteSimpleSchemaObjectResponse>(
+) : PluginBaseAction<DeleteSimpleSchemaObjectRequest, DeleteSimpleSchemaObjectResponse>(
     NAME,
     transportService,
     client,
     actionFilters,
-    ::SimpleSchemaObjectRequest
+    ::DeleteSimpleSchemaObjectRequest
 ) {
     companion object {
         private const val NAME = "cluster:admin/opensearch/simpleschema/delete"
@@ -36,7 +36,8 @@ internal class DeleteSimpleSchemaObjectAction @Inject constructor(
     /**
      * {@inheritDoc}
      */
-    override fun executeRequest(request: SimpleSchemaObjectRequest, user: User?): DeleteSimpleSchemaObjectResponse {
-        return SimpleSchemaActions.delete(request, user)
+    override fun executeRequest(request: DeleteSimpleSchemaObjectRequest, user: User?): DeleteSimpleSchemaObjectResponse {
+
+        return SimpleSchemaActions.delete(request.objectIds, user)
     }
 }

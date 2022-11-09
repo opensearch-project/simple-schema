@@ -22,7 +22,7 @@ internal class SchemaEntityTypeTests {
         "    books: [Book]\n" +
         "}"
 
-    private val sample = SchemaEntityType("test","test",null,listOf("a","b"),entity)
+    private val sample = SchemaEntityType("test", "test", null, listOf("a", "b"), entity)
 
     @Test
     fun `SchemaEntityType serialize and deserialize transport object should be equal`() {

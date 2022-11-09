@@ -14,72 +14,7 @@ import org.opensearch.simpleschema.createObjectFromJsonString
 import org.opensearch.simpleschema.getJsonString
 
 internal class IndexProviderTests {
-    var indexProvider = "{\n" +
-        "  \"entities\": [\n" +
-        "    {\n" +
-        "      \"type\": \"User\",\n" +
-        "      \"partition\": \"NESTED\",\n" +
-        "      \"props\": {\n" +
-        "        \"values\": [\n" +
-        "          \"User\"\n" +
-        "        ]\n" +
-        "      },\n" +
-        "      \"nested\": [\n" +
-        "        {\n" +
-        "          \"type\": \"Group\",\n" +
-        "          \"partition\": \"NESTED\",\n" +
-        "          \"props\": {\n" +
-        "            \"values\": [\n" +
-        "              \"Group\"\n" +
-        "            ]\n" +
-        "          },\n" +
-        "          \"nested\": [],\n" +
-        "          \"mapping\": \"INDEX\"\n" +
-        "        }\n" +
-        "      ],\n" +
-        "      \"mapping\": \"INDEX\"\n" +
-        "    },\n" +
-        "    {\n" +
-        "      \"type\": \"Group\",\n" +
-        "      \"partition\": \"NESTED\",\n" +
-        "      \"props\": {\n" +
-        "        \"values\": [\n" +
-        "          \"Group\"\n" +
-        "        ]\n" +
-        "      },\n" +
-        "      \"nested\": [],\n" +
-        "      \"mapping\": \"INDEX\"\n" +
-        "    }\n" +
-        "  ],\n" +
-        "  \"relations\": [],\n" +
-        "  \"ontology\": \"client\",\n" +
-        "  \"rootEntities\": [\n" +
-        "    {\n" +
-        "      \"type\": \"User\",\n" +
-        "      \"partition\": \"STATIC\",\n" +
-        "      \"props\": {\n" +
-        "        \"values\": [\n" +
-        "          \"User\"\n" +
-        "        ]\n" +
-        "      },\n" +
-        "      \"nested\": [\n" +
-        "        {\n" +
-        "          \"type\": \"Group\",\n" +
-        "          \"partition\": \"NESTED\",\n" +
-        "          \"props\": {\n" +
-        "            \"values\": [\n" +
-        "              \"Group\"\n" +
-        "            ]\n" +
-        "          },\n" +
-        "          \"nested\": [],\n" +
-        "          \"mapping\": \"INDEX\"\n" +
-        "        }\n" +
-        "      ],\n" +
-        "      \"mapping\": \"INDEX\"\n" +
-        "    }\n" +
-        "  ],\n" +
-        "  \"rootRelations\": []\n" +
-        "}"
+    var indexProvider = "{}"
 
     private val sample = IndexProvider("test", "test", null, listOf("a", "b"), "ont", indexProvider)
 
@@ -107,7 +42,7 @@ internal class IndexProviderTests {
             "      \"b\"\n" +
             "    ],\n" +
             "    \"ontology\": \"ont\",\n" +
-            "    \"content\": \"{\\n  \\\"entities\\\": [\\n    {\\n      \\\"type\\\": \\\"User\\\",\\n      \\\"partition\\\": \\\"NESTED\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"User\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [\\n        {\\n          \\\"type\\\": \\\"Group\\\",\\n          \\\"partition\\\": \\\"NESTED\\\",\\n          \\\"props\\\": {\\n            \\\"values\\\": [\\n              \\\"Group\\\"\\n            ]\\n          },\\n          \\\"nested\\\": [],\\n          \\\"mapping\\\": \\\"INDEX\\\"\\n        }\\n      ],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"Group\\\",\\n      \\\"partition\\\": \\\"NESTED\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"Group\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    }\\n  ],\\n  \\\"relations\\\": [],\\n  \\\"ontology\\\": \\\"client\\\",\\n  \\\"rootEntities\\\": [\\n    {\\n      \\\"type\\\": \\\"User\\\",\\n      \\\"partition\\\": \\\"STATIC\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"User\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [\\n        {\\n          \\\"type\\\": \\\"Group\\\",\\n          \\\"partition\\\": \\\"NESTED\\\",\\n          \\\"props\\\": {\\n            \\\"values\\\": [\\n              \\\"Group\\\"\\n            ]\\n          },\\n          \\\"nested\\\": [],\\n          \\\"mapping\\\": \\\"INDEX\\\"\\n        }\\n      ],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    }\\n  ],\\n  \\\"rootRelations\\\": []\\n}\"\n" +
+            "    \"content\": \"{}\"\n" +
                 "}"
         val recreatedObject = createObjectFromJsonString(jsonString) { IndexProvider.parse(it) }
         assertEquals(sample, recreatedObject)
@@ -133,7 +68,7 @@ internal class IndexProviderTests {
                 "      \"b\"\n" +
                 "    ],\n" +
                 "    \"ontology\": \"ont\",\n" +
-                "    \"content\": \"{\\n  \\\"entities\\\": [\\n    {\\n      \\\"type\\\": \\\"User\\\",\\n      \\\"partition\\\": \\\"NESTED\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"User\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [\\n        {\\n          \\\"type\\\": \\\"Group\\\",\\n          \\\"partition\\\": \\\"NESTED\\\",\\n          \\\"props\\\": {\\n            \\\"values\\\": [\\n              \\\"Group\\\"\\n            ]\\n          },\\n          \\\"nested\\\": [],\\n          \\\"mapping\\\": \\\"INDEX\\\"\\n        }\\n      ],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    },\\n    {\\n      \\\"type\\\": \\\"Group\\\",\\n      \\\"partition\\\": \\\"NESTED\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"Group\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    }\\n  ],\\n  \\\"relations\\\": [],\\n  \\\"ontology\\\": \\\"client\\\",\\n  \\\"rootEntities\\\": [\\n    {\\n      \\\"type\\\": \\\"User\\\",\\n      \\\"partition\\\": \\\"STATIC\\\",\\n      \\\"props\\\": {\\n        \\\"values\\\": [\\n          \\\"User\\\"\\n        ]\\n      },\\n      \\\"nested\\\": [\\n        {\\n          \\\"type\\\": \\\"Group\\\",\\n          \\\"partition\\\": \\\"NESTED\\\",\\n          \\\"props\\\": {\\n            \\\"values\\\": [\\n              \\\"Group\\\"\\n            ]\\n          },\\n          \\\"nested\\\": [],\\n          \\\"mapping\\\": \\\"INDEX\\\"\\n        }\\n      ],\\n      \\\"mapping\\\": \\\"INDEX\\\"\\n    }\\n  ],\\n  \\\"rootRelations\\\": []\\n}\"\n" +
+                "    \"content\": \"{}\"\n" +
                 "}"
         val recreatedObject = createObjectFromJsonString(jsonString) { IndexProvider.parse(it) }
         assertEquals(sample, recreatedObject)

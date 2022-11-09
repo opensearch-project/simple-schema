@@ -28,7 +28,6 @@ internal object RestTag {
     const val SORT_ORDER_FIELD = "sortOrder"
     const val FILTER_PARAM_LIST_FIELD = "filterParamList"
 
-    const val ONTOLOGY_FIELD = "ontology"
     const val INDEX_PROVIDER_FIELD = "indexProvider"
     const val SCHEMA_ENTITY_FIELD = "schemaEntityType"
 

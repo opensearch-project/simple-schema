@@ -48,7 +48,7 @@ class GetObjectIT : PluginRestTestCase() {
     }
 
     fun `test get single object`() {
-        val createRequest = constructOntologyRequest()
+        val createRequest = constructSchemaEntityTypeRequest()
         val id = createObject(createRequest)
 
         val getResponse = executeRequest(
@@ -60,8 +60,8 @@ class GetObjectIT : PluginRestTestCase() {
         val objectDetails = getResponse.get(OBJECT_LIST_FIELD).asJsonArray.get(0).asJsonObject
         Assert.assertEquals(id, objectDetails.get("objectId").asString)
         Assert.assertEquals(
-            jsonify(createRequest).get("ontology").asJsonObject,
-            objectDetails.get("ontology").asJsonObject
+            jsonify(createRequest).get("schemaEntityType").asJsonObject,
+            objectDetails.get("schemaEntityType").asJsonObject
         )
         Thread.sleep(100)
     }
@@ -76,7 +76,6 @@ class GetObjectIT : PluginRestTestCase() {
         Assert.assertEquals(0, emptyResponse.get("totalHits").asInt)
 
         val startTime = Instant.now().toEpochMilli()
-        val ontologyIds = Array(4) { createObject(constructOntologyRequest("ontology-$it")) }
         val indexProviderIds = Array(6) { createObject(constructIndexProviderRequest("indexProvider-$it")) }
         val schemaEntityTypeIds =
             Array(3) { createObject(constructSchemaEntityTypeRequest("schemaEntityType-$it")) }
@@ -89,45 +88,58 @@ class GetObjectIT : PluginRestTestCase() {
             "",
             RestStatus.OK.status
         )
-        Assert.assertEquals(25, getAllResponse.get("totalHits").asInt)
+        Assert.assertEquals(9, getAllResponse.get("totalHits").asInt)
 
-        val getOntologyResponse = executeRequest(
+        val getResponse = executeRequest(
             RestRequest.Method.GET.name,
-            "$BASE_SIMPLESCHEMA_URI/object?objectType=ontology",
+            "$BASE_SIMPLESCHEMA_URI/object?objectType=schemaEntityType",
             "",
             RestStatus.OK.status
         )
-        Assert.assertEquals(4, getOntologyResponse.get("totalHits").asInt)
-        val list = getOntologyResponse.get(OBJECT_LIST_FIELD).asJsonArray
+        Assert.assertEquals(3, getResponse.get("totalHits").asInt)
+        val list = getResponse.get(OBJECT_LIST_FIELD).asJsonArray
         Assert.assertArrayEquals(
-            ontologyIds,
+            schemaEntityTypeIds,
             list.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
         )
 
         val getMultipleTypesResponse = executeRequest(
             RestRequest.Method.GET.name,
-            "$BASE_SIMPLESCHEMA_URI/object?objectType=ontology,schemaEntityType",
+            "$BASE_SIMPLESCHEMA_URI/object?objectType=indexProvider,schemaEntityType",
             "",
             RestStatus.OK.status
         )
         Assert.assertEquals(9, getMultipleTypesResponse.get("totalHits").asInt)
-        val multipleTypesList = getMultipleTypesResponse.get(OBJECT_LIST_FIELD).asJsonArray
+        var multipleTypesList = getMultipleTypesResponse.get(OBJECT_LIST_FIELD).asJsonArray
         Assert.assertArrayEquals(
-            ontologyIds.plus(schemaEntityTypeIds),
+            indexProviderIds.plus(schemaEntityTypeIds),
             multipleTypesList.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
         )
 
-        val getMultipleIdsResponse = executeRequest(
+        var getMultipleIdsResponse = executeRequest(
             RestRequest.Method.GET.name,
             "$BASE_SIMPLESCHEMA_URI/object?objectIdList=${indexProviderIds.joinToString(",")}",
             "",
             RestStatus.OK.status
         )
-        Assert.assertEquals(7, getMultipleIdsResponse.get("totalHits").asInt)
+        Assert.assertEquals(6, getMultipleIdsResponse.get("totalHits").asInt)
         val multipleIdsList = getMultipleIdsResponse.get(OBJECT_LIST_FIELD).asJsonArray
         Assert.assertArrayEquals(
             indexProviderIds,
             multipleIdsList.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
+        )
+
+        val getIndexProviderIdsResponse = executeRequest(
+            RestRequest.Method.GET.name,
+            "$BASE_SIMPLESCHEMA_URI/object?objectType=indexProvider",
+            "",
+            RestStatus.OK.status
+        )
+        Assert.assertEquals(6, getIndexProviderIdsResponse.get("totalHits").asInt)
+        multipleTypesList = getIndexProviderIdsResponse.get(OBJECT_LIST_FIELD).asJsonArray
+        Assert.assertArrayEquals(
+            indexProviderIds,
+            multipleTypesList.map { it.asJsonObject.get("objectId").asString }.toTypedArray()
         )
     }
 }

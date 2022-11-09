@@ -18,27 +18,9 @@ properties:
     type: keyword
   access: # Array of access details like user,role,backend_role etc
     type: keyword
-  type:
+  objectType:
     type: keyword
-  ontology:
-    type: object
-    properties:
-      name:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-      type:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-      namespace:
-        type: text
-        fields:
-          keyword:
-            type: keyword
-  indexprovider:
+  indexProvider:
     type: object
     properties:
       name:
@@ -61,7 +43,7 @@ properties:
         fields:
           keyword:
             type: keyword
-  schemaentity:
+  schemaEntityType:
     type: object
     properties:
       name:

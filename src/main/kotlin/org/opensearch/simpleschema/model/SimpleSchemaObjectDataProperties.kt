@@ -19,7 +19,6 @@ internal object SimpleSchemaObjectDataProperties {
     )
 
     private val OBJECT_PROPERTIES_MAP = mapOf(
-        Pair(SimpleSchemaObjectType.ONTOLOGY, ObjectProperty(Ontology.reader, Ontology.xParser)),
         Pair(SimpleSchemaObjectType.SCHEMA_ENTITY, ObjectProperty(SchemaEntityType.reader, SchemaEntityType.xParser)),
         Pair(SimpleSchemaObjectType.INDEX_PROVIDER, ObjectProperty(IndexProvider.reader, IndexProvider.xParser)),
     )
@@ -39,7 +38,6 @@ internal object SimpleSchemaObjectDataProperties {
      */
     fun validateObjectData(objectType: SimpleSchemaObjectType, objectData: BaseObjectData?): Boolean {
         return when (objectType) {
-            SimpleSchemaObjectType.ONTOLOGY -> objectData is Ontology
             SimpleSchemaObjectType.SCHEMA_ENTITY -> objectData is SchemaEntityType
             SimpleSchemaObjectType.INDEX_PROVIDER -> objectData is IndexProvider
             SimpleSchemaObjectType.NONE -> true

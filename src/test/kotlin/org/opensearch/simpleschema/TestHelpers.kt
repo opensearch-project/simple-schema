@@ -18,52 +18,7 @@ import kotlin.test.assertTrue
 
 private const val DEFAULT_TIME_ACCURACY_SEC = 5L
 
-var ontology = "{\n" +
-    "  \"ont\": \"user\",\n" +
-    "  \"directives\": [],\n" +
-    "  \"entityTypes\": [\n" +
-    "    {\n" +
-    "      \"eType\": \"Geo\",\n" +
-    "      \"name\": \"Geo\",\n" +
-    "      \"properties\": [\n" +
-    "        \"name\",\n" +
-    "        \"location\",\n" +
-    "        \"timezone\"\n" +
-    "      ],\n" +
-    "      \"abstract\": false\n" +
-    "    },\n" +
-    "  ],\n" +
-    "  \"relationshipTypes\": [],\n" +
-    "  \"properties\": [\n" +
-    "    {\n" +
-    "      \"pType\": \"name\",\n" +
-    "      \"name\": \"name\",\n" +
-    "      \"type\": {\n" +
-    "        \"pType\": \"Primitive\",\n" +
-    "        \"type\": \"STRING\",\n" +
-    "        \"array\": false\n" +
-    "      }\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"pType\": \"timezone\",\n" +
-    "      \"name\": \"timezone\",\n" +
-    "      \"type\": {\n" +
-    "        \"pType\": \"Primitive\",\n" +
-    "        \"type\": \"STRING\",\n" +
-    "        \"array\": false\n" +
-    "      }\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"pType\": \"location\",\n" +
-    "      \"name\": \"location\",\n" +
-    "      \"type\": {\n" +
-    "        \"pType\": \"Primitive\",\n" +
-    "        \"type\": \"GEOPOINT\",\n" +
-    "        \"array\": false\n" +
-    "      }\n" +
-    "    },\n" +
-    "  ]\n" +
-    "}"
+var ontology = "{}"
 
 var schemaEntityType = "type Author {\n" +
     "    name: String!\n" +
@@ -73,72 +28,7 @@ var schemaEntityType = "type Author {\n" +
     "    books: [Book]\n" +
     "}"
 
-val indexProvider = "{\n" +
-    "  \"entities\": [\n" +
-    "    {\n" +
-    "      \"type\": \"User\",\n" +
-    "      \"partition\": \"NESTED\",\n" +
-    "      \"props\": {\n" +
-    "        \"values\": [\n" +
-    "          \"User\"\n" +
-    "        ]\n" +
-    "      },\n" +
-    "      \"nested\": [\n" +
-    "        {\n" +
-    "          \"type\": \"Group\",\n" +
-    "          \"partition\": \"NESTED\",\n" +
-    "          \"props\": {\n" +
-    "            \"values\": [\n" +
-    "              \"Group\"\n" +
-    "            ]\n" +
-    "          },\n" +
-    "          \"nested\": [],\n" +
-    "          \"mapping\": \"INDEX\"\n" +
-    "        }\n" +
-    "      ],\n" +
-    "      \"mapping\": \"INDEX\"\n" +
-    "    },\n" +
-    "    {\n" +
-    "      \"type\": \"Group\",\n" +
-    "      \"partition\": \"NESTED\",\n" +
-    "      \"props\": {\n" +
-    "        \"values\": [\n" +
-    "          \"Group\"\n" +
-    "        ]\n" +
-    "      },\n" +
-    "      \"nested\": [],\n" +
-    "      \"mapping\": \"INDEX\"\n" +
-    "    }\n" +
-    "  ],\n" +
-    "  \"relations\": [],\n" +
-    "  \"ontology\": \"client\",\n" +
-    "  \"rootEntities\": [\n" +
-    "    {\n" +
-    "      \"type\": \"User\",\n" +
-    "      \"partition\": \"STATIC\",\n" +
-    "      \"props\": {\n" +
-    "        \"values\": [\n" +
-    "          \"User\"\n" +
-    "        ]\n" +
-    "      },\n" +
-    "      \"nested\": [\n" +
-    "        {\n" +
-    "          \"type\": \"Group\",\n" +
-    "          \"partition\": \"NESTED\",\n" +
-    "          \"props\": {\n" +
-    "            \"values\": [\n" +
-    "              \"Group\"\n" +
-    "            ]\n" +
-    "          },\n" +
-    "          \"nested\": [],\n" +
-    "          \"mapping\": \"INDEX\"\n" +
-    "        }\n" +
-    "      ],\n" +
-    "      \"mapping\": \"INDEX\"\n" +
-    "    }\n" +
-    "  ],\n" +
-    "  \"rootRelations\": []\n" +
-    "}"
+val indexProvider = "{}"
 
 fun constructSampleSchemaObjectDoc(
     name: String = "test schema entity type",
@@ -167,53 +57,34 @@ fun constructSampleSchemaObjectDoc(
     )
 }
 
-
 fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): String {
     return """
         {
-            "ontology":{
+            "schemaEntityType":{
                 "name" : "$name",
-                "type" : "$name",
-                "catalog" : "["a","b"]",
-                "content" : "type Author {
-                                name: String!
-                                born: DateTime!
-                                died: DateTime
-                                nationality: String!
-                                books: [Book]
-                            }"
+                "type" : "${SimpleSchemaObjectType.SCHEMA_ENTITY}",
+                "catalog" : ["test"],
+                "content" : "type Author { name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
                 }
             }
     """.trimIndent()
 }
 
 
-fun constructOntologyRequest(name: String = "test ontology", content: String = ontology): String {
-    return """
-        {
-            "ontology":{
-                "name" : "$name",
-                "type" : "$name",
-                "namespace" : "["a","b"]",
-                "content" : "$content"
-            }
-        }
-    """.trimIndent()
-}
-
 fun constructIndexProviderRequest(name: String = "test Index Provider", content: String = indexProvider): String {
     return """
         {
-            "schemaEntityType":{
+            "indexProvider":{
                 "name" : "$name",
                 "type" : "$name",
-                "catalog" : "["a","b"]",
+                "description" : "$name",
+                "ontology" : "test",
+                "indices" : ["test"],
                 "content" : "$content"
             }
         }
     """.trimIndent()
 }
-
 
 fun jsonify(text: String): JsonObject {
     return JsonParser.parseString(text).asJsonObject
