@@ -11,13 +11,12 @@ import org.opensearch.simpleschema.validateErrorResponse
 import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestStatus
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.BASE_SIMPLESCHEMA_URI
-import org.opensearch.simpleschema.constructOntologyRequest
-import org.opensearch.simpleschema.model.RestTag
+import org.opensearch.simpleschema.constructSchemaEntityTypeRequest
 import org.opensearch.simpleschema.model.RestTag.OBJECT_LIST_FIELD
 
 class UpdateObjectIT : PluginRestTestCase() {
-    private fun createOntology(name: String = "test"): String {
-        val createRequest = constructOntologyRequest(name)
+    private fun createSchema(name: String = "test"): String {
+        val createRequest = constructSchemaEntityTypeRequest(name)
         val createResponse = executeRequest(
             RestRequest.Method.POST.name,
             "$BASE_SIMPLESCHEMA_URI/object",
@@ -31,7 +30,7 @@ class UpdateObjectIT : PluginRestTestCase() {
     }
 
     fun `test update invalid object`() {
-        val updateRequest = constructOntologyRequest()
+        val updateRequest = constructSchemaEntityTypeRequest()
         val updateResponse = executeRequest(
             RestRequest.Method.PUT.name,
             "$BASE_SIMPLESCHEMA_URI/object/does-not-exist",
@@ -42,10 +41,10 @@ class UpdateObjectIT : PluginRestTestCase() {
     }
 
     fun `test update object`() {
-        val id = createOntology()
+        val id = createSchema()
 
         val newName = "updated_name"
-        val updateRequest = constructOntologyRequest(newName)
+        val updateRequest = constructSchemaEntityTypeRequest(newName)
         val updateResponse = executeRequest(
             RestRequest.Method.PUT.name,
             "$BASE_SIMPLESCHEMA_URI/object/$id",
@@ -65,13 +64,13 @@ class UpdateObjectIT : PluginRestTestCase() {
         Assert.assertEquals(id, objectDetails.get("objectId").asString)
         Assert.assertEquals(
             newName,
-            objectDetails.get("ontology").asJsonObject.get("name").asString
+            objectDetails.get("schemaEntityType").asJsonObject.get("name").asString
         )
         Thread.sleep(100)
     }
 
     fun `test update object with invalid request`() {
-        val id = createOntology()
+        val id = createSchema()
 
         val updateRequest = """
             {

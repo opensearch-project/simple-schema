@@ -1,0 +1,53 @@
+# Get the flights, times, and prices for all flights between two cities
+query FlightsFromAmsterdamToChicago {
+    flights (filter: {
+        origin: {
+            city: {
+                eq: "Amsterdam"
+            }
+        }
+        destination: {
+            city: {
+                eq: "Chicago"
+            }
+        }
+    }) {
+        flightNumber
+        time
+        price
+    }
+}
+
+# Query for all flights in a specified time range
+query FlightsFrom3To5OnNovember1 {
+    flights (filter: {
+        time: {
+            departureAfter: "2022-11-01T15:00:00+0000"
+            departureBefore: "2022-11-01T17:00:00+0000"
+        }
+    }) {
+        flightNumber
+    }
+}
+
+# Get flights depending on the weather of the destination
+query FlightsWhereWeatherIsSunny {
+    flights (filter: {
+        destination: {
+            weather: {
+                in: ["Sunny", "Clear"]
+            }
+        }
+    }) {
+        flightNumber
+        time
+        origin {
+            city
+            country
+        }
+        destination {
+            city
+            country
+        }
+    }
+}

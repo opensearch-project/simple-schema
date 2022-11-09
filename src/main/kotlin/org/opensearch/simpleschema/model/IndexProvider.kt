@@ -3,7 +3,11 @@ package org.opensearch.simpleschema.model
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.StreamOutput
 import org.opensearch.common.io.stream.Writeable
-import org.opensearch.common.xcontent.*
+import org.opensearch.common.xcontent.XContentParser
+import org.opensearch.common.xcontent.XContentFactory
+import org.opensearch.common.xcontent.ToXContent
+import org.opensearch.common.xcontent.XContentBuilder
+import org.opensearch.common.xcontent.XContentParserUtils
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.LOG_PREFIX
 import org.opensearch.simpleschema.util.fieldIfNotNull
 import org.opensearch.simpleschema.util.logger

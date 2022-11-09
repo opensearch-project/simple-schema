@@ -7,7 +7,6 @@ package org.opensearch.simpleschema.model
 
 import org.opensearch.commons.utils.EnumParser
 import org.opensearch.simpleschema.model.RestTag.INDEX_PROVIDER_FIELD
-import org.opensearch.simpleschema.model.RestTag.ONTOLOGY_FIELD
 import org.opensearch.simpleschema.model.RestTag.SCHEMA_ENTITY_FIELD
 import java.util.*
 
@@ -16,11 +15,6 @@ import java.util.*
  */
 enum class SimpleSchemaObjectType(val tag: String) {
     NONE("none") {
-        override fun toString(): String {
-            return tag
-        }
-    },
-    ONTOLOGY(ONTOLOGY_FIELD) {
         override fun toString(): String {
             return tag
         }

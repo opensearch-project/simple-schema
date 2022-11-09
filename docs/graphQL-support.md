@@ -40,7 +40,7 @@ This section will describe the creation of the schema used for definition and qu
 When using a GraphQL schema without prior data - we will want that the entire process of creating the indices mapping to be done automatically.
 For this purpose the indexProvider abstraction layer will provide a list of mapping strategies to allow custom optimization per use-case and allow customer to utilize the best of opensearch capabilities.
 
-see [mapping entities and relations onto opensearch indices](IndexProvider.md)
+see [mapping entities and relations onto opensearch indices](index-provider.md)
 
 ### Mapping for existing Indices
 

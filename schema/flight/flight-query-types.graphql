@@ -1,0 +1,30 @@
+input StringFilterInput {
+    eq: String
+    in: [String]
+    notEq: String
+    notIn: [String]
+}
+
+input TimeFilterInput {
+    departureAfter: DateTime
+    departureBefore: DateTime
+    departureDuring: DateTime
+}
+
+input AirportFilterInput {
+    id: StringFilterInput
+    city: StringFilterInput
+    country: StringFilterInput
+    weather: StringFilterInput
+}
+
+input FlightFilterInput {
+    destination: AirportFilterInput
+    origin: AirportFilterInput
+    time: TimeFilterInput
+}
+
+type Query {
+    flight(id: ID!): Flight
+    flights(filter: FlightFilterInput): [Flight]!
+}

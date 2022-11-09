@@ -11,7 +11,12 @@ import org.opensearch.cluster.metadata.IndexNameExpressionResolver
 import org.opensearch.cluster.node.DiscoveryNodes
 import org.opensearch.cluster.service.ClusterService
 import org.opensearch.common.io.stream.NamedWriteableRegistry
-import org.opensearch.common.settings.*
+import org.opensearch.common.settings.ClusterSettings
+import org.opensearch.common.settings.IndexScopedSettings
+import org.opensearch.common.settings.Settings
+import org.opensearch.common.settings.SettingsFilter
+import org.opensearch.common.settings.Setting
+import org.opensearch.jobscheduler.spi.JobSchedulerExtension
 import org.opensearch.common.xcontent.NamedXContentRegistry
 import org.opensearch.env.Environment
 import org.opensearch.env.NodeEnvironment
@@ -31,12 +36,18 @@ import org.opensearch.simpleschema.settings.PluginSettings
 import org.opensearch.threadpool.ThreadPool
 import org.opensearch.watcher.ResourceWatcherService
 import java.util.function.Supplier
+import org.opensearch.jobscheduler.spi.ScheduledJobParser
+import org.opensearch.jobscheduler.spi.ScheduledJobRunner
+import org.opensearch.simpleschema.scheduler.SimpleSearchJobParser
+import org.opensearch.simpleschema.scheduler.SimpleSearchJobRunner
+import org.opensearch.simpleschema.resthandler.SchedulerRestHandler
+
 
 /**
  * Entry point of the OpenSearch simple schema plugin.
  * This class initializes the rest handlers.
  */
-class SimpleSchemaPlugin : Plugin(), ActionPlugin {
+class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
 
     companion object {
         const val PLUGIN_NAME = "opensearch-simple-schema"
@@ -111,5 +122,21 @@ class SimpleSchemaPlugin : Plugin(), ActionPlugin {
                 UpdateSimpleSchemaObjectAction::class.java
             )
         )
+    }
+
+    override fun getJobType(): String {
+        return "simpleschema"
+    }
+
+    override fun getJobIndex(): String {
+        return SchedulerRestHandler.SCHEDULED_JOB_INDEX
+    }
+
+    override fun getJobRunner(): ScheduledJobRunner {
+        return SimpleSearchJobRunner
+    }
+
+    override fun getJobParser(): ScheduledJobParser {
+        return SimpleSearchJobParser
     }
 }
