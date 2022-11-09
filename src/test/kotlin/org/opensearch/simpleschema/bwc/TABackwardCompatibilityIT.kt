@@ -99,13 +99,11 @@ class TABackwardCompatibilityIT : PluginRestTestCase() {
     }
 
     private fun createObsObjects() {
-        createOntology()
         createIndexProvider()
         createSchemaEntityType()
     }
 
     private fun verifyObsObjectExists() {
-        verifyOntologyExists()
         verifyIndexProviderExists()
         verifySchemaEntityTypeExists()
     }
@@ -136,28 +134,6 @@ class TABackwardCompatibilityIT : PluginRestTestCase() {
         Thread.sleep(100)
     }
 
-    private fun createOntology() {
-        val createRequest = constructOntologyRequest()
-        val createResponse = executeRequest(
-            RestRequest.Method.POST.name,
-            "$BASE_SIMPLESCHEMA_URI/object",
-            createRequest,
-            RestStatus.OK.status
-        )
-        val id = createResponse.get("objectId").asString
-        Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
-    }
-    private fun verifyOntologyExists() {
-        val listOntologies = executeRequest(
-            RestRequest.Method.GET.name,
-            "$BASE_SIMPLESCHEMA_URI/object?objectType=ontology",
-            "",
-            RestStatus.OK.status
-        )
-        val totalHits = listOntologies.get("totalHits").asInt
-        assertTrue("Actual items counts ($totalHits) should be equal to (1)", totalHits == 1)
-    }
 
     private fun verifyIndexProviderExists() {
         val listSavedQuery = executeRequest(

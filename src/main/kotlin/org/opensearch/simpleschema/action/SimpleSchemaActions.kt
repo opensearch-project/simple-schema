@@ -250,7 +250,7 @@ internal object SimpleSchemaActions {
      * @param user the user info object
      * @return [DeleteSimpleSchemaObjectResponse]
      */
-    private fun delete(objectIds: Set<String>, user: User?): DeleteSimpleSchemaObjectResponse {
+    fun delete(objectIds: Set<String>, user: User?): DeleteSimpleSchemaObjectResponse {
         log.info("$LOG_PREFIX:SimpleSchemaObject-delete $objectIds")
         UserAccessManager.validateUser(user)
         val configDocs = SimpleSearchIndex.getSimpleSchemaObjects(objectIds)

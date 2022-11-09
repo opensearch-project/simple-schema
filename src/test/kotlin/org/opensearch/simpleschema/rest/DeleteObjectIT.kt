@@ -11,11 +11,11 @@ import org.opensearch.simpleschema.validateErrorResponse
 import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestStatus
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.BASE_SIMPLESCHEMA_URI
-import org.opensearch.simpleschema.constructOntologyRequest
+import org.opensearch.simpleschema.constructIndexProviderRequest
+import org.opensearch.simpleschema.constructSchemaEntityTypeRequest
 
 class DeleteObjectIT : PluginRestTestCase() {
-    private fun createOntology(name: String = "test"): String {
-        val createRequest = constructOntologyRequest(name)
+    private fun createObject(createRequest: String): String {
         val createResponse = executeRequest(
             RestRequest.Method.POST.name,
             "$BASE_SIMPLESCHEMA_URI/object",
@@ -23,7 +23,7 @@ class DeleteObjectIT : PluginRestTestCase() {
             RestStatus.OK.status
         )
         val id = createResponse.get("objectId").asString
-        Assert.assertNotNull("ontologyId should be generated", id)
+        Assert.assertNotNull("Id should be generated", id)
         Thread.sleep(100)
         return id
     }
@@ -31,7 +31,7 @@ class DeleteObjectIT : PluginRestTestCase() {
     fun `test delete invalid ids`() {
         val invalidDeleteIdResponse = executeRequest(
             RestRequest.Method.DELETE.name,
-            "$BASE_SIMPLESCHEMA_URI/object/does-not-exist",
+            "$BASE_SIMPLESCHEMA_URI/object/unknown",
             "",
             RestStatus.NOT_FOUND.status
         )
@@ -49,7 +49,8 @@ class DeleteObjectIT : PluginRestTestCase() {
     }
 
     fun `test delete single object`() {
-        val id = createOntology()
+        val createRequest = constructSchemaEntityTypeRequest()
+        val id = createObject(createRequest)
         val deleteResponse = executeRequest(
             RestRequest.Method.DELETE.name,
             "$BASE_SIMPLESCHEMA_URI/object/$id",
@@ -64,7 +65,7 @@ class DeleteObjectIT : PluginRestTestCase() {
     }
 
     fun `test delete multiple objects`() {
-        val ids: Set<String> = (1..20).map { createOntology() }.toSet()
+        val ids = Array(6) { createObject(constructIndexProviderRequest("indexProvider-$it")) }
         Thread.sleep(1000)
         val deleteResponse = executeRequest(
             RestRequest.Method.DELETE.name,
