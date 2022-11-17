@@ -5,6 +5,8 @@
 
 plugins {
     id 'java'
+    id 'checkstyle'
+    id 'jacoco'
 }
 
 version '2.1.0.0-SNAPSHOT'
@@ -34,3 +36,25 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+    }
+}
+test.finalizedBy(project.tasks.jacocoTestReport)
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
