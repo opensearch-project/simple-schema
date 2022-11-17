@@ -67,7 +67,7 @@ input AuthorAggregationFilter {
 }
 
 # auto generated author aggregation filter
-type AuthorAggregationResult {
+type AuthorAggregationResults {
     name:TextAggregationFilterResult
     born :DateTimeAggregationFilterResult
     died :DateTimeAggregationFilterResult
@@ -83,7 +83,7 @@ type BookResults {
 # auto generated book results
 type AuthorResults {
     results:[Author]
-    aggResults:[AuthorAggregationResult]
+    aggResults:[AuthorAggregationResults]
 }
 # auto generated queries
 type Query {
