@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Entity implements BaseTypeElement<Entity> {
 
     @JsonProperty("type")
-    private String type;
+    private Type type;
     @JsonProperty("nesting")
     private NestingType nesting;
     @JsonProperty("mapping")
@@ -38,7 +38,7 @@ public class Entity implements BaseTypeElement<Entity> {
     public Entity() {
     }
 
-    public Entity(String type, NestingType nesting, MappingIndexType mapping, Props props, Map<String,Entity> nested, Map<String, Object> additionalProperties) {
+    public Entity(Type type, NestingType nesting, MappingIndexType mapping, Props props, Map<String,Entity> nested, Map<String, Object> additionalProperties) {
         this.type = type;
         this.nesting = nesting;
         this.mapping = mapping;
@@ -47,7 +47,7 @@ public class Entity implements BaseTypeElement<Entity> {
         this.additionalProperties = additionalProperties;
     }
 
-    public Entity(String type, NestingType nestingType, MappingIndexType mapping, Props props) {
+    public Entity(Type type, NestingType nestingType, MappingIndexType mapping, Props props) {
         this(type,nestingType,mapping,props,Collections.EMPTY_MAP,Collections.EMPTY_MAP);
     }
 
@@ -62,12 +62,17 @@ public class Entity implements BaseTypeElement<Entity> {
     }
 
     @JsonProperty("type")
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
+    @Override
+    public boolean hasProperties() {
+        return props != null && !props.getValues().isEmpty();
+    }
+
     @JsonProperty("type")
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -125,7 +130,7 @@ public class Entity implements BaseTypeElement<Entity> {
     }
 
     @JsonIgnore
-    public Entity withType(String type) {
+    public Entity withType(Type type) {
         this.type = type;
         return this;
     }

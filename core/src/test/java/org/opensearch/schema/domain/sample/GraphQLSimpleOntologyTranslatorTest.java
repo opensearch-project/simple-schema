@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.schema.index.schema.BaseTypeElement;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 import org.opensearch.schema.ontology.Property;
 
@@ -24,7 +26,7 @@ import static org.opensearch.schema.ontology.Property.equal;
  */
 public class GraphQLSimpleOntologyTranslatorTest {
     public static Ontology ontology;
-    public static Ontology.Accessor ontologyAccessor;
+    public static Accessor ontologyAccessor;
 
     @BeforeAll
     /**
@@ -40,7 +42,7 @@ public class GraphQLSimpleOntologyTranslatorTest {
 
         ontology = transformer.transform("simple", utilsSchemaInput, filterSchemaInput, aggregationSchemaInput, simpleSchemaInput);
         Assertions.assertNotNull(ontology);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
     }
 
     /**
@@ -49,7 +51,7 @@ public class GraphQLSimpleOntologyTranslatorTest {
     @Test
     public void testIndexProviderBuilder() {
         IndexProvider provider = IndexProvider.Builder.generate(ontology);
-        List<String> names = provider.getEntities().stream().map(Entity::getType).collect(Collectors.toList());
+        List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName).toList();
         Assertions.assertTrue(names.contains("Author"));
         Assertions.assertTrue(names.contains("Book"));
         Assertions.assertTrue(names.contains("AuthorResults"));

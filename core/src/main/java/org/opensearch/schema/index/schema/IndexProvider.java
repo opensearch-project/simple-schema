@@ -4,6 +4,8 @@ package org.opensearch.schema.index.schema;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.collect.ImmutableList;
 import javaslang.Tuple2;
+import org.opensearch.schema.index.schema.BaseTypeElement.Type;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.EntityType;
 import org.opensearch.schema.ontology.Ontology;
 import org.opensearch.schema.ontology.RelationshipType;
@@ -102,12 +104,12 @@ public class IndexProvider {
 
     @JsonIgnore
     public Optional<Entity> getEntity(String label) {
-        return getEntities().stream().filter(e -> e.getType().equals(label)).findFirst();
+        return getEntities().stream().filter(e -> e.getType().getName().equals(label)).findFirst();
     }
 
     @JsonIgnore
     public Optional<Relation> getRelation(String label) {
-        return getRelations().stream().filter(e -> e.getType().equals(label)).findAny();
+        return getRelations().stream().filter(e -> e.getType().getName().equals(label)).findAny();
     }
 
     public static class Builder {
@@ -123,7 +125,7 @@ public class IndexProvider {
          * @return
          */
         public static IndexProvider generate(Ontology ontology, Predicate<EntityType> entityPredicate, Predicate<RelationshipType> relationPredicate) {
-            Ontology.Accessor accessor = new Ontology.Accessor(ontology);
+            Accessor accessor = new Accessor(ontology);
             IndexProvider provider = new IndexProvider();
             provider.ontology = ontology.getOnt();
             //generate entities
@@ -142,16 +144,16 @@ public class IndexProvider {
             return provider;
         }
 
-        private static Relation createRelation(RelationshipType r, MappingIndexType mappingIndexType, NestingType nestingType, Ontology.Accessor accessor) {
+        private static Relation createRelation(RelationshipType r, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
             switch (nestingType) {
                 case NESTED:
                 case NESTED_REFERENCE:
                     //create minimal representation - TODO add redundant here
-                    return new Relation(r.getName(), nestingType, mappingIndexType, false,
+                    return new Relation(Type.of(r.getName()), nestingType, mappingIndexType, false,
                             createProperties(r.getName(), accessor));
 
                 default:
-                    return new Relation(r.getName(), nestingType, mappingIndexType, false,
+                    return new Relation(Type.of(r.getName()), nestingType, mappingIndexType, false,
                             createNestedElements(r, accessor),
                             // indices need to be lower cased
                             createProperties(r.getName(), accessor),
@@ -159,17 +161,17 @@ public class IndexProvider {
             }
         }
 
-        private static Entity createEntity(EntityType e, MappingIndexType mappingIndexType, NestingType nestingType, Ontology.Accessor accessor) {
+        private static Entity createEntity(EntityType e, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
             switch (nestingType) {
                 case NESTED:
                 case REFERENCE:
                 case NESTED_REFERENCE:
                     // create minimal representation  - TODO add redundant here
                     // indices need to be lower cased
-                    return new Entity(e.getName(), nestingType, mappingIndexType,
+                    return new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
                             createProperties(e.getName(), accessor));
                 default:
-                    return new Entity(e.getName(), nestingType, mappingIndexType,
+                    return new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
                             // indices need to be lower cased
                             createProperties(e.getName(), accessor),
                             createNestedElements(e, accessor),
@@ -177,7 +179,7 @@ public class IndexProvider {
             }
         }
 
-        private static Map<String, Relation> createNestedElements(RelationshipType r, Ontology.Accessor accessor) {
+        private static Map<String, Relation> createNestedElements(RelationshipType r, Accessor accessor) {
             return r.getProperties().stream()
                     .filter(p -> accessor.getNestedRelationByPropertyName(p).isPresent())
                     .map(p ->
@@ -189,7 +191,7 @@ public class IndexProvider {
                     ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
         }
 
-        private static Map<String, Entity> createNestedElements(EntityType e, Ontology.Accessor accessor) {
+        private static Map<String, Entity> createNestedElements(EntityType e, Accessor accessor) {
             return accessor.relationsPairsBySourceEntity(e).stream()
                     .map(p -> {
                                 //in case of mutual reference - using the REFERENCE type mapping
@@ -210,7 +212,7 @@ public class IndexProvider {
                     ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
         }
 
-        private static Props createProperties(String name, Ontology.Accessor accessor) {
+        private static Props createProperties(String name, Accessor accessor) {
             return new Props(ImmutableList.of(name));
         }
     }

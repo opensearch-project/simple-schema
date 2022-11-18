@@ -8,10 +8,7 @@ import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.schema.NestingType;
 import org.opensearch.schema.index.schema.Relation;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.PrimitiveType;
-import org.opensearch.schema.ontology.Property;
-import org.opensearch.schema.ontology.RelationshipType;
+import org.opensearch.schema.ontology.*;
 
 import java.util.*;
 
@@ -34,7 +31,7 @@ public class IndexProjectionMappingBuilder {
      * @param ontology
      * @return
      */
-    Ontology.Accessor generateProjectionOntology(Ontology ontology) {
+    Accessor generateProjectionOntology(Ontology ontology) {
         //adding projection related metadata
         Ontology clone = new Ontology(ontology);
         //add projection related metadata
@@ -46,7 +43,7 @@ public class IndexProjectionMappingBuilder {
         clone.getProperties().add(new Property("tag", "tag", PrimitiveType.Types.STRING.asType()));
         clone.getProperties().add(new Property(OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE, OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE, PrimitiveType.Types.STRING.asType()));
         clone.getProperties().add(new Property(OntologyIndexGenerator.EdgeSchemaConfig.DEST_ID, OntologyIndexGenerator.EdgeSchemaConfig.DEST_ID, PrimitiveType.Types.STRING.asType()));
-        return new Ontology.Accessor(clone);
+        return new Accessor(clone);
     }
 
 
@@ -61,10 +58,11 @@ public class IndexProjectionMappingBuilder {
      * add the mapping part of the template according to the ontology
      * This projection mapping is a single unified index containing the entire ontology wrapped into a single index so that
      * every type of query result can be indexed and queried for slice & dice type of questions
+     *
      * @param client
      * @return
      */
-    public Collection<PutIndexTemplateRequestBuilder> map(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
+    public Collection<PutIndexTemplateRequestBuilder> map(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
         PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, "projection");
         request.setSettings(IndexMappingUtils.getDefaultSettings().build()).setPatterns(Collections.singletonList(String.format("%s*", OntologyIndexGenerator.ProjectionConfigs.PROJECTION)));
 
@@ -89,13 +87,15 @@ public class IndexProjectionMappingBuilder {
                     //todo remove nested entities since they already appear as a qualified ontological entity
                     try {
                         //generate entity mapping - each entity should be a nested objects array
-                        Map<String, Object> objectMap = IndexMappingUtils.generateNestedEntityMapping(ontology, rootProperties, new Tuple2<>(entity.getType(), entity.withNesting(NestingType.NESTED)));
+                        Map<String, Object> objectMap = IndexMappingUtils.generateNestedEntityMapping(ontology, rootProperties,
+                                new Tuple2<>(entity.getType().getName(), entity.withNesting(NestingType.NESTED)));
                         //generate relation mapping - each entity's relation should be a nested objects array inside the entity
-                        List<RelationshipType> relationshipTypes = ontology.relationBySideA(entity.getType());
+                        List<RelationshipType> relationshipTypes = ontology.relationBySideA(entity.getType().getName());
                         relationshipTypes.forEach(rel -> {
                             Relation relation = this.indexProvider.getRelation(rel.getName()).get();
                             relationsMappingBuilder.generateNestedRelationMapping(ontology, (Map<String, Object>) objectMap.get(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES),
-                                    new Tuple2<>(relation.withNesting(NestingType.NESTED).getType(), relation.withNesting(NestingType.NESTED)));
+                                    new Tuple2<>(relation.withNesting(NestingType.NESTED).getType().getName(),
+                                            relation.withNesting(NestingType.NESTED)));
                         });
                     } catch (Throwable typeNotFound) {
                         //log error

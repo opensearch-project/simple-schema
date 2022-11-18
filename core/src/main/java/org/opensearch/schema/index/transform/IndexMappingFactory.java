@@ -8,6 +8,7 @@ import org.opensearch.client.Client;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class IndexMappingFactory implements OntologyIndexGenerator {
     public Map<String, PutIndexTemplateRequestBuilder> buildRequests() {
         //generate the index template requests
         Map<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
-        Ontology.Accessor ontology = new Ontology.Accessor(this.ontology);
+        Accessor ontology = new Accessor(this.ontology);
         //map the entities index
         entitiesMappingBuilder.map(ontology, client, requests);
         //map the relationships index

@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
-import org.opensearch.schema.ontology.EnumeratedType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.Property;
-import org.opensearch.schema.ontology.Value;
+import org.opensearch.schema.ontology.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -22,7 +19,7 @@ import static org.opensearch.schema.ontology.Property.equal;
  */
 public class GraphQLOntologyBaseTranslatorTest {
     public static Ontology ontology;
-    public static Ontology.Accessor ontologyAccessor;
+    public static Accessor ontologyAccessor;
     public static GraphQLSchema graphQLSchema;
 
     @BeforeAll
@@ -37,7 +34,7 @@ public class GraphQLOntologyBaseTranslatorTest {
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         ontology = transformer.transform("base",utilsSchemaInput,filterSchemaInput,aggregationSchemaInput,baseSchemaInput);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
         Assertions.assertNotNull(ontology);
     }
 

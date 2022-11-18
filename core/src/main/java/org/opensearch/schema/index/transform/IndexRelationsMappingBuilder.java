@@ -12,7 +12,7 @@ import org.opensearch.schema.index.schema.Relation;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.template.SettingBuilder;
 import org.opensearch.schema.index.template.TemplateMapping;
-import org.opensearch.schema.ontology.Ontology;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.PrimitiveType;
 import org.opensearch.schema.ontology.RelationshipType;
 
@@ -33,7 +33,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         this.indexProvider = indexProvider;
     }
 
-    public Collection<PutIndexTemplateRequestBuilder> map(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
+    public Collection<PutIndexTemplateRequestBuilder> map(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
         ontology.relations()
                 .forEach(r -> {
                     MappingIndexType mapping = indexProvider.getRelation(r.getName()).orElseThrow(
@@ -60,9 +60,9 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         return requests.values();
     }
 
-    private void createTimePartitionMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
+    private void createTimePartitionMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
         String label = r.getrType();
-        PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, relation.getType().toLowerCase());
+        PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, relation.getType().getName().toLowerCase());
         //todo - Only the time based partition will have a template suffix with astrix added to allow numbering and dates as part of the naming convention
         request.setPatterns(new ArrayList<>(Arrays.asList(r.getName().toLowerCase(), label, r.getName(), String.format(relation.getProps().getIndexFormat(), "*"))))
                 .setSettings(generateSettings(ontology, r, relation, label));
@@ -73,11 +73,10 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         request.setPatterns(request.request().patterns().stream().distinct().collect(Collectors.toList()));
 
         //add the request
-        requests.put(relation.getType(), request);
-        return;
+        requests.put(relation.getType().getName(), request);
     }
 
-    private void createStaticMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
+    private void createStaticMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
         //static index
         relation.getProps().getValues().forEach(v -> {
             String label = r.getrType();
@@ -91,10 +90,9 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
             //add response to list of responses
             requests.put(label.toLowerCase(), request);
         });
-        return;
     }
 
-    private void createUnifiedMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
+    private void createUnifiedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, RelationshipType r, Relation relation) {
         relation.getProps().getValues().forEach(v -> {
             String label = r.getrType();
             String unifiedName = relation.getProps().getValues().isEmpty() ? label : relation.getProps().getValues().get(0);
@@ -129,7 +127,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
      * @param label
      * @return
      */
-    public Map<String, Object> generateElementMapping(Ontology.Accessor ontology, RelationshipType relationshipType, Relation rel, String label) {
+    public Map<String, Object> generateElementMapping(Accessor ontology, RelationshipType relationshipType, Relation rel, String label) {
         Optional<RelationshipType> relation = ontology.relation(relationshipType.getName());
         if (!relation.isPresent())
             throw new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No relation    with name " + label + " found in ontology"));
@@ -166,8 +164,8 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         return jsonMap;
     }
 
-    void generateNestedRelationMapping(Ontology.Accessor ontology, Map<String, Object> parent, Tuple2<String, BaseTypeElement<? extends BaseTypeElement>> nest) {
-        Optional<RelationshipType> relation = ontology.relation(nest._2().getType());
+    void generateNestedRelationMapping(Accessor ontology, Map<String, Object> parent, Tuple2<String, BaseTypeElement<? extends BaseTypeElement>> nest) {
+        Optional<RelationshipType> relation = ontology.relation(nest._2().getType().getName());
         if (!relation.isPresent())
             throw new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No relation with name " + nest._2().getType() + " found in ontology"));
 
@@ -196,7 +194,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         }
     }
 
-    private void populateRedundant(Ontology.Accessor ontology, String side, String label, Map<String, Object> properties) {
+    private void populateRedundant(Accessor ontology, String side, String label, Map<String, Object> properties) {
         HashMap<String, Object> sideProperties = new HashMap<>();
         properties.put(side, sideProperties);
         HashMap<String, Object> values = new HashMap<>();
@@ -215,7 +213,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
      *
      * @return
      */
-    private Settings generateSettings(Ontology.Accessor ontology, RelationshipType relationType, Relation rel, String label) {
+    private Settings generateSettings(Accessor ontology, RelationshipType relationType, Relation rel, String label) {
         ontology.relation(relationType.getName()).get().getIdField().forEach(idField -> {
             if (!ontology.relation(relationType.getName()).get().fields().contains(idField))
                 throw new SchemaError.SchemaErrorException(new SchemaError("Relation Schema generation exception", " Relationship " + label + " not containing id metadata property "));
@@ -223,11 +221,11 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         return builder(ontology, rel);
     }
 
-    private Settings builder(Ontology.Accessor ontology, Relation relation) {
+    private Settings builder(Accessor ontology, Relation relation) {
         SettingBuilder settings = getDefaultSettings();
         if (relation.getNested().isEmpty()) {
             //assuming id is a mandatory part of metadata/properties
-            settings.sortByField(ontology.relation$(relation.getType()).idFieldName(), true);
+            settings.sortByField(ontology.relation$(relation.getType().getName()).idFieldName(), true);
         }
         return settings.build();
     }

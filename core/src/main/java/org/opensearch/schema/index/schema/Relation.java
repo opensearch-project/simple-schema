@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class Relation implements BaseTypeElement<Relation> {
 
     @JsonProperty("type")
-    private String type;
+    private Type type;
     @JsonProperty("partition")
     private NestingType nesting;
     @JsonProperty("mapping")
@@ -40,7 +40,7 @@ public class Relation implements BaseTypeElement<Relation> {
 
     public Relation() {}
 
-    public Relation(String type, NestingType nesting, MappingIndexType mapping, boolean symmetric, Map<String,Relation> nested, Props props, Set<Redundant> redundant, Map<String, Object> additionalProperties) {
+    public Relation(Type type, NestingType nesting, MappingIndexType mapping, boolean symmetric, Map<String,Relation> nested, Props props, Set<Redundant> redundant, Map<String, Object> additionalProperties) {
         this.type = type;
         this.nesting = nesting;
         this.mapping = mapping;
@@ -51,7 +51,7 @@ public class Relation implements BaseTypeElement<Relation> {
         this.additionalProperties = additionalProperties;
     }
 
-    public Relation(String type, NestingType nestingType, MappingIndexType mapping, boolean symmetric, Props props) {
+    public Relation(Type type, NestingType nestingType, MappingIndexType mapping, boolean symmetric, Props props) {
         this(type,nestingType,mapping,symmetric,Collections.EMPTY_MAP,props,Collections.EMPTY_SET,Collections.EMPTY_MAP);
     }
 
@@ -67,12 +67,17 @@ public class Relation implements BaseTypeElement<Relation> {
     }
 
     @JsonProperty("type")
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
+    @Override
+    public boolean hasProperties() {
+        return props != null && !props.getValues().isEmpty();
+    }
+
     @JsonProperty("type")
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -150,7 +155,7 @@ public class Relation implements BaseTypeElement<Relation> {
     }
 
     @JsonIgnore
-    public Relation withType(String type) {
+    public Relation withType(Type type) {
         this.type = type;
         return this;
     }

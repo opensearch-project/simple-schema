@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.schema.index.schema.BaseTypeElement;
+import org.opensearch.schema.index.schema.BaseTypeElement.Type;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.ObjectType;
 import org.opensearch.schema.ontology.Ontology;
 import org.opensearch.schema.ontology.Property;
@@ -27,7 +30,7 @@ import static org.opensearch.schema.ontology.Property.equal;
  */
 public class GraphQLOntologyUserTranslatorTest {
     public static Ontology ontology;
-    public static Ontology.Accessor ontologyAccessor;
+    public static Accessor ontologyAccessor;
 
     @BeforeAll
     /**
@@ -42,7 +45,7 @@ public class GraphQLOntologyUserTranslatorTest {
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         ontology = transformer.transform("user",utilsSchemaInput,filterSchemaInput,aggregationSchemaInput, baseSchemaInput, userSchemaInput);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
         Assertions.assertNotNull(ontology);
         String valueAsString = new ObjectMapper().writeValueAsString(ontology);
         Assertions.assertNotNull(valueAsString);
@@ -112,11 +115,11 @@ public class GraphQLOntologyUserTranslatorTest {
 
         List<Entity> rootEntities = new ArrayList<>(provider.getEntities());
         Assertions.assertEquals(rootEntities.size(), 1);
-        Assertions.assertEquals(rootEntities.get(0).getType(), "User");
+        Assertions.assertEquals(rootEntities.get(0).getType(), Type.of("User"));
 
         Map<String, Entity> nested = rootEntities.get(0).getNested();
         Assertions.assertEquals(nested.size(), 1);
-        Assertions.assertEquals(nested.get("group").getType(), "Group");
+        Assertions.assertEquals(nested.get("group").getType(), Type.of("Group"));
         Assertions.assertEquals(provider.getRelations().size(), 0);
     }
 

@@ -13,6 +13,7 @@ import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -26,7 +27,7 @@ import java.util.Map;
  * This test is verifying that the process of generating an index provider from the ontology is working as expected
  */
 public class MappingEntityWithRelationTemplateGeneratorTest {
-    static Ontology.Accessor ontologyAccessor;
+    static Accessor ontologyAccessor;
     static IndexProvider indexProvider;
 
     @BeforeAll
@@ -48,7 +49,7 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         Ontology ontology = transformer.transform("process", utilsSchemaInput, filterSchemaInput, aggregationSchemaInput, baseSchemaInput, userSchemaInput, communicationSchemaInput, hashSchemaInput, codeSignatureSchemaInput, executableFormatSchemaInput, processSchemaInput);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> d.getName().equals("model"))

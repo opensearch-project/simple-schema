@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.schema.index.schema.BaseTypeElement;
+import org.opensearch.schema.index.schema.BaseTypeElement.Type;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.ObjectType;
 import org.opensearch.schema.ontology.Ontology;
 import org.opensearch.schema.ontology.Property;
@@ -27,7 +30,7 @@ import static org.opensearch.schema.ontology.Property.equal;
  */
 public class GraphQLOntologyClientTranslatorTest {
     public static Ontology ontology;
-    public static Ontology.Accessor ontologyAccessor;
+    public static Accessor ontologyAccessor;
 
     @BeforeAll
     /**
@@ -43,7 +46,7 @@ public class GraphQLOntologyClientTranslatorTest {
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         ontology = transformer.transform("client",utilsSchemaInput,filterSchemaInput,aggregationSchemaInput,baseSchemaInput,userSchemaInput,clientSchemaInput);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
         Assertions.assertNotNull(ontology);
         String valueAsString = new ObjectMapper().writeValueAsString(ontology);
         Assertions.assertNotNull(valueAsString);
@@ -128,21 +131,21 @@ public class GraphQLOntologyClientTranslatorTest {
 
         List<Entity> rootEntities = new ArrayList<>(provider.getEntities());
         Assertions.assertEquals(rootEntities.size(),3);
-        Optional<Entity> client = rootEntities.stream().filter(p -> p.getType().equals("Client")).findFirst();
+        Optional<Entity> client = rootEntities.stream().filter(p -> p.getType().equals(Type.of("Client"))).findFirst();
         Assertions.assertTrue(client.isPresent());
 
         Map<String, Entity> nested = client.get().getNested();
         Assertions.assertEquals(nested.size(),3);
 
         Assertions.assertTrue(nested.containsKey("user"));
-        Assertions.assertEquals(nested.get("user").getType(),"User");
+        Assertions.assertEquals(nested.get("user").getType().getName(),"User");
         Assertions.assertTrue(nested.containsKey("as"));
-        Assertions.assertEquals(nested.get("as").getType(),"AutonomousSystem");
+        Assertions.assertEquals(nested.get("as").getType().getName(),"AutonomousSystem");
         Assertions.assertTrue(nested.containsKey("geo"));
-        Assertions.assertEquals(nested.get("geo").getType(),"Geo");
+        Assertions.assertEquals(nested.get("geo").getType().getName(),"Geo");
 
         Assertions.assertEquals(provider.getRelations().size(),1);
-        Assertions.assertEquals(provider.getRelations().get(0).getType(),"has_User");
+        Assertions.assertEquals(provider.getRelations().get(0).getType().getName(),"has_User");
     }
 
 }

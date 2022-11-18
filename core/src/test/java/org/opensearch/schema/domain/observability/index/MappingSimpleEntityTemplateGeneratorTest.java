@@ -13,6 +13,7 @@ import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -50,7 +51,7 @@ public class MappingSimpleEntityTemplateGeneratorTest {
     public void GenerateAgentEntityMappingTest() throws IOException, JSONException {
         IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
-        Collection<PutIndexTemplateRequestBuilder> results = builder.map(new Ontology.Accessor(ontology), new NoOpClient("test"), requests);
+        Collection<PutIndexTemplateRequestBuilder> results = builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
         Assert.assertNotNull(requests.get("user"));
         Assert.assertEquals(1, requests.get("user").getMappings().size());
         Assert.assertNotNull(requests.get("user").getMappings().get("User"));

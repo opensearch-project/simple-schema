@@ -4,10 +4,7 @@ import javaslang.Tuple2;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.index.schema.BaseTypeElement;
 import org.opensearch.schema.index.template.SettingBuilder;
-import org.opensearch.schema.ontology.BaseElement;
-import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.PropertyType;
+import org.opensearch.schema.ontology.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +27,7 @@ public abstract class IndexMappingUtils {
      * @param nameType
      * @return
      */
-    public static Map<String, Object> parseType(Ontology.Accessor ontology, PropertyType nameType) {
+    public static Map<String, Object> parseType(Accessor ontology, PropertyType nameType) {
         Map<String, Object> map = new HashMap<>();
         try {
             Ontology.OntologyPrimitiveType type = Ontology.OntologyPrimitiveType.valueOf(nameType.getType());
@@ -64,10 +61,10 @@ public abstract class IndexMappingUtils {
             }
         } catch (Throwable typeNotFound) {
             // manage non-primitive type such as enum or nested typed
-            Optional<Tuple2<Ontology.Accessor.NodeType, String>> type = ontology.matchNameToType(nameType.getType());
+            Optional<Tuple2<Accessor.NodeType, String>> type = ontology.matchNameToType(nameType.getType());
             if (type.isPresent()) {
                 // nested & relational elements are being populated outside this scope
-                if (type.get()._1() == Ontology.Accessor.NodeType.ENUM) {
+                if (type.get()._1() == Accessor.NodeType.ENUM) {
                     //enum is always backed by integer
                     map.put("type", "integer");
                 }
@@ -80,7 +77,7 @@ public abstract class IndexMappingUtils {
         return map;
     }
 
-    static void populateProperty(Ontology.Accessor ontology, BaseTypeElement<? extends BaseTypeElement> element, Map<String, Object> properties, BaseElement entityType) {
+    static void populateProperty(Accessor ontology, BaseTypeElement<? extends BaseTypeElement> element, Map<String, Object> properties, BaseElement entityType) {
         switch (element.getNesting()) {
             case REFERENCE:
             case NESTED_REFERENCE:
@@ -116,8 +113,8 @@ public abstract class IndexMappingUtils {
      * @param nest
      * @return
      */
-    static Map<String, Object> generateNestedEntityMapping(Ontology.Accessor ontology, Map<String, Object> parent, Tuple2<String, BaseTypeElement<? extends BaseTypeElement>> nest) {
-        Optional<EntityType> entity = ontology.entity(nest._2().getType());
+    static Map<String, Object> generateNestedEntityMapping(Accessor ontology, Map<String, Object> parent, Tuple2<String, BaseTypeElement<? extends BaseTypeElement>> nest) {
+        Optional<EntityType> entity = ontology.entity(nest._2().getType().getName());
         if (!entity.isPresent())
             throw new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No entity with name " + nest._2().getType() + " found in ontology"));
 

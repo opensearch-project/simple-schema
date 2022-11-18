@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.schema.index.schema.BaseTypeElement;
+import org.opensearch.schema.index.schema.BaseTypeElement.Type;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
-import org.opensearch.schema.ontology.EPair;
-import org.opensearch.schema.ontology.ObjectType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.Property;
+import org.opensearch.schema.ontology.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -28,7 +27,7 @@ import static org.opensearch.schema.ontology.Property.equal;
  */
 public class GraphQLOntologyProcessTranslatorTest {
     public static Ontology ontology;
-    public static Ontology.Accessor ontologyAccessor;
+    public static Accessor ontologyAccessor;
 
     @BeforeAll
     /**
@@ -49,7 +48,7 @@ public class GraphQLOntologyProcessTranslatorTest {
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         ontology = transformer.transform("client",utilsSchemaInput,filterSchemaInput,aggregationSchemaInput, baseSchemaInput, userSchemaInput, communicationSchemaInput, hashSchemaInput, codeSignatureSchemaInput, executableFormatSchemaInput, processSchemaInput);
-        ontologyAccessor = new Ontology.Accessor(ontology);
+        ontologyAccessor = new Accessor(ontology);
         Assertions.assertNotNull(ontology);
         String valueAsString = new ObjectMapper().writeValueAsString(ontology);
         Assertions.assertNotNull(valueAsString);
@@ -157,48 +156,48 @@ public class GraphQLOntologyProcessTranslatorTest {
         List<Entity> rootEntities = new ArrayList<>(provider.getEntities());
         Assertions.assertEquals(rootEntities.size(), 4);
 
-        Optional<Entity> processEntity = rootEntities.stream().filter(p->p.getType().equals("Process")).findAny();
+        Optional<Entity> processEntity = rootEntities.stream().filter(p->p.getType().equals(Type.of("Process"))).findAny();
         Assertions.assertEquals(processEntity.isEmpty(), false);
         Map<String, Entity> nested = processEntity.get().getNested();
         Assertions.assertEquals(nested.size(), 15);
 
         Assertions.assertTrue(nested.containsKey("source"));
-        Assertions.assertEquals(nested.get("source").getType(),"Source");
+        Assertions.assertEquals(nested.get("source").getType().getName(),"Source");
 
         Assertions.assertTrue(nested.containsKey("codeSignature"));
-        Assertions.assertEquals(nested.get("codeSignature").getType(),"CodeSignature");
+        Assertions.assertEquals(nested.get("codeSignature").getType().getName(),"CodeSignature");
 
         Assertions.assertTrue(nested.containsKey("elf"));
-        Assertions.assertEquals(nested.get("elf").getType(),"ELF");
+        Assertions.assertEquals(nested.get("elf").getType().getName(),"ELF");
 
         Assertions.assertTrue(nested.containsKey("pe"));
-        Assertions.assertEquals(nested.get("pe").getType(),"PE");
+        Assertions.assertEquals(nested.get("pe").getType().getName(),"PE");
 
         Assertions.assertTrue(nested.containsKey("user"));
-        Assertions.assertEquals(nested.get("user").getType(),"User");
+        Assertions.assertEquals(nested.get("user").getType().getName(),"User");
         Assertions.assertTrue(nested.containsKey("savedUser"));
-        Assertions.assertEquals(nested.get("savedUser").getType(),"User");
+        Assertions.assertEquals(nested.get("savedUser").getType().getName(),"User");
         Assertions.assertTrue(nested.containsKey("group"));
 
-        Assertions.assertEquals(nested.get("group").getType(),"Group");
+        Assertions.assertEquals(nested.get("group").getType().getName(),"Group");
         Assertions.assertTrue(nested.containsKey("savedGroup"));
-        Assertions.assertEquals(nested.get("savedGroup").getType(),"Group");
+        Assertions.assertEquals(nested.get("savedGroup").getType().getName(),"Group");
         Assertions.assertTrue(nested.containsKey("supplementalGroups"));
-        Assertions.assertEquals(nested.get("supplementalGroups").getType(),"Group");
+        Assertions.assertEquals(nested.get("supplementalGroups").getType().getName(),"Group");
 
-        Assertions.assertEquals(nested.get("parent").getType(),"Process");
+        Assertions.assertEquals(nested.get("parent").getType().getName(),"Process");
         Assertions.assertTrue(nested.containsKey("parent"));
-        Assertions.assertEquals(nested.get("groupLeader").getType(),"Process");
+        Assertions.assertEquals(nested.get("groupLeader").getType().getName(),"Process");
         Assertions.assertTrue(nested.containsKey("groupLeader"));
-        Assertions.assertEquals(nested.get("sessionLeader").getType(),"Process");
+        Assertions.assertEquals(nested.get("sessionLeader").getType().getName(),"Process");
         Assertions.assertTrue(nested.containsKey("sessionLeader"));
-        Assertions.assertEquals(nested.get("leader").getType(),"Process");
+        Assertions.assertEquals(nested.get("leader").getType().getName(),"Process");
         Assertions.assertTrue(nested.containsKey("leader"));
-        Assertions.assertEquals(nested.get("previous").getType(),"Process");
+        Assertions.assertEquals(nested.get("previous").getType().getName(),"Process");
         Assertions.assertTrue(nested.containsKey("previous"));
 
         Assertions.assertEquals(provider.getRelations().size(), 1);
-        Assertions.assertEquals(provider.getRelations().get(0).getType(), "has_User");
+        Assertions.assertEquals(provider.getRelations().get(0).getType().getName(), "has_User");
     }
 
 }

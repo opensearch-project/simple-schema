@@ -2,10 +2,7 @@ package org.opensearch.schema.graphql;
 
 import graphql.language.*;
 import graphql.schema.*;
-import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.EnumeratedType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.RelationshipType;
+import org.opensearch.schema.ontology.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +27,7 @@ public class OntologyToGraphQLTransformer {
      * @param accessor
      * @return
      */
-    private GraphQLObjectType buildQuery(Ontology.Accessor accessor) {
+    private GraphQLObjectType buildQuery(Accessor accessor) {
         GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
                 .definition(ObjectTypeDefinition.newObjectTypeDefinition()
                         .name(QUERY)
@@ -65,7 +62,7 @@ public class OntologyToGraphQLTransformer {
             //create schema
             GraphQLSchema.Builder builder = newSchema();
             // each registry is merged into the main registry
-            Ontology.Accessor accessor = new Ontology.Accessor(source);
+            Accessor accessor = new Accessor(source);
             accessor.getEnumeratedTypes().forEach(t -> builder.additionalType(buildEnum(t, accessor)));
             accessor.entities().forEach(e -> builder.additionalType(buildGraphQLObject(e, accessor)));
             //add where input type
@@ -74,7 +71,7 @@ public class OntologyToGraphQLTransformer {
             builder.query(buildQuery(accessor));
             graphQLSchema = builder.build();
         } else {
-            Ontology.Accessor accessor = new Ontology.Accessor(source);
+            Accessor accessor = new Accessor(source);
             accessor.getEnumeratedTypes().forEach(t -> graphQLSchema.getAllTypesAsList().add(buildEnum(t, accessor)));
             accessor.entities().forEach(e -> graphQLSchema.getAllTypesAsList().add(buildGraphQLObject(e, accessor)));
         }
@@ -82,7 +79,7 @@ public class OntologyToGraphQLTransformer {
 
     }
 
-    private GraphQLEnumType buildEnum(EnumeratedType type, Ontology.Accessor accessor) {
+    private GraphQLEnumType buildEnum(EnumeratedType type, Accessor accessor) {
         return new GraphQLEnumType.Builder()
                 .name(type.geteType())
                 .values(type.getValues().stream()
@@ -99,7 +96,7 @@ public class OntologyToGraphQLTransformer {
     }
 
 
-    private GraphQLObjectType buildGraphQLObject(EntityType e, Ontology.Accessor accessor) {
+    private GraphQLObjectType buildGraphQLObject(EntityType e, Accessor accessor) {
         GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
                 .name(e.geteType());
 
@@ -143,7 +140,7 @@ public class OntologyToGraphQLTransformer {
         return builder.build();
     }
 
-    private GraphQLOutputType type(String type, Ontology.Accessor accessor) {
+    private GraphQLOutputType type(String type, Accessor accessor) {
         if (accessor.enumeratedType(type).isPresent())
             return typeRef(type);
 

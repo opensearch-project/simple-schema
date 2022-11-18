@@ -11,8 +11,8 @@ import org.opensearch.schema.index.schema.MappingIndexType;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.template.SettingBuilder;
 import org.opensearch.schema.index.template.TemplateMapping;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.Ontology;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
      * @param client
      * @return
      */
-    public Collection<PutIndexTemplateRequestBuilder> map(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
+    public Collection<PutIndexTemplateRequestBuilder> map(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
         StreamSupport.stream(ontology.entities().spliterator(), false)
                 //ignore abstract entities
                 .filter(e -> !e.isAbstract())
@@ -47,7 +47,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         return requests.values();
     }
 
-    private void mappingFunc(EntityType e, Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
+    private void mappingFunc(EntityType e, Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
         MappingIndexType mapping = this.indexProvider.getEntity(e.getName()).orElseThrow(
                         () -> new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No entity with name " + e + " found in ontology")))
                 .getMapping();
@@ -72,10 +72,10 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         }
     }
 
-    private void buildTimebasedMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
+    private void buildTimebasedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
         //time partitioned index
         PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, e.getName().toLowerCase());
-        String label = entity.getType();
+        String label = entity.getType().getName();
         request.setPatterns(new ArrayList<>(Arrays.asList(e.getName().toLowerCase(), label, e.getName(), String.format(entity.getProps().getIndexFormat(), "*"))))
                 .setSettings(generateSettings(ontology, e, entity, label));
         request.addMapping(label, generateElementMapping(ontology, e, entity, label.toLowerCase()));
@@ -86,7 +86,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         requests.put(e.getName().toLowerCase(), request);
     }
 
-    private void buildStaticMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
+    private void buildStaticMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
         entity.getProps().getValues().forEach(v -> {
             String label = e.geteType();
             PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, v.toLowerCase());
@@ -102,7 +102,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         });
     }
 
-    private void buildUnifiedMapping(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
+    private void buildUnifiedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
         entity.getProps().getValues().forEach(v -> {
             String label = e.geteType();
             String unifiedName = entity.getProps().getValues().isEmpty() ? label : entity.getProps().getValues().get(0);
@@ -129,7 +129,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         });
     }
 
-    private Map<String, Object> populateMappingIndexFields(Ontology.Accessor ontology, Entity ent, Optional<EntityType> entity) {
+    private Map<String, Object> populateMappingIndexFields(Accessor ontology, Entity ent, Optional<EntityType> entity) {
         Map<String, Object> mapping = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         mapping.put(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES, properties);
@@ -153,7 +153,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
      * @param label
      * @return
      */
-    public Map<String, Object> generateElementMapping(Ontology.Accessor ontology, EntityType entityType, Entity ent, String label) {
+    public Map<String, Object> generateElementMapping(Accessor ontology, EntityType entityType, Entity ent, String label) {
         Optional<EntityType> entity = ontology.entity(entityType.getName());
         if (!entity.isPresent())
             throw new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No entity with name " + label + " found in ontology"));
@@ -170,7 +170,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
      *
      * @return
      */
-    private Settings generateSettings(Ontology.Accessor ontology, EntityType entityType, Entity entity, String label) {
+    private Settings generateSettings(Accessor ontology, EntityType entityType, Entity entity, String label) {
         ontology.entity(entityType.getName()).get().getIdField().forEach(idField -> {
             if (!ontology.entity(entityType.getName()).get().fields().contains(idField))
                 throw new SchemaError.SchemaErrorException(new SchemaError("Entity Schema generation exception", " Entity " + label + " not containing id metadata property "));
@@ -179,11 +179,11 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         return builder(ontology, entity);
     }
 
-    private Settings builder(Ontology.Accessor ontology, Entity entity) {
+    private Settings builder(Accessor ontology, Entity entity) {
         SettingBuilder settings = getDefaultSettings();
         if (entity.getNested().isEmpty()) {
             //assuming id is a mandatory part of metadata/properties
-            settings.sortByField(ontology.entity$(entity.getType()).idFieldName(), true);
+            settings.sortByField(ontology.entity$(entity.getType().getName()).idFieldName(), true);
         }
         return settings.build();
     }

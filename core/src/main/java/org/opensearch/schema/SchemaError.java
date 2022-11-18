@@ -18,9 +18,6 @@ public class SchemaError {
         this.errorCode = errorCode;
         StringWriter sw = new StringWriter();
         if (e != null) {
-            e.printStackTrace(new PrintWriter(sw));
-            //todo check is in debug mode
-            e.printStackTrace();
             this.errorDescription = e.getMessage() != null ? e.getMessage() : sw.toString();
         }
     }

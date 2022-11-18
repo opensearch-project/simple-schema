@@ -5,12 +5,11 @@ import org.opensearch.cluster.metadata.ComponentTemplate;
 import org.opensearch.cluster.metadata.Template;
 import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.compress.CompressedXContent;
-import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.schema.index.schema.BaseTypeElement;
+import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.BaseElement;
-import org.opensearch.schema.ontology.Ontology;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -24,9 +23,9 @@ import java.util.Map;
  * @param <T>
  */
 public interface TemplateMapping<E extends BaseElement, T extends BaseTypeElement> {
-    Collection<PutIndexTemplateRequestBuilder> map(Ontology.Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests);
+    Collection<PutIndexTemplateRequestBuilder> map(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests);
 
-    Map<String, Object> generateElementMapping(Ontology.Accessor ontology, E element, T elementType, String label);
+    Map<String, Object> generateElementMapping(Accessor ontology, E element, T elementType, String label);
 
     /**
      * create component template
