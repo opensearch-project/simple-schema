@@ -17,10 +17,6 @@ import static graphql.schema.GraphQLTypeReference.typeRef;
 public interface GraphQLSchemaUtils {
     String QUERY = "Query";
 
-    GraphQLSchema getGraphQLSchema();
-
-    TypeDefinitionRegistry getTypeRegistry();
-
     static Optional<String> getIDFieldName(GraphQLObjectType object) {
         Type Id = TypeName.newTypeName(GraphQLID.getName()).build();
         Optional<GraphQLFieldDefinition> fieldDefinition = object.getFieldDefinitions().stream()

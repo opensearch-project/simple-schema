@@ -35,9 +35,6 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
     public static final String HAS = "has_";
     //graph QL reader and schema parts
     private GraphQLSchema graphQLSchema;
-    private SchemaParser schemaParser = new SchemaParser();
-    private TypeDefinitionRegistry typeRegistry = new TypeDefinitionRegistry();
-    private SchemaGenerator schemaGenerator = new SchemaGenerator();
 
     private Set<String> languageTypes = new HashSet<>();
     private Set<String> objectTypes = new HashSet<>();
@@ -45,21 +42,6 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
 
     public GraphQLToOntologyTransformer() {
         languageTypes.addAll(Arrays.asList(QUERY));
-    }
-
-
-    /**
-     * get the graph QL schema
-     *
-     * @return
-     */
-    @Override
-    public GraphQLSchema getGraphQLSchema() {
-        return graphQLSchema;
-    }
-
-    public TypeDefinitionRegistry getTypeRegistry() {
-        return typeRegistry;
     }
 
 
@@ -95,52 +77,17 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
      */
     public Ontology transform(String ontologyName, InputStream... streams) {
         if (graphQLSchema == null) {
-            // each registry is merged into the main registry
-            Arrays.asList(streams).forEach(s -> typeRegistry.merge(parse(s)));
+            graphQLSchema = GraphQLEngineFactory.generateSchema(Arrays.asList(streams));
+        }  //create a curated list of names for typed schema elements
+        return transform(ontologyName, graphQLSchema);
 
-            //create schema
-            RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring()
-                    .wiringFactory(new EchoingWiringFactory())
-                    .scalar(ExtendedScalars.newAliasedScalar("Text")
-                            .aliasedScalar(GraphQLString)
-                            .build())
-                    .scalar(ExtendedScalars.newAliasedScalar("IP")
-                            .aliasedScalar(GraphQLString)
-                            .build())
-                    .scalar(ExtendedScalars.newAliasedScalar("GeoPoint")
-                            .aliasedScalar(GraphQLString)
-                            .build())
-                    .scalar(ExtendedScalars.GraphQLLong)
-                    .scalar(ExtendedScalars.Json)
-                    .scalar(ExtendedScalars.Object)
-                    .scalar(ExtendedScalars.Url)
-                    .scalar(ExtendedScalars.DateTime)
-                    .scalar(ExtendedScalars.Time);
-
-            graphQLSchema = schemaGenerator.makeExecutableSchema(
-                    SchemaGenerator.Options.defaultOptions(),
-                    typeRegistry,
-                    builder.build());
-        }
-        //create a curated list of names for typed schema elements
-        return transform(ontologyName,graphQLSchema);
-
-    }
-
-    private TypeDefinitionRegistry parse(InputStream s) {
-        try {
-            return schemaParser.parse(new InputStreamReader(s));
-        }catch (Throwable err) {
-            //log parse errors
-            throw new SchemaError.SchemaErrorException("Couldn't parse the input schema file",err);
-        }
     }
 
     /**
      * @param graphQLSchema
      * @return
      */
-    public Ontology transform(String ontologyName,GraphQLSchema graphQLSchema) {
+    public Ontology transform(String ontologyName, GraphQLSchema graphQLSchema) {
         validateLanguageType(graphQLSchema);
         populateObjectTypes(graphQLSchema);
 
@@ -216,9 +163,9 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
         //list type
         if (definitionType instanceof ListType) {
             //in case of list with nested object field
-            if (((GraphQLList)type.getType()).getWrappedType() instanceof GraphQLObjectType) {
+            if (((GraphQLList) type.getType()).getWrappedType() instanceof GraphQLObjectType) {
                 GraphQLObjectType wrappedType = (GraphQLObjectType) ((GraphQLList) type.getType()).getWrappedType();
-                return Optional.of(new Property(fieldName, wrappedType.getName(),new ObjectType.ArrayOfObjects(wrappedType.getName())));
+                return Optional.of(new Property(fieldName, wrappedType.getName(), new ObjectType.ArrayOfObjects(wrappedType.getName())));
             }
 
             //case for list of primitives
@@ -229,9 +176,9 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
             Type rawType = ((NonNullType) definitionType).getType();
 
             //in case of non-null with nested object field
-            if (((GraphQLNonNull)type.getType()).getWrappedType() instanceof GraphQLObjectType) {
+            if (((GraphQLNonNull) type.getType()).getWrappedType() instanceof GraphQLObjectType) {
                 GraphQLObjectType wrappedType = (GraphQLObjectType) ((GraphQLNonNull) type.getType()).getWrappedType();
-                return Property.MandatoryProperty.of(Optional.of(new Property(fieldName, wrappedType.getName(),new ObjectType(wrappedType.getName()))));
+                return Property.MandatoryProperty.of(Optional.of(new Property(fieldName, wrappedType.getName(), new ObjectType(wrappedType.getName()))));
             }
 
             //validate only scalars are registered as properties
@@ -409,14 +356,14 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
     }
 
     private String getRelationName(String name) {
-        return name.startsWith(HAS)?name: HAS +name;
+        return name.startsWith(HAS) ? name : HAS + name;
     }
 
     private EPair createEPair(String name, Tuple2<String, EntityType> t, Ontology.OntologyBuilder context) {
         EntityType sideA = context.getEntityType(name).get();
         String sideAFieldName = t._1;
         EntityType sideB = t._2;
-        return new EPair(sideA.geteType(), sideAFieldName,sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
+        return new EPair(sideA.geteType(), sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
     }
 
     private Ontology.OntologyBuilder properties(GraphQLSchema graphQLSchema, Ontology.OntologyBuilder context) {
