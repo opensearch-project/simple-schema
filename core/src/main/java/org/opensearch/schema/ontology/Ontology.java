@@ -3,16 +3,11 @@ package org.opensearch.schema.ontology;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import javaslang.Tuple;
-import javaslang.Tuple2;
-import javaslang.collection.Stream;
-import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.PrimitiveType.ArrayOfPrimitives;
 
 import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.opensearch.schema.ontology.PrimitiveType.Types.*;

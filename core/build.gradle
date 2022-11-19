@@ -5,7 +5,7 @@
 
 plugins {
     id 'java'
-    id 'checkstyle'
+//    id 'checkstyle'
     id 'jacoco'
 }
 
@@ -51,7 +51,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.5
+                minimum = 0.8
             }
 
         }

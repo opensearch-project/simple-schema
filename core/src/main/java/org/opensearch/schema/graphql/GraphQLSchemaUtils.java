@@ -2,7 +2,6 @@ package org.opensearch.schema.graphql;
 
 import graphql.language.*;
 import graphql.schema.*;
-import graphql.schema.idl.TypeDefinitionRegistry;
 import javaslang.Tuple2;
 import org.opensearch.schema.ontology.DirectiveType;
 

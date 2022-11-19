@@ -1,7 +1,6 @@
 package org.opensearch.schema;
 
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**

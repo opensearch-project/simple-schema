@@ -6,15 +6,11 @@ import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.validation.ValidationResult;
 import org.opensearch.schema.validation.ValidationResult.ValidationResults;
 
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.opensearch.schema.ontology.OntologyFinalizer.ID_FIELD_PTYPE;
 import static org.opensearch.schema.ontology.OntologyFinalizer.TYPE_FIELD_PTYPE;
 
-/**
- *
- */
 
 /**
  * schema validation utility - this code will verify both logical & physical config is valid and in sync with each other
