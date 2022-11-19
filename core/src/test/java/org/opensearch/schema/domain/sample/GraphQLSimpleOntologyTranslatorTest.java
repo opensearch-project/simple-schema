@@ -1,9 +1,11 @@
 package org.opensearch.schema.domain.sample;
 
 import org.junit.Ignore;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.BaseTypeElement;
 import org.opensearch.schema.index.schema.Entity;
@@ -28,6 +30,10 @@ public class GraphQLSimpleOntologyTranslatorTest {
     public static Ontology ontology;
     public static Accessor ontologyAccessor;
 
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
     /**
      * load sample graphQL SDL files, transform them into the ontology & index-provider components

@@ -1,8 +1,10 @@
 package org.opensearch.schema.domain.observability.graphql;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.*;
@@ -21,6 +23,10 @@ import static org.opensearch.schema.ontology.Property.equal;
 public class GraphQLOntologyAgentTranslatorTest {
     public static Ontology ontology;
     public static Accessor ontologyAccessor;
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
 
     @BeforeAll
     /**

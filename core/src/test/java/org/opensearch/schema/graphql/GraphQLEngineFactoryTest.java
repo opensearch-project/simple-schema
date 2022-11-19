@@ -6,6 +6,7 @@ import graphql.introspection.IntrospectionQuery;
 import graphql.schema.GraphQLSchema;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,10 @@ class GraphQLEngineFactoryTest {
     private static List<InputStream> streams;
     private static GraphQLSchema schema;
 
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
     /**
      * load sample graphQL SDL files, transform them into the ontology & index-provider components
@@ -70,6 +75,7 @@ class GraphQLEngineFactoryTest {
         assertNotNull(schema);
         assertNotNull(schema.get("types"));
 
+        //todo move this section to the GQL engine component tests
         List types = (List) schema.get("types");
         assertTrue(types.stream().anyMatch(p->
                 ((Map)p).get("name").equals("Author")));

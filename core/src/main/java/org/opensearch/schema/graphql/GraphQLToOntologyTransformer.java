@@ -76,10 +76,10 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
      * @return
      */
     public Ontology transform(String ontologyName, InputStream... streams) {
-        if (graphQLSchema == null) {
-            graphQLSchema = GraphQLEngineFactory.generateSchema(Arrays.asList(streams));
+        if (GraphQLEngineFactory.schema().isEmpty()) {
+            GraphQLEngineFactory.generateSchema(Arrays.asList(streams));
         }  //create a curated list of names for typed schema elements
-        return transform(ontologyName, graphQLSchema);
+        return transform(ontologyName, GraphQLEngineFactory.schema().get());
 
     }
 

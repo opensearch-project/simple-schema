@@ -3,6 +3,7 @@ package org.opensearch.schema.domain.observability.index;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.NoOpClient;
@@ -10,6 +11,7 @@ import org.opensearch.common.bytes.BytesReference;
 import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentType;
+import org.opensearch.schema.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
@@ -30,6 +32,10 @@ public class MappingSimpleEntityTemplateGeneratorTest {
     static Ontology ontology;
     static IndexProvider indexProvider;
 
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
     /**
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components

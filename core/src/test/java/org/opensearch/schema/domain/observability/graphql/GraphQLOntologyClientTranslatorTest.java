@@ -2,9 +2,11 @@ package org.opensearch.schema.domain.observability.graphql;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.Assert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.BaseTypeElement;
 import org.opensearch.schema.index.schema.BaseTypeElement.Type;
@@ -32,6 +34,10 @@ public class GraphQLOntologyClientTranslatorTest {
     public static Ontology ontology;
     public static Accessor ontologyAccessor;
 
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
     /**
      * load base, communication & user graphQL SDL files, transform them into the ontology & index-provider components

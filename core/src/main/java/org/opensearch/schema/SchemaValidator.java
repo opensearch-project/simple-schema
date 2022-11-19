@@ -57,34 +57,32 @@ public class SchemaValidator {
 
         // ID field verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
-                .filter(e -> e.containsProperty(ID_FIELD_PTYPE)).collect(Collectors.toList())
+                .filter(e -> e.containsProperty(ID_FIELD_PTYPE)).toList()
                 .forEach(e -> results.with(new ValidationResult(false, String.format("%s entity missing ID field", e.getName()))));
 
         accessor.relations().stream()
-                .filter(r -> r.containsProperty(ID_FIELD_PTYPE)).collect(Collectors.toList())
+                .filter(r -> r.containsProperty(ID_FIELD_PTYPE)).toList()
                 .forEach(r -> results.with(new ValidationResult(false, String.format("%s relation missing ID field", r.getName()))));
 
         // type field verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
-                .filter(e-> e.containsProperty(TYPE_FIELD_PTYPE)).collect(Collectors.toList())
+                .filter(e -> e.containsProperty(TYPE_FIELD_PTYPE)).toList()
                 .forEach(e -> results.with(new ValidationResult(false, String.format("%s entity missing TYPE field", e.getName()))));
 
         accessor.relations().stream()
-                .filter(r-> r.containsProperty(TYPE_FIELD_PTYPE)).collect(Collectors.toList())
+                .filter(r -> r.containsProperty(TYPE_FIELD_PTYPE)).toList()
                 .forEach(r -> results.with(new ValidationResult(false, String.format("%s relation missing TYPE field", r.getName()))));
 
         // general entities/relations properties verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
                 .forEach(e -> e.getProperties()
-                        .stream().filter(p -> !accessor.pType(p).isPresent())
-                        .collect(Collectors.toList())
+                        .stream().filter(p -> accessor.pType(p).isEmpty()).toList()
                         .forEach(p -> results.with(new ValidationResult(false, String.format("%s entity missing %s property definition",e.getName(), p))))
                 );
 
-        accessor.relations().stream()
+        accessor.relations()
                 .forEach(e -> e.getProperties()
-                        .stream().filter(p -> !accessor.pType(p).isPresent())
-                        .collect(Collectors.toList())
+                        .stream().filter(p -> accessor.pType(p).isEmpty()).toList()
                         .forEach(p -> results.with(new ValidationResult(false, String.format("%s relation missing %s property definition",e.getName(), p))))
                 );
 
@@ -92,9 +90,9 @@ public class SchemaValidator {
          accessor.relations()
                 .forEach(r -> r.getePairs()
                     .forEach(pair -> {
-                        if(!accessor.entity(pair.geteTypeA()).isPresent())
+                        if(accessor.entity(pair.geteTypeA()).isEmpty())
                             results.with(new ValidationResult(false, String.format("%s relation pair sideA %s type is missing from ontology",r.getrType(),pair.geteTypeA())));
-                        if(!accessor.entity(pair.geteTypeB()).isPresent())
+                        if(accessor.entity(pair.geteTypeB()).isEmpty())
                             results.with(new ValidationResult(false, String.format("%s relation pair sideB %s type is missing from ontology",r.getrType(),pair.geteTypeB())));
                         })
                 );
@@ -108,17 +106,17 @@ public class SchemaValidator {
             */
 
         provider.getEntities().stream()
-                .filter(i->!accessor.entity(i.getType().getName()).isPresent())
+                .filter(i-> accessor.entity(i.getType().getName()).isEmpty())
                 .forEach(i->results.with(new ValidationResult(false, String.format("%s entity index definition is missing from ontology",i.getType().getName()))));
 
         provider.getRelations().stream()
-                .filter(i->!accessor.relation(i.getType().getName()).isPresent())
+                .filter(i-> accessor.relation(i.getType().getName()).isEmpty())
                 .forEach(i->results.with(new ValidationResult(false, String.format("%s relation index definition is missing from ontology",i.getType().getName()))));
 
 
         provider.getRelations()
                 .forEach(r->r.getRedundant().stream()
-                        .filter(rp->!accessor.pType(rp.getName()).isPresent())
+                        .filter(rp-> accessor.pType(rp.getName()).isEmpty())
                         .forEach(rp->results.with(new ValidationResult(false, String.format("%s Redundant index %s relation property definition is missing from ontology",r.getType(),rp))))
                 );
 

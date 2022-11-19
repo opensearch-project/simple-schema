@@ -1,9 +1,11 @@
 package org.opensearch.schema.domain.observability.graphql;
 
 import graphql.schema.GraphQLSchema;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.ontology.*;
 
@@ -22,6 +24,10 @@ public class GraphQLOntologyBaseTranslatorTest {
     public static Accessor ontologyAccessor;
     public static GraphQLSchema graphQLSchema;
 
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
     /**
      * load base SDL files, transform it into the ontology components
