@@ -5,8 +5,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opensearch.schema.graphql.GraphQLEngineFactory;
-import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.ontology.*;
 
 import java.io.FileInputStream;

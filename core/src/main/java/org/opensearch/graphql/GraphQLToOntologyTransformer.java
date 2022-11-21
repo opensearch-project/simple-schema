@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.graphql;
 
 
 import graphql.language.ListType;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
-import static org.opensearch.schema.graphql.GraphQLSchemaUtils.*;
+import static org.opensearch.graphql.GraphQLSchemaUtils.*;
 import static org.opensearch.schema.ontology.PrimitiveType.Types.STRING;
 import static org.opensearch.schema.ontology.PrimitiveType.Types.find;
 

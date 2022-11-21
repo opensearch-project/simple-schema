@@ -55,6 +55,27 @@ public class Accessor implements Supplier<Ontology> {
         return entityType == null ? Optional.empty() : Optional.of(entityType.geteType());
     }
 
+    /**
+     * returns property by its name - returns optional empty if not found
+     *
+     * @param propertyName
+     * @return
+     */
+    public Optional<Property> pName(String propertyName) {
+        return Optional.ofNullable(this.propertiesByName.get(propertyName));
+    }
+
+    /**
+     * return property (no matter which element it belongs to) - throws exception if not found
+     *
+     * @param propertyName
+     * @return
+     */
+    public Property pName$(String propertyName) {
+        return pName(propertyName)
+                .orElseThrow(() -> new SchemaError.SchemaErrorException(new SchemaError("No Ontology propertyName for value ", "No Ontology propertyName for value[" + propertyName + "]")));
+    }
+
     public String eType$(String entityName) {
         return eType(entityName)
                 .orElseThrow(() -> new SchemaError.SchemaErrorException(new SchemaError("No Ontology entityType for value ", "No Ontology entityType for value[" + entityName + "]")));

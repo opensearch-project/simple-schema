@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.graphql;
 
 import graphql.language.*;
 import graphql.schema.*;

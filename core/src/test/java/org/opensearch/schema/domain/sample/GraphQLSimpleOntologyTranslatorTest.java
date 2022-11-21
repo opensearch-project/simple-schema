@@ -5,8 +5,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opensearch.schema.graphql.GraphQLEngineFactory;
-import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.BaseTypeElement;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
@@ -17,7 +17,6 @@ import org.opensearch.schema.ontology.Property;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.opensearch.schema.ontology.PrimitiveType.Types.*;
 import static org.opensearch.schema.ontology.Property.equal;

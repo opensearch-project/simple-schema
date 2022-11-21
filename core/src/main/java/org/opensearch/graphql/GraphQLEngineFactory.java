@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.graphql;
 
 import graphql.GraphQL;
 import graphql.scalars.ExtendedScalars;
@@ -84,6 +84,9 @@ public class GraphQLEngineFactory {
                 .scalar(ExtendedScalars.DateTime)
                 .scalar(ExtendedScalars.Time);
 
+
+        registerDataFetcher(builder);
+
         graphQLSchema = schemaGenerator.makeExecutableSchema(
                 SchemaGenerator.Options.defaultOptions(),
                 typeRegistry,
@@ -111,6 +114,9 @@ public class GraphQLEngineFactory {
         return engine().get();
     }
 
+    public static void registerDataFetcher(RuntimeWiring.Builder builder) {
+        //todo
+    }
     /**
      * get GQL engine
      *
@@ -122,6 +128,16 @@ public class GraphQLEngineFactory {
 
         return Optional.empty();
     }
+
+    /**
+     * get GQL type definition registry
+     *
+     * @return
+     */
+    public static TypeDefinitionRegistry registry() {
+        return typeRegistry;
+    }
+
     /**
      * get GQL schema
      *

@@ -1,9 +1,11 @@
 package org.opensearch.schema;
 
-import org.junit.jupiter.api.*;
-import org.opensearch.index.Index;
-import org.opensearch.schema.graphql.GraphQLEngineFactory;
-import org.opensearch.schema.graphql.GraphQLToOntologyTransformer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
@@ -12,7 +14,7 @@ import org.opensearch.schema.validation.ValidationResult;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SchemaValidatorTest {
     public static Ontology ontology;

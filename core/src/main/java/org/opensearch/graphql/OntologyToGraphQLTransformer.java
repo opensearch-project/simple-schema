@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.graphql;
 
 import graphql.language.*;
 import graphql.schema.*;
@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 import static graphql.Scalars.*;
 import static graphql.schema.GraphQLSchema.newSchema;
 import static graphql.schema.GraphQLTypeReference.typeRef;
-import static org.opensearch.schema.graphql.GraphQLSchemaUtils.QUERY;
-import static org.opensearch.schema.graphql.GraphQLSchemaUtils.WhereSupportGraphQL.WHERE_CLAUSE;
-import static org.opensearch.schema.graphql.GraphQLSchemaUtils.WhereSupportGraphQL.buildWhereInputType;
 
 /**
  *
@@ -30,9 +27,9 @@ public class OntologyToGraphQLTransformer {
     private GraphQLObjectType buildQuery(Accessor accessor) {
         GraphQLObjectType.Builder builder = GraphQLObjectType.newObject()
                 .definition(ObjectTypeDefinition.newObjectTypeDefinition()
-                        .name(QUERY)
+                        .name(GraphQLSchemaUtils.QUERY)
                         .build())
-                .name(QUERY);
+                .name(GraphQLSchemaUtils.QUERY);
 
         //build input query with where clause for each entity
         accessor.entities()
@@ -41,8 +38,8 @@ public class OntologyToGraphQLTransformer {
                                 GraphQLFieldDefinition.newFieldDefinition()
                                         .name(e.geteType())
                                         .argument(new GraphQLArgument.Builder()
-                                                .name(WHERE_CLAUSE)
-                                                .type(typeRef(WHERE_CLAUSE))
+                                                .name(GraphQLSchemaUtils.WhereSupportGraphQL.WHERE_CLAUSE)
+                                                .type(typeRef(GraphQLSchemaUtils.WhereSupportGraphQL.WHERE_CLAUSE))
                                                 .build())
                                         .type(typeRef(e.geteType()))
                                         .definition(new FieldDefinition(e.geteType(), new TypeName(e.geteType())))
@@ -66,7 +63,7 @@ public class OntologyToGraphQLTransformer {
             accessor.getEnumeratedTypes().forEach(t -> builder.additionalType(buildEnum(t, accessor)));
             accessor.entities().forEach(e -> builder.additionalType(buildGraphQLObject(e, accessor)));
             //add where input type
-            buildWhereInputType(builder);
+            GraphQLSchemaUtils.WhereSupportGraphQL.buildWhereInputType(builder);
             // add query for all concrete types with the where input type
             builder.query(buildQuery(accessor));
             graphQLSchema = builder.build();

@@ -2,6 +2,8 @@ package org.opensearch.schema;
 
 
 import java.io.StringWriter;
+import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * general purpose error
@@ -55,7 +57,7 @@ public class SchemaError {
      * the exception raised inside the schema error
      */
     public static class SchemaErrorException extends RuntimeException {
-        private final SchemaError error;
+        private SchemaError error;
 
         public SchemaErrorException(String message, SchemaError error) {
             super(message);
@@ -80,6 +82,13 @@ public class SchemaError {
         public SchemaErrorException(String message, Throwable cause) {
             super(message, cause);
             this.error = new SchemaError(message, cause);
+        }
+
+        public SchemaErrorException(String message, List<String> messages) {
+            super(message);
+            StringJoiner messagesJoiner =  new StringJoiner(", ");
+            messages.forEach(messagesJoiner::add);
+            this.error = new SchemaError(message,messagesJoiner.toString());
         }
 
         public SchemaError getError() {
