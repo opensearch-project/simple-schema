@@ -6,8 +6,6 @@ import org.opensearch.action.index.IndexResponse
 import org.opensearch.client.node.NodeClient
 import org.opensearch.common.xcontent.json.JsonXContent
 import org.opensearch.jobscheduler.spi.schedule.IntervalSchedule
-import org.opensearch.simpleschema.model.RestTag
-import org.opensearch.simpleschema.model.ScheduledJobDoc
 import org.opensearch.rest.BaseRestHandler
 import org.opensearch.rest.BaseRestHandler.RestChannelConsumer
 import org.opensearch.rest.BytesRestResponse
@@ -16,6 +14,8 @@ import org.opensearch.rest.RestHandler
 import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestResponse
 import org.opensearch.rest.RestStatus
+import org.opensearch.simpleschema.model.RestTag
+import org.opensearch.simpleschema.model.ScheduledJobDoc
 import java.io.IOException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
