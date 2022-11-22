@@ -3,9 +3,6 @@ package org.opensearch.query.properties;
 
 import org.opensearch.query.properties.projection.Projection;
 
-/**
- * Created by roman.margolis on 26/09/2017.
- */
 public class RedundantSelectionRelProp extends RelProp {
     //region Constructors
     public RedundantSelectionRelProp() {

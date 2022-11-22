@@ -24,6 +24,34 @@ import static java.util.Collections.singletonList;
 import static org.opensearch.graphql.GraphQLSchemaUtils.*;
 import static org.opensearch.schema.ontology.PrimitiveType.Types.STRING;
 import static org.opensearch.schema.ontology.PrimitiveType.Types.find;
+/**
+ * This component is the transformation element which takes a GQL SDL files and translates them into the ontological structure
+ * This structure is defined by the next basic elements:
+ * <br>
+ * <br>
+ *  - Entity
+ *       <br>
+ *  --- Concrete type entity - specific labeled entity with ID
+ *       <br>
+ *  --- Typed entity - - specific labeled entity
+ *      <br>
+ *  --- UnTyped entity - - multi labeled entity
+ *      <br>
+ *  - Relations
+ *       <br>
+ *  --- Typed relation - - specific labeled relation
+ *      <br>
+ *  --- UnTyped relation - - multi labeled relation
+ *
+ * <br>
+ *  - Properties
+ *   <br>
+ *      --- primitive property
+ * <br>
+ *  - Constraints
+ * <br>
+ *  - Quantifiers
+ */
 
 public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<String, Ontology>, GraphQLSchemaUtils {
 

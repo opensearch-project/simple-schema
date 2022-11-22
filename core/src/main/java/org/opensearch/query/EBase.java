@@ -9,7 +9,6 @@ import org.opensearch.query.entity.ETyped;
 import org.opensearch.query.entity.EUntyped;
 import org.opensearch.query.optional.OptionalComp;
 import org.opensearch.query.properties.*;
-import org.opensearch.query.quant.HQuant;
 import org.opensearch.query.quant.Quant1;
 
 
@@ -21,7 +20,6 @@ import org.opensearch.query.quant.Quant1;
         @JsonSubTypes.Type(name = "EPropGroup", value = EPropGroup.class),
         @JsonSubTypes.Type(name = "ETyped", value = ETyped.class),
         @JsonSubTypes.Type(name = "EUntyped", value = EUntyped.class),
-        @JsonSubTypes.Type(name = "HQuant", value = HQuant.class),
         @JsonSubTypes.Type(name = "Quant1", value = Quant1.class),
         @JsonSubTypes.Type(name = "Rel", value = Rel.class),
         @JsonSubTypes.Type(name = "RelPattern", value = RelPattern.class),

@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-/**
- * Created by lior.perry on 5/29/2017.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationResult {
     public static ValidationResult OK = new ValidationResult(true, "none");

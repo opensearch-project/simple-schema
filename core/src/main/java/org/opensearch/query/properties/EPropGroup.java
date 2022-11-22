@@ -16,9 +16,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * Created by benishue on 25-Apr-17.
- */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class EPropGroup extends BasePropGroup<EProp, EPropGroup> {
     //region Constructors
