@@ -1,7 +1,10 @@
 package org.opensearch.simpleschema.action
 
+import graphql.language.Document
+import graphql.parser.Parser
 import org.opensearch.action.ActionRequest
 import org.opensearch.action.ActionRequestValidationException
+import org.opensearch.common.io.stream.InputStreamStreamInput
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.StreamOutput
 import org.opensearch.common.io.stream.Writeable
@@ -16,12 +19,13 @@ import org.opensearch.simpleschema.model.BaseObjectData
 import org.opensearch.simpleschema.model.RestTag
 import org.opensearch.simpleschema.model.SimpleSchemaObjectDataProperties
 import org.opensearch.simpleschema.model.SimpleSchemaObjectType
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
+import java.lang.IllegalArgumentException
 
 internal class CreateGraphQLRequest : ActionRequest, ToXContentObject {
-    val objectId: String?
-    val type: SimpleSchemaObjectType
-    val objectData: BaseObjectData?
+    val document: Document
 
     companion object {
         private val log by logger(CreateGraphQLRequest::class.java)
@@ -38,8 +42,26 @@ internal class CreateGraphQLRequest : ActionRequest, ToXContentObject {
          */
         @JvmStatic
         @Throws(IOException::class)
-        fun parse(parser: XContentParser, id: String? = null): CreateGraphQLRequest {
-            TODO("not implemented")
+        fun parse(parser: XContentParser): CreateGraphQLRequest {
+            var rawContent: String? = null
+            XContentParserUtils.ensureExpectedToken(
+                XContentParser.Token.START_OBJECT,
+                parser.currentToken(),
+                parser
+            )
+            while (parser.nextToken() != XContentParser.Token.END_OBJECT) {
+                val fieldName = parser.currentName()
+                parser.nextToken()
+                when (fieldName) {
+                    "content" -> rawContent = parser.text()
+                    else -> {
+                        parser.skipChildren()
+                        log.info("Unexpected field: '$fieldName' while parsing CreateGraphQLRequest, ignoring")
+                    }
+                }
+            }
+            rawContent ?: throw IllegalArgumentException("Required field 'content' absent")
+            return CreateGraphQLRequest(Parser.parse(rawContent))
         }
     }
 
@@ -51,15 +73,11 @@ internal class CreateGraphQLRequest : ActionRequest, ToXContentObject {
     }
 
     /**
-     * constructor for creating the class
-     * @param objectId optional id to use for Object
-     * @param type type of Object
-     * @param objectData the Object
+     * Constructor for creating the class
+     * @param document A GraphQL Document describing a new object or schema addition
      */
-    constructor(objectId: String? = null, type: SimpleSchemaObjectType, objectData: BaseObjectData) {
-        this.objectId = objectId
-        this.type = type
-        this.objectData = objectData
+    constructor(document: Document) {
+        this.document = document
     }
 
     /**
@@ -67,15 +85,7 @@ internal class CreateGraphQLRequest : ActionRequest, ToXContentObject {
      */
     @Throws(IOException::class)
     constructor(input: StreamInput) : super(input) {
-        objectId = input.readOptionalString()
-        type = input.readEnum(SimpleSchemaObjectType::class.java)
-        objectData = input.readOptionalWriteable(
-            SimpleSchemaObjectDataProperties.getReaderForObjectType(
-                input.readEnum(
-                    SimpleSchemaObjectType::class.java
-                )
-            )
-        )
+        this.document = Parser.parse(input.readString())
     }
 
     /**

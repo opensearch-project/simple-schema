@@ -21,7 +21,7 @@ internal class CreateGraphQLAction @Inject constructor(
     ::CreateGraphQLRequest
 ) {
     companion object {
-        private const val NAME = "cluster:admin/opensearch/simpleschema/create"
+        private const val NAME = "cluster:admin/opensearch/simpleschema/graphql/create"
         internal val ACTION_TYPE = ActionType(NAME, ::CreateGraphQLResponse)
     }
 
