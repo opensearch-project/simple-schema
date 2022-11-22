@@ -5,6 +5,8 @@ import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.*;
 import graphql.schema.idl.errors.SchemaProblem;
+import org.opensearch.query.Query;
+import org.opensearch.query.QueryBuilder;
 import org.opensearch.schema.SchemaError;
 
 import java.io.InputStream;
@@ -53,21 +55,33 @@ public class GraphQLEngineFactory {
      * @param streams - list of GQL schema files
      * @return
      */
-    public static GraphQLSchema generateSchema(List<InputStream> streams) {
+    public static GraphQLSchema generateSchema(WiringFactory factory,List<InputStream> streams) {
         // each registry is merged into the main registry
         streams.forEach(GraphQLEngineFactory::addType);
-        return generateSchema();
+        return generateSchema(factory);
     }
+
 
     /**
      * generate GQL schema - will create a new schema even if schema was already created
      *
      * @return
      */
-    public static GraphQLSchema generateSchema() {
+    public static GraphQLSchema generateSchema(List<InputStream> streams) {
+        // each registry is merged into the main registry
+        streams.forEach(GraphQLEngineFactory::addType);
+        return generateSchema(new EchoingWiringFactory());
+    }
+
+    /**
+     * generate GQL schema - will create a new schema even if schema was already created
+     * @param factory
+     * @return
+     */
+    public static GraphQLSchema generateSchema(WiringFactory factory) {
         //create schema
         RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring()
-                .wiringFactory(new EchoingWiringFactory())
+                .wiringFactory(factory)
                 .scalar(ExtendedScalars.newAliasedScalar("Text")
                         .aliasedScalar(GraphQLString)
                         .build())
@@ -83,10 +97,6 @@ public class GraphQLEngineFactory {
                 .scalar(ExtendedScalars.Url)
                 .scalar(ExtendedScalars.DateTime)
                 .scalar(ExtendedScalars.Time);
-
-
-        registerDataFetcher(builder);
-
         graphQLSchema = schemaGenerator.makeExecutableSchema(
                 SchemaGenerator.Options.defaultOptions(),
                 typeRegistry,
@@ -103,10 +113,11 @@ public class GraphQLEngineFactory {
         }
     }
 
+
     /**
      * generate GQL engine - will create a new engine even if engine was already created
      *
-     * @param schema
+     * @param schema -  the schema from which the query will be validated and build upon
      * @return
      */
     public static GraphQL generateEngine(GraphQLSchema schema) {
@@ -114,9 +125,6 @@ public class GraphQLEngineFactory {
         return engine().get();
     }
 
-    public static void registerDataFetcher(RuntimeWiring.Builder builder) {
-        //todo
-    }
     /**
      * get GQL engine
      *
@@ -160,4 +168,5 @@ public class GraphQLEngineFactory {
         gql = null;
         return true;
     }
+
 }

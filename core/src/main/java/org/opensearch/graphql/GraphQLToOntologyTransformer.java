@@ -6,6 +6,7 @@ import graphql.language.NonNullType;
 import graphql.language.Type;
 import graphql.language.TypeName;
 import graphql.schema.*;
+import graphql.schema.idl.EchoingWiringFactory;
 import javaslang.Tuple2;
 import org.opensearch.schema.ontology.*;
 import org.opensearch.schema.ontology.PrimitiveType.ArrayOfPrimitives;
@@ -72,7 +73,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
      */
     public Ontology transform(String ontologyName, InputStream... streams) {
         if (GraphQLEngineFactory.schema().isEmpty()) {
-            GraphQLEngineFactory.generateSchema(Arrays.asList(streams));
+            GraphQLEngineFactory.generateSchema(new EchoingWiringFactory(),Arrays.asList(streams));
         }  //create a curated list of names for typed schema elements
         return transform(ontologyName, GraphQLEngineFactory.schema().get());
 

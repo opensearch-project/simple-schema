@@ -3,8 +3,11 @@ package org.opensearch.graphql;
 
 import graphql.ExecutionResult;
 import graphql.GraphQLError;
+import org.opensearch.graphql.wiring.TraversalWiringFactory;
 import org.opensearch.query.Query;
 import org.opensearch.schema.SchemaError;
+import org.opensearch.schema.ontology.Accessor;
+import org.opensearch.schema.ontology.Ontology;
 
 import java.util.stream.Collectors;
 
@@ -14,9 +17,13 @@ import java.util.stream.Collectors;
  */
 public class GraphQLToQueryTransformer {
 
-    public static Query transform(String query) {
+    public synchronized static Query transform(Accessor accessor, String query) {
         Query.Builder instance = Query.Builder.instance();
-        ExecutionResult execute = GraphQLEngineFactory.engine().get().execute(query);
+        TraversalWiringFactory factory = new TraversalWiringFactory(accessor, instance);
+        ExecutionResult execute = GraphQLEngineFactory
+                .generateEngine(
+                        GraphQLEngineFactory.generateSchema(factory)
+                ).execute(query);
         if (execute.getErrors().isEmpty())
             return instance.build();
         // throw error over failed query parsing

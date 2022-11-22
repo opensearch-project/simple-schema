@@ -100,7 +100,7 @@ public class Query implements IQuery<EBase> {
     //endregion
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "with")
-    public static final class Builder {
+    public static final class Builder implements QueryBuilder{
         private AtomicInteger sequence = new AtomicInteger(0);
         private int currentIndex = 0;
 
@@ -123,11 +123,13 @@ public class Query implements IQuery<EBase> {
             return instance;
         }
 
+        @Override
         public Builder withOnt(String ont) {
             this.ont = ont;
             return this;
         }
 
+        @Override
         public Builder withName(String name) {
             this.name = name;
             return this;
@@ -151,12 +153,14 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder start() {
             getElements().add(new Wrapper<>(new Start(sequence.get())));
             currentIndex = sequence.get();
             return this;
         }
 
+        @Override
         public Builder eType(String type, String tag) {
             populateNext();
             getElements().add(new Wrapper<>(new ETyped(sequence.get(), tag, type, 0), current()));
@@ -164,11 +168,13 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder concrete(String id, String name, String type, String tag) {
             getElements().add(new Wrapper<>(new EConcrete(sequence.get(), tag, type, id, name, sequence.incrementAndGet()), current()));
             return this;
         }
 
+        @Override
         public Builder rel(String rType, Rel.Direction dir, String tag) {
             populateNext();
             getElements().add(new Wrapper<>(new Rel(sequence.get(), rType, dir, tag, 0), current()));
@@ -176,6 +182,7 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder eProp(String pType) {
             populateNext();
             getElements().add(new Wrapper<>(new EProp(sequence.get(), pType, new IdentityProjection()), current()));
@@ -183,6 +190,7 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder eProp(String pType, Constraint constraint) {
             populateNext();
             getElements().add(new Wrapper<>(new EProp(sequence.get(), pType, constraint), current()));
@@ -190,6 +198,7 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder ePropGroup(List<Tuple2<String, Optional<Constraint>>> pTypes, QuantType type) {
             populateNext();
             getElements().add(new Wrapper<>(new EPropGroup(sequence.get(), type, pTypes.stream()
@@ -200,6 +209,7 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder rProp(String pType) {
             populateNext();
             getElements().add(new Wrapper<>(new RelProp(sequence.get(), pType, new IdentityProjection()), current()));
@@ -207,11 +217,13 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder projectField(EBase... name) {
             this.projectedFields.addAll(Arrays.asList(name));
             return this;
         }
 
+        @Override
         public Builder rProp(String pType, Constraint constraint) {
             populateNext();
             getElements().add(new Wrapper<>(new RelProp(sequence.get(), pType, constraint), current()));
@@ -219,6 +231,7 @@ public class Query implements IQuery<EBase> {
             return this;
         }
 
+        @Override
         public Builder quant(QuantType type) {
             populateNext();
             getElements().add(new Wrapper<>(new Quant1(sequence.get(), type, new ArrayList<>()), current(sequence.get() - 1)));
@@ -241,15 +254,18 @@ public class Query implements IQuery<EBase> {
             }
         }
 
+        @Override
         public int currentIndex() {
             return currentIndex;
         }
 
+        @Override
         public int currentIndex(int newCurrent) {
             currentIndex = newCurrent;
             return newCurrent;
         }
 
+        @Override
         public EBase current() {
             return elements.get(currentIndex).getCurrent();
         }
@@ -262,14 +278,17 @@ public class Query implements IQuery<EBase> {
             return elements.get(index);
         }
 
+        @Override
         public EBase pop() {
             return currentWrapper().getParent();
         }
 
+        @Override
         public Optional<EBase> pop(int index) {
             return Optional.ofNullable(currentWrapper(index).getParent());
         }
 
+        @Override
         public Optional<EBase> pop(Predicate<EBase> predicate) {
             int currentIndex = currentIndex();
             while (currentIndex != -1 && !predicate.test(current(currentIndex))) {
@@ -290,10 +309,12 @@ public class Query implements IQuery<EBase> {
             return elements.get(currentWrapper().getParent().geteNum());
         }
 
+        @Override
         public EBase current(int index) {
             return elements.get(index).getCurrent();
         }
 
+        @Override
         public Query build() {
             Query query = new Query();
             query.setOnt(ont);
@@ -304,7 +325,9 @@ public class Query implements IQuery<EBase> {
             if (nonidentical != null)
                 query.setNonidentical(nonidentical);
             return query;
+
         }
+
 
         private List<Wrapper<? extends EBase>> getElements() {
             if (elements == null) {

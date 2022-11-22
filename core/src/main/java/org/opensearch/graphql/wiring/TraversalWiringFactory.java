@@ -6,10 +6,13 @@ import graphql.Internal;
 import graphql.Scalars;
 import graphql.execution.ExecutionStepInfo;
 import graphql.execution.ResultPath;
+import graphql.scalars.ExtendedScalars;
 import graphql.schema.*;
 import graphql.schema.idl.*;
 import javaslang.Tuple2;
+import org.joda.time.DateTime;
 import org.opensearch.query.Query;
+import org.opensearch.query.QueryBuilder;
 import org.opensearch.query.Rel;
 import org.opensearch.query.properties.constraint.Constraint;
 import org.opensearch.query.properties.constraint.ConstraintOp;
@@ -20,9 +23,13 @@ import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.ontology.*;
 
 import java.io.IOException;
+import java.net.URL;
+import java.sql.Time;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static java.time.OffsetDateTime.*;
 
 
 @Internal
@@ -33,34 +40,34 @@ public class TraversalWiringFactory implements WiringFactory {
     //wiring jackson mapper
     public static final ObjectMapper mapper = new ObjectMapper();
 
-    private Query.Builder builder;
+    private QueryBuilder builder;
     private Accessor accessor;
     private Map<String, Integer> pathContext;
     private GraphQLSchema schema;
 
-    public static RuntimeWiring newEchoingWiring( Ontology ontology, Query.Builder queryBuilder) {
+    public static RuntimeWiring newEchoingWiring( Accessor accessor, QueryBuilder queryBuilder) {
         return newEchoingWiring(x -> {
-        }, ontology, queryBuilder);
+        }, accessor, queryBuilder);
     }
 
-    public static RuntimeWiring newEchoingWiring( Consumer<RuntimeWiring.Builder> builderConsumer, Ontology ontology, Query.Builder queryBuilder) {
+    public static RuntimeWiring newEchoingWiring( Consumer<RuntimeWiring.Builder> builderConsumer, Accessor accessor, QueryBuilder queryBuilder) {
         RuntimeWiring.Builder builder = RuntimeWiring.newRuntimeWiring();
         builderConsumer.accept(builder);
         return builder
-                .wiringFactory(new TraversalWiringFactory(ontology, queryBuilder))
+                .wiringFactory(new TraversalWiringFactory(accessor, queryBuilder))
                 .build();
     }
 
-    public TraversalWiringFactory( Ontology ontology, Query.Builder builder) {
+    public TraversalWiringFactory( Accessor accessor, QueryBuilder builder) {
         this.schema = GraphQLEngineFactory.schema()
                 .orElseThrow(() -> new SchemaError.SchemaErrorException("GraphQL schema not present","Expecting the GraphQL schema to be created during this stage" ));
 
         this.builder = builder;
-        this.accessor = new Accessor(ontology);
+        this.accessor = accessor;
         this.pathContext = new HashMap<>();
     }
 
-    public Query.Builder getBuilder() {
+    public QueryBuilder getBuilder() {
         return builder;
     }
 
@@ -162,8 +169,7 @@ public class TraversalWiringFactory implements WiringFactory {
             InputTypeWhereClause whereClause = mapper.readValue(mapper.writeValueAsString(argument), InputTypeWhereClause.class);
             //verify fields exist within entity type
             List<InputTypeConstraint> nonFoundFields = whereClause.getConstraints().stream()
-                    .filter(c -> !realType.get().containsProperty(c.getOperand()))
-                    .collect(Collectors.toList());
+                    .filter(c -> !realType.get().containsProperty(c.getOperand())).toList();
 
             if(!nonFoundFields.isEmpty())
                 throw new IllegalArgumentException("Fields "+nonFoundFields +" are not a part of the queried entity "+realType.get().getName());
@@ -176,7 +182,7 @@ public class TraversalWiringFactory implements WiringFactory {
 
 
             //if no quant exists - add one
-            if(!getBuilder().pop(eBase -> eBase instanceof QuantBase).isPresent()) {
+            if(getBuilder().pop(eBase -> eBase instanceof QuantBase).isEmpty()) {
                 builder.quant(QuantType.all);
             }
 
@@ -329,15 +335,27 @@ public class TraversalWiringFactory implements WiringFactory {
 
 
     private  Object fakeScalarValue(String fieldName, GraphQLScalarType scalarType) {
-        if (scalarType.equals(Scalars.GraphQLString)) {
+        if (scalarType.getName().equals(Scalars.GraphQLString.getName())) {
             return fieldName;
-        } else if (scalarType.equals(Scalars.GraphQLBoolean)) {
+        } else if (scalarType.getName().equals(Scalars.GraphQLBoolean.getName())) {
             return true;
-        } else if (scalarType.equals(Scalars.GraphQLInt)) {
+        } else if (scalarType.getName().equals(ExtendedScalars.Time.getName())) {
+            return new Time(System.currentTimeMillis());
+        } else if (scalarType.getName().equals(ExtendedScalars.DateTime.getName())) {
+            return now();
+        } else if (scalarType.getName().equals(ExtendedScalars.Url.getName())) {
+            return "https://somewhere.com";
+        } else if (scalarType.getName().equals(ExtendedScalars.Object.getName())) {
+            return new Object();
+        } else if (scalarType.getName().equals(ExtendedScalars.Json.getName())) {
+            return "{}";
+        } else if (scalarType.getName().equals(Scalars.GraphQLInt.getName())) {
             return 1;
-        } else if (scalarType.equals(Scalars.GraphQLFloat)) {
+        } else if (scalarType.getName().equals(ExtendedScalars.GraphQLLong.getName())) {
+            return 1L;
+        } else if (scalarType.getName().equals(Scalars.GraphQLFloat.getName())) {
             return 1.0;
-        } else if (scalarType.equals(Scalars.GraphQLID)) {
+        } else if (scalarType.getName().equals(Scalars.GraphQLID.getName())) {
             return "id_" + fieldName;
 /*
         } else if (scalarType.equals(Scalars.GraphQLBigDecimal)) {
