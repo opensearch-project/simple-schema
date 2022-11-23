@@ -37,7 +37,7 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
     companion object {
         private const val SIMPLESCHEMA_ACTION = "simpleschema_actions"
         private const val SIMPLESCHEMA_OBJECT_URL = "$BASE_SIMPLESCHEMA_URI/object"
-        private const val SIMPLESCHEMA_GRAPHQL_URL = "$BASE_SIMPLESCHEMA_URI/_igraphql"
+        private const val SIMPLESCHEMA_GRAPHQL_URL = "$BASE_SIMPLESCHEMA_URI/graphql"
     }
 
     /**

@@ -5,8 +5,6 @@ import org.opensearch.rest.RestChannel
 import org.opensearch.rest.RestRequest
 import org.opensearch.simpleschema.action.CreateGraphQLAction
 import org.opensearch.simpleschema.action.CreateGraphQLRequest
-import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectRequest
 import org.opensearch.simpleschema.util.contentParserNextToken
 
 class GraphQLRequestExecutor {

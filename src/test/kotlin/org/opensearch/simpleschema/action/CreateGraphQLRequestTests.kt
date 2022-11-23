@@ -21,9 +21,7 @@ import kotlin.test.assertContentEquals
 
 class CreateGraphQLRequestTests {
     private val xContentType = XContentType.JSON
-    private val createSchemaGraphQL = """
-        type Author { name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }
-    """.trim()
+    private val createSchemaGraphQL = """query all_countries {\n  countries {\n    code\n    name\n    capital\n  }\n}""".trim()
     private val createSchemaRequest = "{\"content\": \"$createSchemaGraphQL\"}".trimIndent()
 
     @Test
@@ -50,7 +48,6 @@ class CreateGraphQLRequestTests {
         graphQLStreamOutput.writeString("")
         graphQLStreamOutput.writeString(createSchemaGraphQL.replace("\\n", "\n"))
         graphQLStreamOutput.flush()
-        println(outputStream.toString())
         val graphQLStreamInput = InputStreamStreamInput(outputStream.toString().byteInputStream())
         val request2 = CreateGraphQLRequest(graphQLStreamInput)
         // Definitions are unequal due to invisible fields, but the strings show they're parsed equivalently

@@ -4,7 +4,6 @@ import graphql.language.Document
 import graphql.parser.Parser
 import org.opensearch.action.ActionRequest
 import org.opensearch.action.ActionRequestValidationException
-import org.opensearch.common.io.stream.InputStreamStreamInput
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.StreamOutput
 import org.opensearch.common.io.stream.Writeable
@@ -13,16 +12,8 @@ import org.opensearch.common.xcontent.ToXContentObject
 import org.opensearch.common.xcontent.XContentBuilder
 import org.opensearch.common.xcontent.XContentParser
 import org.opensearch.common.xcontent.XContentParserUtils
-import org.opensearch.commons.utils.fieldIfNotNull
 import org.opensearch.commons.utils.logger
-import org.opensearch.simpleschema.model.BaseObjectData
-import org.opensearch.simpleschema.model.RestTag
-import org.opensearch.simpleschema.model.SimpleSchemaObjectDataProperties
-import org.opensearch.simpleschema.model.SimpleSchemaObjectType
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
-import java.lang.IllegalArgumentException
 
 internal class CreateGraphQLRequest : ActionRequest, ToXContentObject {
     val document: Document
