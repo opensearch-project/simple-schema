@@ -59,19 +59,14 @@ public class GraphQLSimpleOntologyTranslatorTest {
         List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName).toList();
         Assertions.assertTrue(names.contains("Author"));
         Assertions.assertTrue(names.contains("Book"));
-        Assertions.assertTrue(names.contains("AuthorResults"));
-        Assertions.assertTrue(names.contains("AuthorAggregationResults"));
-        Assertions.assertTrue(names.contains("BookResults"));
-        Assertions.assertTrue(names.contains("BookAggregationResults"));
     }
-
 
     /**
      * test properties are correctly translated (sample properties are selected for comparison)
      */
-//    @Test
-    @Ignore("Fix overriding properties by different schema types with similar names")
-    public void fixTestSimplePropertiesTranslation() {
+//    @Ignore("Fix overriding properties by different schema types with similar names")
+    @Test
+    public void testSimplePropertiesTranslation() {
         Assertions.assertTrue(equal(ontologyAccessor.property$("ISBN"),
                 new Property.MandatoryProperty(new Property("ISBN", "ISBN", ID.asType()))));
         Assertions.assertTrue(equal(ontologyAccessor.property$("title"),
@@ -87,6 +82,7 @@ public class GraphQLSimpleOntologyTranslatorTest {
         Assertions.assertTrue(equal(ontologyAccessor.property$("nationality"),
                 new Property("nationality", "nationality", STRING.asType())));
     }
+
 
     /**
      * test the schema is correctly translated into ontology structure

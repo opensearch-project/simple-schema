@@ -130,8 +130,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
 
     private void validateLanguageType(GraphQLSchema graphQLSchema) {
         List<GraphQLNamedType> types = graphQLSchema.getAllTypesAsList().stream()
-                .filter(p -> languageTypes.contains(p.getName()))
-                .collect(Collectors.toList());
+                .filter(p -> languageTypes.contains(p.getName())).toList();
 
         if (types.size() != languageTypes.size())
             throw new IllegalArgumentException("GraphQL schema doesnt include Query/Where types");
@@ -146,8 +145,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
                                 .map(GraphQLNamedSchemaElement::getName)
                 )
                 .filter(p -> !p.startsWith("__"))
-                .filter(p -> !languageTypes.contains(p))
-                .collect(Collectors.toList()));
+                .filter(p -> !languageTypes.contains(p)).toList());
     }
 
     private List<Property> populateProperties(List<GraphQLFieldDefinition> fieldDefinitions) {
@@ -298,6 +296,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
     private Ontology.OntologyBuilder entities(GraphQLSchema graphQLSchema, Ontology.OntologyBuilder context) {
         List<EntityType> collect = graphQLSchema.getAllTypesAsList().stream()
                 .filter(p -> GraphQLObjectType.class.isAssignableFrom(p.getClass()))
+                .filter(p -> getDirective((GraphQLObjectType) p,"autoGen").isEmpty())
                 .filter(p -> !languageTypes.contains(p.getName()))
                 .filter(p -> !p.getName().startsWith("__"))
                 .map(ifc -> createEntity((GraphQLObjectType) ifc, context))
@@ -330,6 +329,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
     private Ontology.OntologyBuilder relations(GraphQLSchema graphQLSchema, Ontology.OntologyBuilder context) {
         Map<String, List<RelationshipType>> collect = graphQLSchema.getAllTypesAsList().stream()
                 .filter(p -> GraphQLObjectType.class.isAssignableFrom(p.getClass()))
+                .filter(p -> getDirective((GraphQLObjectType) p,"autoGen").isEmpty())
                 .filter(p -> !languageTypes.contains(p.getName()))
                 .filter(p -> !p.getName().startsWith("__"))
                 .map(ifc -> createRelation(ifc.getName(), ((GraphQLObjectType) ifc).getFieldDefinitions(), context))

@@ -16,6 +16,10 @@ import static graphql.schema.GraphQLTypeReference.typeRef;
 public interface GraphQLSchemaUtils {
     String QUERY = "Query";
 
+    static Optional<GraphQLDirective> getDirective(GraphQLObjectType object, String directiveName) {
+        return object.getDirectives().stream().filter(d->d.getName().equals(directiveName)).findAny();
+    }
+
     static Optional<String> getIDFieldName(GraphQLObjectType object) {
         Type Id = TypeName.newTypeName(GraphQLID.getName()).build();
         Optional<GraphQLFieldDefinition> fieldDefinition = object.getFieldDefinitions().stream()

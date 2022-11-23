@@ -46,7 +46,7 @@ input BookAggregationFilter {
     OR : [BookAggregationFilter]
 }
 # auto generated book aggregation filter results
-type BookAggregationResults {
+type BookAggregationResults @autoGen{
     ISBN:TextAggregationFilterResult
     title:TextAggregationFilterResult
     published:DateTimeAggregationFilterResult
@@ -67,7 +67,7 @@ input AuthorAggregationFilter {
 }
 
 # auto generated author aggregation filter
-type AuthorAggregationResults {
+type AuthorAggregationResults @autoGen{
     name:TextAggregationFilterResult
     born :DateTimeAggregationFilterResult
     died :DateTimeAggregationFilterResult
@@ -76,12 +76,12 @@ type AuthorAggregationResults {
     booksCount:Int
 }
 # auto generated book results
-type BookResults {
+type BookResults @autoGen{
     results:[Book]
     aggResults:[BookAggregationResults]
 }
 # auto generated book results
-type AuthorResults {
+type AuthorResults @autoGen{
     results:[Author]
     aggResults:[AuthorAggregationResults]
 }

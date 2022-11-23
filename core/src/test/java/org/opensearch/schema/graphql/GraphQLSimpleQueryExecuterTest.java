@@ -154,23 +154,24 @@ public class GraphQLSimpleQueryExecuterTest {
                 "                           └─?[4]:[born<IdentityProjection>]]";
         assertEquals(expected, QueryDescriptor.print(query));
     }
+
     @Test
     public void testCorrectTypeWithAllField() {
         String q = " {\n" +
                 "    author {\n" +
                 "        name,\n" +
-                "        born\n" +
-                "        died\n" +
-                "        nationality\n" +
-                "        books {\n" +
-                "              }\n" +
+                "        born,\n" +
+                "        died,\n" +
+                "        nationality,\n" +
                 "    }\n" +
                 "}";
         Query query = transformer.transform(accessor, q);
         String expected = "[└── Start, \n" +
-                "    ──Typ[Author:1]──Q[2]:{3|4}, \n" +
-                "                           └─?[3]:[name<IdentityProjection>], \n" +
-                "                           └─?[4]:[born<IdentityProjection>]]";
+                "    ──Typ[Author:1]──Q[2]:{3|4|5|6}, \n" +
+                "                               └─?[3]:[name<IdentityProjection>], \n" +
+                "                               └─?[4]:[born<IdentityProjection>], \n" +
+                "                               └─?[5]:[died<IdentityProjection>], \n" +
+                "                               └─?[6]:[nationality<IdentityProjection>]]";
         assertEquals(expected, QueryDescriptor.print(query));
     }
 
@@ -193,9 +194,9 @@ public class GraphQLSimpleQueryExecuterTest {
                 "                                 └─?[3]:[name<IdentityProjection>], \n" +
                 "                                 └─?[4]:[born<IdentityProjection>], \n" +
                 "                                 └─?[5]:[died<IdentityProjection>], \n" +
-                "                                 └─?[6]:[TextAggregationFilterResult<IdentityProjection>], \n" +
+                "                                 └─?[6]:[nationality<IdentityProjection>], \n" +
                 "                                 └─Typ[Book:7]──Q[8]:{9}, \n" +
-                "                                                       └─?[9]:[title<IdentityProjection>]]";
+                "                                                    └─?[9]:[title<IdentityProjection>]]";
         assertEquals(expected, QueryDescriptor.print(query));
     }
 
@@ -217,14 +218,14 @@ public class GraphQLSimpleQueryExecuterTest {
         Query query = transformer.transform(accessor, q);
         String expected = "[└── Start, \n" +
                 "    ──Typ[Author:1]──Q[2]:{3|4|5|6|7}, \n" +
-                "                                 └─?[3]:[TextAggregationFilterResult<IdentityProjection>], \n" +
+                "                                 └─?[3]:[name<IdentityProjection>], \n" +
                 "                                 └─?[4]:[born<IdentityProjection>], \n" +
                 "                                 └─?[5]:[died<IdentityProjection>], \n" +
-                "                                 └─?[6]:[TextAggregationFilterResult<IdentityProjection>], \n" +
+                "                                 └─?[6]:[nationality<IdentityProjection>], \n" +
                 "                                 └─Typ[Book:7]──Q[8]:{9|10|11}, \n" +
-                "                                                          └─?[9]:[TextAggregationFilterResult<IdentityProjection>], \n" +
+                "                                                          └─?[9]:[ISBN<IdentityProjection>], \n" +
                 "                                                          └─?[10]:[title<IdentityProjection>], \n" +
-                "                                                          └─?[11]:[DateTimeAggregationFilterResult<IdentityProjection>]]";
+                "                                                          └─?[11]:[published<IdentityProjection>]]";
         assertEquals(expected, QueryDescriptor.print(query));
     }
 }
