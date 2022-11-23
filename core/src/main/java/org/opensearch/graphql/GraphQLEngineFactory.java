@@ -5,8 +5,6 @@ import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.*;
 import graphql.schema.idl.errors.SchemaProblem;
-import org.opensearch.query.Query;
-import org.opensearch.query.QueryBuilder;
 import org.opensearch.schema.SchemaError;
 
 import java.io.InputStream;

@@ -28,7 +28,7 @@ public class InputTypeWhereClause {
         return constraints;
     }
 
-    enum WhereOperator {
+    public enum WhereOperator {
         AND,
         OR
     }
