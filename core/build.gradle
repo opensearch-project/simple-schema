@@ -9,7 +9,7 @@ plugins {
     id 'jacoco'
 }
 
-version '2.1.0.0-SNAPSHOT'
+version '2.3.0.0'
 
 repositories {
     mavenCentral()
@@ -23,6 +23,7 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
     implementation group: 'com.google.inject', name: 'guice', version: '4.1.0'
     implementation "org.opensearch:opensearch:2.3.0"
+    implementation "org.opensearch.plugin:opensearch-sql-plugin:2.3.0.0"
     implementation 'org.opensearch.client:opensearch-rest-high-level-client:2.3.0'
 
     testImplementation group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'

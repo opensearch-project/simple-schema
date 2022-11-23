@@ -1,3 +1,6 @@
+rootProject.name = 'simpleschema'
+
 include 'core'
 include 'service'
+
 

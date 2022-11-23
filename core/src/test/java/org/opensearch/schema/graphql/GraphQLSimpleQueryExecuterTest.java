@@ -4,11 +4,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.Transformer;
-import org.opensearch.languages.ioql.query.descriptor.QueryDescriptor;
+import org.opensearch.languages.oql.query.descriptor.QueryDescriptor;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.GraphQLToOntologyTransformer;
-import org.opensearch.languages.ioql.graphql.GraphQLToQueryTransformer;
-import org.opensearch.languages.ioql.query.Query;
+import org.opensearch.languages.oql.graphql.GraphQLToOQLTransformer;
+import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
@@ -48,7 +48,7 @@ public class GraphQLSimpleQueryExecuterTest {
         //expect engine not yet created
         assertTrue(GraphQLEngineFactory.engine().isEmpty());
         //create a GQL to Query IOQL transformer
-        transformer = new GraphQLToQueryTransformer();
+        transformer = new GraphQLToOQLTransformer();
 
         // first create an ontology from the GQL SDL
         GraphQLToOntologyTransformer graphQLToOntologyTransformer = new GraphQLToOntologyTransformer();

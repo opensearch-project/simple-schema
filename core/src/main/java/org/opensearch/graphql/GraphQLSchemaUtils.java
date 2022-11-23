@@ -1,10 +1,13 @@
 package org.opensearch.graphql;
 
+import graphql.Scalars;
 import graphql.language.*;
+import graphql.scalars.ExtendedScalars;
 import graphql.schema.*;
 import javaslang.Tuple2;
 import org.opensearch.schema.ontology.DirectiveType;
 
+import java.sql.Time;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -12,10 +15,38 @@ import java.util.stream.Collectors;
 import static graphql.Scalars.GraphQLID;
 import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLTypeReference.typeRef;
+import static java.time.OffsetDateTime.now;
 
 public interface GraphQLSchemaUtils {
     String QUERY = "Query";
 
+    static Object fakeScalarValue(String fieldName, GraphQLScalarType scalarType) {
+        if (scalarType.getName().equals(Scalars.GraphQLString.getName())) {
+            return fieldName;
+        } else if (scalarType.getName().equals(Scalars.GraphQLBoolean.getName())) {
+            return true;
+        } else if (scalarType.getName().equals(ExtendedScalars.Time.getName())) {
+            return new Time(System.currentTimeMillis());
+        } else if (scalarType.getName().equals(ExtendedScalars.DateTime.getName())) {
+            return now();
+        } else if (scalarType.getName().equals(ExtendedScalars.Url.getName())) {
+            return "https://opensearch.org/";
+        } else if (scalarType.getName().equals(ExtendedScalars.Object.getName())) {
+            return new Object();
+        } else if (scalarType.getName().equals(ExtendedScalars.Json.getName())) {
+            return "{}";
+        } else if (scalarType.getName().equals(Scalars.GraphQLInt.getName())) {
+            return 1;
+        } else if (scalarType.getName().equals(ExtendedScalars.GraphQLLong.getName())) {
+            return 1L;
+        } else if (scalarType.getName().equals(Scalars.GraphQLFloat.getName())) {
+            return 1.0;
+        } else if (scalarType.getName().equals(Scalars.GraphQLID.getName())) {
+            return "id_" + fieldName;
+        } else {
+            return null;
+        }
+    }
     static Optional<GraphQLDirective> getDirective(GraphQLObjectType object, String directiveName) {
         return object.getDirectives().stream().filter(d->d.getName().equals(directiveName)).findAny();
     }
