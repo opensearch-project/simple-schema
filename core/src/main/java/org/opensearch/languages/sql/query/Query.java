@@ -38,7 +38,7 @@ public class Query {
     }
 
     /**
-     * Taken from https://github.com/HTTP-RPC/Kilo - <br>
+     * Fluent SQL Query Builder Taken from https://github.com/HTTP-RPC/Kilo - <br>
      * <p>
      * Provides a fluent API for programmatically constructing and executing SQL
      * queries.
