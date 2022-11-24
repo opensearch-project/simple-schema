@@ -5,6 +5,9 @@ import javaslang.collection.Stream;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * static index stands for the default standard single entity <-> single index mapping
+ */
 public class StaticIndexPartitions implements IndexPartitions {
     //region Constructors
     public StaticIndexPartitions(String...indices) {

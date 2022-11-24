@@ -7,6 +7,7 @@ import org.opensearch.languages.oql.query.*;
 import org.opensearch.languages.oql.query.entity.*;
 import org.opensearch.languages.oql.query.optional.OptionalComp;
 import org.opensearch.languages.oql.query.properties.*;
+import org.opensearch.languages.oql.query.properties.constraint.Constraint;
 import org.opensearch.languages.oql.query.quant.QuantBase;
 import org.opensearch.languages.oql.query.quant.QuantType;
 import org.opensearch.schema.ontology.Below;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 import static org.opensearch.languages.oql.query.Query.QueryUtils.findByEnum;
 import static org.opensearch.languages.oql.query.Query.QueryUtils.getPath;
 
+/**
+ * a Query description reflects the query's state
+ */
 public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query> {
 
 
@@ -80,6 +84,10 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         } else {
             if (e instanceof EConcrete)
                 joiner.add(e.getClass().getSimpleName() + "[" + ((EConcrete) e).geteType() + ":" + e.geteNum() + ":ID[" + ((EConcrete) e).geteID() + "]]");
+            else if (e instanceof ETyped)
+                joiner.add(e.getClass().getSimpleName() + "[" + ((ETyped) e).geteType() + ":" + e.geteNum() + "]");
+            else if (e instanceof Rel)
+                joiner.add(e.getClass().getSimpleName() + "[" + ((Rel) e).getrType() + ":" + e.geteNum() + "]");
             else
                 joiner.add(e.getClass().getSimpleName() + "[" + e.geteNum() + "]");
         }
@@ -122,7 +130,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         String[] pStrings = Stream.ofAll(propGroup.getProps())
                 .map(p -> {
                     if (p.getCon() != null) {
-                        return p.getpType() + "<" + p.getCon().getOp() + "," + p.getCon().getExpr() + ">";
+                        return p.getpType() + "<" + printConstraint(p.getCon()) + ">";
                     } else if (p.getProj() != null) {
                         return p.getpType() + "<" + p.getProj().getClass().getSimpleName() + ">";
                     } else {
@@ -142,9 +150,9 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
 
     static String printDetailedProp(BaseProp p) {
         if (p instanceof RankingProp) {
-            return "boost:" + ((RankingProp) p).getBoost() + "Typ:[" + p.getpType() + "] [" + p.getpType() + "[" + p.getCon().getOp() + "," + p.getCon().getExpr() + "]";
+            return "boost:" + ((RankingProp) p).getBoost() + "Typ:[" + p.getpType() + "] [" + p.getpType() + "[" + printConstraint(p.getCon()) + "]";
         } else if (p.getCon() != null) {
-            return "Typ:[" + p.getpType() + "] [" + p.getCon().getOp() + "," + p.getCon().getExpr() + "]";
+            return "Typ:[" + p.getpType() + "] [" + printConstraint(p.getCon()) + "]";
         } else if (p.getProj() != null) {
             return "Typ:[" + p.getpType() + "] [" + p.getProj().getClass().getSimpleName() + "]";
         } else {
@@ -154,14 +162,21 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
 
     static String printProp(EProp p) {
         if (p instanceof RankingProp) {
-            return "boost:" + ((RankingProp) p).getBoost() + "  " + p.getpType() + "<" + p.getCon().getOp() + "," + p.getCon().getExpr() + ">";
+            return "boost:" + ((RankingProp) p).getBoost() + "  " + p.getpType() + "<" + printConstraint(p.getCon()) + ">";
         } else if (p.getCon() != null) {
-            return p.getpType() + "<" + p.getCon().getOp() + "," + p.getCon().getExpr() + ">";
+            return p.getpType() + "<" + printConstraint(p.getCon()) + ">";
         } else if (p.getProj() != null) {
             return p.getpType() + "<" + p.getProj().getClass().getSimpleName() + ">";
         } else {
             return p.getpType();
         }
+    }
+
+    public static String printConstraint(Constraint con) {
+        if (con == null)
+            return "-";
+
+        return (con.getOp() != null ? con.getOp() : "") + "," + (con.getExpr() != null ? con.getExpr().toString() : "");
     }
     //endregion
 
@@ -244,6 +259,13 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         return builder.toString();
     }
 
+    /**
+     *
+     * prints the graphviz string dot product describing this query
+     * see <a href="https://dreampuf.github.io/GraphvizOnline/">Visualize</a>
+     * @param query
+     * @return
+     */
     public static String printGraph(Query query) {
         return new QueryDescriptor().visualize(query);
     }
@@ -308,7 +330,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         }
 
         prpoBuilder.append("\n " + printElementsDef(query, props));
-        props.forEach(p->prpoBuilder.append("\n " + element.geteNum() + "->" + printElements(Collections.singletonList(p))));
+        props.forEach(p -> prpoBuilder.append("\n " + element.geteNum() + "->" + printElements(Collections.singletonList(p))));
         removeRedundentArrow(prpoBuilder);
 
         prpoBuilder.append("\n } \n");
@@ -322,32 +344,33 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
      * @param element
      * @return
      */
-    public static String printQuant(Query query, Container element) {
+    private static String printQuant(Query query, Container element) {
         QuantType quantType = element.getqType();
-        int id  = ((EBase) element).geteNum();
+        int id = ((EBase) element).geteNum();
         //add subgraph for the entire quant
         StringBuilder quantBuilder = new StringBuilder();
-        quantBuilder.append(" \n subgraph cluster_Q_" + id   + " { \n");
+        quantBuilder.append(" \n subgraph cluster_Q_" + id + " { \n");
         quantBuilder.append(" \t color=blue; \n");
         quantBuilder.append(" \t node [style=filled]; \n");
 
-        if(element instanceof QuantBase ) {
+        if (element instanceof QuantBase) {
             quantBuilder.append(" \t color=blue; \n");
             quantBuilder.append(" \t " + id + " [color=lightblue, shape=folder, label=\"" + quantType + "\"]; \n");
-        } if(element instanceof OptionalComp) {
+        }
+        if (element instanceof OptionalComp) {
             quantBuilder.append(" \t color=yellow; \n");
             quantBuilder.append(" \t " + id + " [color=yellow, shape=tab, label=\"" + quantType + "\"]; \n");
         }
 
         // label the quant type
-        quantBuilder.append(" \t label = \" "+ element.getClass().getSimpleName()+"[" + id + "];\"; \n");
+        quantBuilder.append(" \t label = \" " + element.getClass().getSimpleName() + "[" + id + "];\"; \n");
 
         //print the quant list path itself
         //non inclusive for additional quants inside the path - they will be printed separately
         Object next = element.getNext();
         // next can be either List<Int> or Int
-        if(next instanceof Collection) {
-            ((Collection)next).forEach(
+        if (next instanceof Collection) {
+            ((Collection) next).forEach(
                     path -> quantBuilder.append(printPath(query, id, getPath(query, (Integer) path, eBase -> Container.class.isAssignableFrom(eBase.getClass()))))
             );
         } else {
@@ -357,7 +380,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         return quantBuilder.toString();
     }
 
-    public static String printPath(Query query, int id, List<? extends EBase> path) {
+    private static String printPath(Query query, int id, List<? extends EBase> path) {
         StringBuilder builder = new StringBuilder();
         //print container (quant / optional )
         path.stream()
@@ -371,7 +394,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         return builder.toString();
     }
 
-    public static String printElementsDef(Query query, List<? extends EBase> path) {
+    private static String printElementsDef(Query query, List<? extends EBase> path) {
         StringBuilder builder = new StringBuilder();
         path.forEach(element -> {
                     //print relationship symbol for the quant
@@ -414,7 +437,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
         return builder.toString();
     }
 
-    public static void removeRedundentArrow(StringBuilder builder) {
+    private static void removeRedundentArrow(StringBuilder builder) {
         if (builder.toString().endsWith("->"))
             builder.delete(builder.toString().length() - 2, builder.toString().length());
     }
@@ -424,7 +447,7 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
      *
      * @param path
      */
-    public static String printElements(List<? extends EBase> path) {
+    private static String printElements(List<? extends EBase> path) {
         StringBuilder builder = new StringBuilder();
 
         path.forEach(element -> {

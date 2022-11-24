@@ -8,6 +8,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Index Partitioning represents the concept of an index that spans across different key based partition field in-which each index partition is responsible for
+ * that specific key value zone
+ */
 public interface IndexPartitions {
     Optional<String> getPartitionField();
 

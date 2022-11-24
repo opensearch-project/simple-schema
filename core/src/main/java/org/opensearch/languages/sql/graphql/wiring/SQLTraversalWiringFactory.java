@@ -3,33 +3,30 @@ package org.opensearch.languages.sql.graphql.wiring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.Internal;
-import graphql.Scalars;
 import graphql.execution.ExecutionStepInfo;
 import graphql.execution.ResultPath;
-import graphql.scalars.ExtendedScalars;
 import graphql.schema.*;
-import graphql.schema.idl.*;
-import javaslang.Tuple2;
+import graphql.schema.idl.FieldWiringEnvironment;
+import graphql.schema.idl.InterfaceWiringEnvironment;
+import graphql.schema.idl.UnionWiringEnvironment;
+import graphql.schema.idl.WiringFactory;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.wiring.InputTypeConstraint;
 import org.opensearch.graphql.wiring.InputTypeWhereClause;
-import org.opensearch.graphql.wiring.InputTypeWhereClause.WhereOperator;
 import org.opensearch.languages.sql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.Property;
-import org.opensearch.schema.ontology.RelationshipType;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.time.OffsetDateTime.now;
 import static org.opensearch.graphql.GraphQLSchemaUtils.fakeScalarValue;
 
 
+/**
+ * GraphQL callback factory for generating a query based on the GraphQL visitor - this factory specifically generates an SQL query
+ */
 @Internal
 public class SQLTraversalWiringFactory implements WiringFactory {
 

@@ -1,6 +1,8 @@
 package org.opensearch.schema.ontology;
 
-
+/**
+ * Marker interface for a tagged element (Entity / Relation)
+ */
 public interface Tagged {
     String TAG_EVAL = "$:{}";
 

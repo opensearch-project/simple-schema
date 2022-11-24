@@ -5,7 +5,8 @@ import org.opensearch.languages.QueryBuilder;
 import java.util.*;
 
 /**
- * this is the SQL based query builder
+ * The SQL (textual) query wrapper and fluent query builder
+ *
  */
 public class Query {
     private String name;
@@ -38,7 +39,7 @@ public class Query {
     }
 
     /**
-     * Taken from https://github.com/HTTP-RPC/Kilo - <br>
+     * Fluent SQL Query Builder Taken / Inspired from https://github.com/HTTP-RPC/Kilo - <br>
      * <p>
      * Provides a fluent API for programmatically constructing and executing SQL
      * queries.

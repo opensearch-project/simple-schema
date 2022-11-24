@@ -1,12 +1,5 @@
 package org.opensearch.schema.ontology;
 
-
-
-
-
-
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -15,6 +8,9 @@ import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
+/**
+ * a Property is a container for a field which has a name, logical type ana a concrete type
+ */
 public class Property {
     //region Constructors
     public Property() {

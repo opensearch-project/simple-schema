@@ -1,5 +1,8 @@
 package org.opensearch.schema.ontology;
 
+/**
+ * OntologyFinalizer is responsible for post creation phase of tj
+ */
 public class OntologyFinalizer {
     public static final String STRING = "string"; //represents keyword
 

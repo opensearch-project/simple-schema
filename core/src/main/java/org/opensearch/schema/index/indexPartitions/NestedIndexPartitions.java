@@ -6,6 +6,9 @@ import javaslang.collection.Stream;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * Index partition that is responsible for the nesting objects in the mapping
+ */
 public class NestedIndexPartitions implements IndexPartitions {
     //region Constructors
     public NestedIndexPartitions(String...indices) {

@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 
 import static org.opensearch.graphql.GraphQLSchemaUtils.fakeScalarValue;
 
-
+/**
+ * GraphQL callback factory for generating a query based on the GraphQL visitor - this factory specifically generates an Ontology Query Language
+ */
 @Internal
 public class OQLTraversalWiringFactory implements WiringFactory {
 

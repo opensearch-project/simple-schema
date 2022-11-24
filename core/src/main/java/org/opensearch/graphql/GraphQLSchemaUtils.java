@@ -17,6 +17,9 @@ import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLTypeReference.typeRef;
 import static java.time.OffsetDateTime.now;
 
+/**
+ * Graph QL general schema utility helpers
+ */
 public interface GraphQLSchemaUtils {
     String QUERY = "Query";
 

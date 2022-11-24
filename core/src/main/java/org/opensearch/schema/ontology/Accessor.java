@@ -9,6 +9,9 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+/**
+ * General helper utility that helps to query and investigate the Ontology metadata
+ */
 public class Accessor implements Supplier<Ontology> {
     //region Constructors
     public Accessor(Ontology ontology) {
