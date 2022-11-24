@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.languages.oql;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
