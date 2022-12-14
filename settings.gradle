@@ -1,0 +1,8 @@
+// This project uses git-submodules to have dependencies from org.opensearch.plugin:opensearch-sql-plugin:2.3.0
+
+rootProject.name = 'simpleschema'
+
+include 'core'
+include 'service'
+
+

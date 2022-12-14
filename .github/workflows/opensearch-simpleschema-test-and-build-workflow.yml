@@ -19,7 +19,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-    
+
+      # dependencies: OpenSearch-sql
+      - name: Checkout Opensearch-SQL-Plugin
+        uses: actions/checkout@v2
+        with:
+          repository: 'opensearch-project/sql'
+          path: OpenSearch-SQL
+          ref: ${{ env.OPENSEARCH_VERSION }}
+      - name: Build Opensearch-SQL-Plugin
+        working-directory: ./OpenSearch-SQL
+        run: ./gradlew publishToMavenLocal -Dbuild.snapshot=false
+
       - name: Run Backwards Compatibility Tests
         run: |
           cd opensearch-simpleschema
