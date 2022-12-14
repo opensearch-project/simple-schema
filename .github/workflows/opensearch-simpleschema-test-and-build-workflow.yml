@@ -37,13 +37,12 @@ jobs:
 
       - name: Run Backwards Compatibility Tests
         run: |
-          cd opensearch-simpleschema
+          cd services
           echo "Running backwards compatibility tests ..."
           ./gradlew bwcTestSuite -Dtests.security.manager=false
 
       - name: Build with Gradle
         run: |
-          cd opensearch-simpleschema
           ./gradlew build
 
       - name: Upload coverage
@@ -55,11 +54,11 @@ jobs:
 
       - name: Create Artifact Path
         run: |
-          mkdir -p opensearch-simpleschema-builds
-          cp -r ./opensearch-simpleschema/build/distributions/*.zip opensearch-simpleschema-builds/
+          mkdir -p simpleschema-builds
+          cp -r ./build/distributions/*.zip simpleschema-builds/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
         with:
           name: opensearch-simpleschema
-          path: opensearch-simpleschema-builds
+          path: simpleschema-builds
