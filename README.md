@@ -1,4 +1,4 @@
-<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
+<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px"> <img src="docs/assets/img/icons8-beta-64.png" height="64px">  
 
 ## Simple Schema for Open Search
 
