@@ -258,6 +258,7 @@ public class Ontology {
         STRING,
         TEXT,
         DATE,
+        DATETIME,
         LONG,
         INT,
         FLOAT,

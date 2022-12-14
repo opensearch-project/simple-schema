@@ -1,6 +1,5 @@
 package org.opensearch.schema.domain.observability.index;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -19,7 +18,6 @@ import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -70,6 +68,44 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
     /**
      * verify the agent entity index-provider contains basic structure and properties
      */
+    public void GenerateAgentEntitySubGroupNestedMappingTest() throws IOException, JSONException {
+        HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
+        IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
+        builder.map(ontologyAccessor, new NoOpClient("test"), requests);
+
+        Assert.assertNotNull(requests.get("process"));
+        Assert.assertEquals(1, requests.get("process").getMappings().size());
+        Assert.assertNotNull(requests.get("process").getMappings().get("Process"));
+        Assert.assertNotNull(((Map) requests.get("process").getMappings().get("Process")).get("properties"));
+        Map processPropertiesMap = (Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties");
+
+        // since group field is an array of groups => verify group field is embedded in the process mapping as a nested object
+        Assert.assertNull(((Map) ((Map) ((Map) processPropertiesMap).get("group")).get("properties")).get("type"));
+        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
+        Assert.assertEquals(3, ((Map) ((Map) ((Map) processPropertiesMap).get("group")).get("properties")).size());
+
+        // since group field is an array of groups => verify group field is embedded in the process mapping as a nested object
+        Assert.assertEquals("nested", ((Map) (((Map) processPropertiesMap).get("supplementalGroups"))).get("type"));
+        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
+        Assert.assertEquals(3, ((Map) ((Map) ((Map) processPropertiesMap).get("supplementalGroups")).get("properties")).size());
+
+        // since previous field is an array of processes => verify previous field is embedded in the process mapping as a nested object
+        Assert.assertEquals("nested", ((Map) (((Map) processPropertiesMap).get("previous"))).get("type"));
+        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
+        Assert.assertEquals(1, ((Map) ((Map) ((Map) processPropertiesMap).get("previous")).get("properties")).size());
+
+        // since previous field is an array of processes => verify previous field is embedded in the process mapping as a nested object
+        Assert.assertEquals("nested", ((Map) (((Map) processPropertiesMap).get("parent"))).get("type"));
+        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
+        Assert.assertEquals(1, ((Map) ((Map) ((Map) processPropertiesMap).get("parent")).get("properties")).size());
+
+
+    }
+
+    @Test
+    /**
+     * verify the agent entity index-provider contains basic structure and properties
+     */
     public void GenerateAgentEntityMappingTest() throws IOException, JSONException {
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
@@ -79,28 +115,47 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
         Assert.assertEquals(1, requests.get("process").getMappings().size());
         Assert.assertNotNull(requests.get("process").getMappings().get("Process"));
         Assert.assertNotNull(((Map) requests.get("process").getMappings().get("Process")).get("properties"));
-        Assert.assertEquals(39, ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).size());
+        Map processPropertiesMap = (Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties");
 
-        // since group field is an array of groups => verify group field is embedded in the process mapping as a nested object
-        Assert.assertNull(((Map) ((Map) ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("group")).get("properties")).get("type"));
-        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
-        Assert.assertEquals(3, ((Map) ((Map) ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("group")).get("properties")).size());
-
-        // since group field is an array of groups => verify group field is embedded in the process mapping as a nested object
-        Assert.assertEquals("nested", ((Map) (((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("supplementalGroups"))).get("type"));
-        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
-        Assert.assertEquals(3, ((Map) ((Map) ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("supplementalGroups")).get("properties")).size());
-
-        // since previous field is an array of processes => verify previous field is embedded in the process mapping as a nested object
-        Assert.assertEquals("nested", ((Map) (((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("previous"))).get("type"));
-        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
-        Assert.assertEquals(1, ((Map) ((Map) ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("previous")).get("properties")).size());
-
-        // since previous field is an array of processes => verify previous field is embedded in the process mapping as a nested object
-        Assert.assertEquals("nested", ((Map) (((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("parent"))).get("type"));
-        // since process has other process fields it is referencing to - all these fields must be created as mapping nested objects of reference type (reference type only contains ID & Name fields)
-        Assert.assertEquals(1, ((Map) ((Map) ((Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties")).get("parent")).get("properties")).size());
-
+        Assert.assertTrue(processPropertiesMap.containsKey("savedUser"));
+        Assert.assertTrue(processPropertiesMap.containsKey("leader"));
+        Assert.assertTrue(processPropertiesMap.containsKey("parent"));
+        Assert.assertTrue(processPropertiesMap.containsKey("argsCount"));
+        Assert.assertTrue(processPropertiesMap.containsKey("workingDirectory"));
+        Assert.assertTrue(processPropertiesMap.containsKey("sessionLeader"));
+        Assert.assertTrue(processPropertiesMap.containsKey("envVars"));
+        Assert.assertTrue(processPropertiesMap.containsKey("interactive"));
+        Assert.assertTrue(processPropertiesMap.containsKey("description"));
+        Assert.assertTrue(processPropertiesMap.containsKey("pid"));
+        Assert.assertTrue(processPropertiesMap.containsKey("source"));
+        Assert.assertTrue(processPropertiesMap.containsKey("title"));
+        Assert.assertTrue(processPropertiesMap.containsKey("threadId"));
+        Assert.assertTrue(processPropertiesMap.containsKey("exitCode"));
+        Assert.assertTrue(processPropertiesMap.containsKey("supplementalGroups"));
+        Assert.assertTrue(processPropertiesMap.containsKey("end"));
+        Assert.assertTrue(processPropertiesMap.containsKey("groupLeader"));
+        Assert.assertTrue(processPropertiesMap.containsKey("elf"));
+        Assert.assertTrue(processPropertiesMap.containsKey("timestamp"));
+        Assert.assertTrue(processPropertiesMap.containsKey("group"));
+        Assert.assertTrue(processPropertiesMap.containsKey("previous"));
+        Assert.assertTrue(processPropertiesMap.containsKey("start"));
+        Assert.assertTrue(processPropertiesMap.containsKey("entityId"));
+        Assert.assertTrue(processPropertiesMap.containsKey("message"));
+        Assert.assertTrue(processPropertiesMap.containsKey("executable"));
+        Assert.assertTrue(processPropertiesMap.containsKey("threadName"));
+        Assert.assertTrue(processPropertiesMap.containsKey("tags"));
+        Assert.assertTrue(processPropertiesMap.containsKey("labels"));
+        Assert.assertTrue(processPropertiesMap.containsKey("args"));
+        Assert.assertTrue(processPropertiesMap.containsKey("upTime"));
+        Assert.assertTrue(processPropertiesMap.containsKey("pe"));
+        Assert.assertTrue(processPropertiesMap.containsKey("savedGroup"));
+        Assert.assertTrue(processPropertiesMap.containsKey("name"));
+        Assert.assertTrue(processPropertiesMap.containsKey("tty"));
+        Assert.assertTrue(processPropertiesMap.containsKey("attributes"));
+        Assert.assertTrue(processPropertiesMap.containsKey("codeSignature"));
+        Assert.assertTrue(processPropertiesMap.containsKey("commandLine"));
+        Assert.assertTrue(processPropertiesMap.containsKey("user"));
+        Assert.assertTrue(processPropertiesMap.containsKey("hash"));
         //test template generation structure
         XContentBuilder process = requests.get("process").request().toXContent(XContentBuilder.builder(XContentType.JSON.xContent()), ToXContent.EMPTY_PARAMS);
         process.prettyPrint();
@@ -112,8 +167,5 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
 
         // compare Process mapping is expected
         Assert.assertNotNull(processMapping);
-        // expected process index template mapping
-        JSONAssert.assertEquals(new JSONObject("{\"properties\":{\"savedUser\":{\"properties\":{\"roles\":{\"type\":\"keyword\"},\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"fullName\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"email\":{\"type\":\"keyword\"},\"group\":{\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}}}},\"parent\":{\"type\":\"nested\",\"properties\":{\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"leader\":{\"type\":\"nested\",\"properties\":{\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"argsCount\":{\"type\":\"long\"},\"workingDirectory\":{\"type\":\"keyword\"},\"sessionLeader\":{\"type\":\"nested\",\"properties\":{\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"interactive\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"envVars\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"description\":{\"type\":\"keyword\"},\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"source\":{\"properties\":{\"address\":{\"type\":\"keyword\"},\"ip\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"description\":{\"type\":\"keyword\"},\"natIpp\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"message\":{\"type\":\"keyword\"},\"packets\":{\"type\":\"long\"},\"mac\":{\"type\":\"keyword\"},\"labels\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"tags\":{\"type\":\"keyword\"},\"geo\":{\"properties\":{\"cityName\":{\"type\":\"keyword\"},\"countryIsoCode\":{\"type\":\"keyword\"},\"timezone\":{\"type\":\"keyword\"},\"regionName\":{\"type\":\"keyword\"},\"postalCode\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"location\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"countryName\":{\"type\":\"keyword\"},\"continentName\":{\"type\":\"keyword\"},\"regionIsoCode\":{\"type\":\"keyword\"},\"continentCode\":{\"type\":\"keyword\"}}},\"topLevelDomain\":{\"type\":\"keyword\"},\"as\":{\"properties\":{\"number\":{\"type\":\"long\"},\"organizationName\":{\"type\":\"keyword\"}}},\"port\":{\"type\":\"long\"},\"bytes\":{\"type\":\"long\"},\"domain\":{\"type\":\"keyword\"},\"subdomain\":{\"type\":\"keyword\"},\"registeredDomain\":{\"type\":\"keyword\"},\"attributes\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"user\":{\"properties\":{\"roles\":{\"type\":\"keyword\"},\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"fullName\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"email\":{\"type\":\"keyword\"},\"group\":{\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}}}},\"natPort\":{\"type\":\"long\"},\"timestamp\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"title\":{\"type\":\"keyword\"},\"threadId\":{\"type\":\"long\"},\"exitCode\":{\"type\":\"long\"},\"supplementalGroups\":{\"type\":\"nested\",\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"end\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"groupLeader\":{\"type\":\"nested\",\"properties\":{\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"elf\":{\"properties\":{\"headerData\":{\"type\":\"keyword\"},\"cpuType\":{\"type\":\"keyword\"},\"imports\":{\"type\":\"keyword\"},\"headerOS_Abi\":{\"type\":\"keyword\"},\"exports\":{\"type\":\"keyword\"},\"creationDate\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"headerClass\":{\"type\":\"keyword\"},\"telfhash\":{\"type\":\"keyword\"},\"sharedLibraries\":{\"type\":\"keyword\"},\"headerObjVersion\":{\"type\":\"keyword\"},\"selections\":{\"type\":\"nested\",\"properties\":{\"physicalSize\":{\"type\":\"keyword\"},\"chi2\":{\"type\":\"long\"},\"physicalOffset\":{\"type\":\"keyword\"},\"entropy\":{\"type\":\"long\"},\"name\":{\"type\":\"keyword\"},\"flags\":{\"type\":\"keyword\"},\"virtualAddress\":{\"type\":\"long\"},\"virtualSize\":{\"type\":\"long\"}}},\"headerABI_Version\":{\"type\":\"keyword\"},\"headerVersion\":{\"type\":\"keyword\"},\"segment\":{\"type\":\"nested\",\"properties\":{\"type\":{\"type\":\"keyword\"},\"sections\":{\"type\":\"keyword\"}}},\"headerType\":{\"type\":\"keyword\"},\"headerEntryPoint\":{\"type\":\"long\"},\"byteOrder\":{\"type\":\"keyword\"},\"architecture\":{\"type\":\"keyword\"}}},\"timestamp\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"group\":{\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"previous\":{\"type\":\"nested\",\"properties\":{\"pid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"start\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"entityId\":{\"type\":\"keyword\"},\"message\":{\"type\":\"keyword\"},\"executable\":{\"type\":\"keyword\"},\"threadName\":{\"type\":\"keyword\"},\"labels\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"tags\":{\"type\":\"keyword\"},\"args\":{\"type\":\"keyword\"},\"upTime\":{\"type\":\"long\"},\"pe\":{\"properties\":{\"originalFileName\":{\"type\":\"keyword\"},\"product\":{\"type\":\"keyword\"},\"peHash\":{\"type\":\"keyword\"},\"importHash\":{\"type\":\"keyword\"},\"description\":{\"type\":\"keyword\"},\"company\":{\"type\":\"keyword\"},\"fileVersion\":{\"type\":\"keyword\"},\"architecture\":{\"type\":\"keyword\"}}},\"savedGroup\":{\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}},\"name\":{\"type\":\"keyword\"},\"tty\":{\"type\":\"long\"},\"attributes\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"codeSignature\":{\"properties\":{\"valid\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"trusted\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"teamId\":{\"type\":\"keyword\"},\"exists\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"digestAlgorithm\":{\"type\":\"keyword\"},\"signingId\":{\"type\":\"keyword\"},\"timestamp\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"subjectName\":{\"type\":\"keyword\"},\"status\":{\"type\":\"keyword\"}}},\"commandLine\":{\"type\":\"keyword\"},\"user\":{\"properties\":{\"roles\":{\"type\":\"keyword\"},\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"fullName\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}},\"email\":{\"type\":\"keyword\"},\"group\":{\"properties\":{\"domain\":{\"type\":\"keyword\"},\"name\":{\"type\":\"keyword\"},\"id\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\"}}}}}}},\"hash\":{\"type\":\"nested\",\"properties\":{\"sha1\":{\"type\":\"keyword\"},\"sha382\":{\"type\":\"keyword\"},\"sha256\":{\"type\":\"keyword\"},\"sha512\":{\"type\":\"keyword\"},\"tlsh\":{\"type\":\"keyword\"},\"ssdeep\":{\"type\":\"keyword\"},\"md5\":{\"type\":\"keyword\"}}}}}"),
-                processMapping, false);
-    }
+      }
 }

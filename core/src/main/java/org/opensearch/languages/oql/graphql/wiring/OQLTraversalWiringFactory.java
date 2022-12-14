@@ -184,14 +184,11 @@ public class OQLTraversalWiringFactory implements WiringFactory {
     }
 
     private QuantType asQuantType(WhereOperator operator) {
-        switch (operator) {
-            case AND:
-                return QuantType.all;
-            case OR:
-                return QuantType.some;
-            default:
-                return QuantType.all;
-        }
+        return switch (operator) {
+            case AND -> QuantType.all;
+            case OR -> QuantType.some;
+            default -> QuantType.all;
+        };
     }
 
     private boolean isParentObjectType(GraphQLFieldDefinition parentField) {

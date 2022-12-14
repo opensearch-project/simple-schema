@@ -32,32 +32,21 @@ public abstract class IndexMappingUtils {
         try {
             Ontology.OntologyPrimitiveType type = Ontology.OntologyPrimitiveType.valueOf(nameType.getType());
             switch (type) {
-                case STRING:
-                    map.put("type", "keyword");
-                    break;
-                case TEXT:
+                case STRING -> map.put("type", "keyword");
+                case TEXT -> {
                     map.put("type", "text");
                     map.put("fields", singletonMap("keyword", singletonMap("type", "keyword")));
-                    break;
-                case DATE:
+                }
+                case DATETIME,DATE -> {
                     map.put("type", "date");
                     map.put("format", "epoch_millis||strict_date_optional_time||yyyy-MM-dd HH:mm:ss.SSS");
-                    break;
-                case LONG:
-                    map.put("type", "long");
-                    break;
-                case INT:
-                    map.put("type", "integer");
-                    break;
-                case FLOAT:
-                    map.put("type", "float");
-                    break;
-                case DOUBLE:
-                    map.put("type", "double");
-                    break;
-                case GEO:
-                    map.put("type", "geo_point");
-                    break;
+                }
+                case LONG -> map.put("type", "long");
+                case INT -> map.put("type", "integer");
+                case FLOAT -> map.put("type", "float");
+                case DOUBLE -> map.put("type", "double");
+                case GEO -> map.put("type", "geo_point");
+                default -> throw new IllegalStateException("Unexpected value: " + type);
             }
         } catch (Throwable typeNotFound) {
             // manage non-primitive type such as enum or nested typed
@@ -79,16 +68,14 @@ public abstract class IndexMappingUtils {
 
     static void populateProperty(Accessor ontology, BaseTypeElement<? extends BaseTypeElement> element, Map<String, Object> properties, BaseElement entityType) {
         switch (element.getNesting()) {
-            case REFERENCE:
-            case NESTED_REFERENCE:
+            case REFERENCE, NESTED_REFERENCE ->
                 //populate only minimal (redundant) fields
-                entityType.getIdField().forEach(v -> {
-                    //todo add redundant fields here as well
-                    Map<String, Object> parseType = parseType(ontology, ontology.property$(v).getType());
-                    if (!parseType.isEmpty()) properties.put(v, parseType);
-                });
-                break;
-            default:
+                    entityType.getIdField().forEach(v -> {
+                        //todo add redundant fields here as well
+                        Map<String, Object> parseType = parseType(ontology, ontology.property$(v).getType());
+                        if (!parseType.isEmpty()) properties.put(v, parseType);
+                    });
+            default -> {
                 //populate mandatory fields
                 entityType.getMetadata().forEach(v -> {
                     Map<String, Object> parseType = parseType(ontology, ontology.property$(v).getType());
@@ -99,7 +86,7 @@ public abstract class IndexMappingUtils {
                     Map<String, Object> parseType = parseType(ontology, ontology.property$(v).getType());
                     if (!parseType.isEmpty()) properties.put(v, parseType);
                 });
-
+            }
         }
         //populate nested documents -
         element.getNested().forEach((key, value)
@@ -121,11 +108,8 @@ public abstract class IndexMappingUtils {
         Map<String, Object> mapping = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         switch (nest._2().getNesting()) {
-            case NESTED:
-            case REFERENCE:
-            case NESTED_REFERENCE:
-                mapping.put(OntologyIndexGenerator.IndexSchemaConfig.TYPE, OntologyIndexGenerator.IndexSchemaConfig.NESTED);
-                break;
+            case NESTED, REFERENCE, NESTED_REFERENCE ->
+                    mapping.put(OntologyIndexGenerator.IndexSchemaConfig.TYPE, OntologyIndexGenerator.IndexSchemaConfig.NESTED);
         }
         mapping.put(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES, properties);
         //populate fields & metadata
