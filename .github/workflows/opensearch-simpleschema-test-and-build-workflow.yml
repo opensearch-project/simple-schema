@@ -1,6 +1,7 @@
 name: Test and Build OpenSearch Simple Schema Backend Plugin
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches-ignore:
@@ -35,11 +36,11 @@ jobs:
 #        working-directory: ./OpenSearch-SQL
 #        run: ./gradlew publishToMavenLocal -Dbuild.snapshot=false
 
-      - name: Run Backwards Compatibility Tests
-        run: |
-          cd services
-          echo "Running backwards compatibility tests ..."
-          ./gradlew bwcTestSuite -Dtests.security.manager=false
+#      - name: Run Backwards Compatibility Tests
+#        run: |
+#          cd services
+#          echo "Running backwards compatibility tests ..."
+#          ./gradlew bwcTestSuite -Dtests.security.manager=false
 
       - name: Build with Gradle
         run: |
