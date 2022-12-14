@@ -1,15 +1,17 @@
-type Book {
+type Book @model {
     ISBN: ID!
     title: String!
     author: Author!
+    description: Text
     published: DateTime!
 }
-type Author {
+type Author @model{
     name: String!
     born: DateTime!
+    age: Int
     died: DateTime
     nationality: String!
-    books: [Book]
+    books: [Book] @relation(mappingType: "embedded")
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # auto generated author filter
@@ -17,6 +19,7 @@ input AuthorFilter {
     name:TextFilter
     born :TimeFilter
     died :TimeFilter
+    age  :NumericFilter
     nationality :TextFilter
     books:[BookFilter]
 
@@ -28,6 +31,7 @@ input AuthorFilter {
 input BookFilter {
     ISBN:TextFilter
     title:TextFilter
+    description :TextFilter
     published:TimeFilter
     author:AuthorFilter
 

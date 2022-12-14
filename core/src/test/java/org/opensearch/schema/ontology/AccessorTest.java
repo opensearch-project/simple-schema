@@ -7,15 +7,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AccessorTest {
     static Accessor accessor;
     static ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public static void setup() throws IOException {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/user.json");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/observability/user.json");
         Ontology ontology = mapper.readValue(stream,Ontology.class);
         accessor = new Accessor(ontology);
 

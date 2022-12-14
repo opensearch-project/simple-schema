@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +22,10 @@ public class DirectiveType {
     private String name;
 
     private List<Argument> arguments;
-    public DirectiveType() {}
+
+    public DirectiveType() {
+    }
+
     public DirectiveType(String name, DirectiveClasses type, String domain, String range) {
         this.type = type;
         this.domain = domain;
@@ -30,7 +34,11 @@ public class DirectiveType {
         this.arguments = new ArrayList<>();
     }
 
-   public DirectiveType(String name, DirectiveClasses type,List<Argument> arguments) {
+    public DirectiveType(String name, DirectiveClasses type) {
+        this(name, type, Collections.emptyList());
+    }
+
+    public DirectiveType(String name, DirectiveClasses type, List<Argument> arguments) {
         this.type = type;
         this.name = name;
         this.arguments = arguments;
@@ -77,11 +85,13 @@ public class DirectiveType {
     }
 
     public boolean containsArgVal(Object value) {
-        return getArguments().stream().anyMatch(arg->arg.value.toString().equals(value));
+        return getArguments().stream().anyMatch(arg -> arg.value.toString().equals(value));
     }
+
     public boolean containsArg(String name) {
-        return getArguments().stream().anyMatch(arg->arg.name.equals(name));
+        return getArguments().stream().anyMatch(arg -> arg.name.equals(name));
     }
+
     public enum DirectiveClasses {
         PROPERTY, CLASS, DATATYPE, RESOURCE, LITERAL
     }
@@ -109,7 +119,9 @@ public class DirectiveType {
             return new Argument(name, value);
         }
 
-        private Argument() {}
+        private Argument() {
+        }
+
         private Argument(String name, Object value) {
             this.name = name;
             this.value = value;

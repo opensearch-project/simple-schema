@@ -49,7 +49,7 @@ public class IndexMappingFactory implements OntologyIndexGenerator {
      *
      * @return
      */
-    public List<Tuple2<String, Boolean>> generateMappings() {
+    private List<Tuple2<String, Boolean>> generateMappings() {
         initBuilders();
 
         List<Tuple2<String, AcknowledgedResponse>> responses = new ArrayList<>();

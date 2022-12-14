@@ -8,7 +8,6 @@ import java.util.List;
  * Index generator interfaces for the ontology (logical) schema
  */
 public interface OntologyIndexGenerator {
-    List<Tuple2<String, Boolean>> generateMappings();
 
     class IndexSchemaConfig {
         public static final String ID = "id";

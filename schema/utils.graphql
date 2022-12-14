@@ -8,7 +8,7 @@ scalar Url
 scalar IP
 scalar GeoPoint
 
-directive @relation(mappingType: String) on FIELD_DEFINITION
+directive @relation(mappingType: String!) on FIELD_DEFINITION
 directive @key(fields: [String!]!, name: String) on OBJECT
 directive @model on OBJECT
 directive @autoGen on OBJECT

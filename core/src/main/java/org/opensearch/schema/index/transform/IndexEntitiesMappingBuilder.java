@@ -55,17 +55,13 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         Entity entity = this.indexProvider.getEntity(e.getName()).get();
         try {
             switch (mapping) {
-                case UNIFIED:
+                case UNIFIED ->
                     //common general index - unifies all entities under the same physical index
-                    buildUnifiedMapping(ontology, client, requests, e, entity);
-                    break;
-                case STATIC:
+                        buildUnifiedMapping(ontology, client, requests, e, entity);
+                case STATIC ->
                     //static index
-                    buildStaticMapping(ontology, client, requests, e, entity);
-                    break;
-                case TIME:
-                    buildTimebasedMapping(ontology, client, requests, e, entity);
-                    break;
+                        buildStaticMapping(ontology, client, requests, e, entity);
+                case TIME -> buildTimebasedMapping(ontology, client, requests, e, entity);
             }
         } catch (Throwable typeNotFound) {
             //log error
