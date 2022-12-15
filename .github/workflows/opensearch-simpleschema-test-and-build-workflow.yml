@@ -56,7 +56,7 @@ jobs:
       - name: Create Artifact Path
         run: |
           mkdir -p simpleschema-builds
-          cp -r ./build/distributions/*.zip simpleschema-builds/
+          cp -r ./build/distributions/*.jar simpleschema-builds/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
