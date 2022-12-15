@@ -160,7 +160,8 @@ public class OQLTraversalWiringFactory implements WiringFactory {
             InputTypeWhereClause whereClause = mapper.readValue(mapper.writeValueAsString(argument), InputTypeWhereClause.class);
             //verify fields exist within entity type
             List<InputTypeConstraint> nonFoundFields = whereClause.getConstraints().stream()
-                    .filter(c -> !realType.get().containsProperty(c.getOperand())).toList();
+                    .filter(c -> !realType.get().containsProperty(c.getOperand()))
+                    .collect(Collectors.toList());
 
             if (!nonFoundFields.isEmpty())
                 throw new IllegalArgumentException("Fields " + nonFoundFields + " are not a part of the queried entity " + realType.get().getName());

@@ -130,7 +130,8 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
 
     private void validateLanguageType(GraphQLSchema graphQLSchema) {
         List<GraphQLNamedType> types = graphQLSchema.getAllTypesAsList().stream()
-                .filter(p -> languageTypes.contains(p.getName())).toList();
+                .filter(p -> languageTypes.contains(p.getName()))
+                .collect(Collectors.toList());
 
         if (types.size() != languageTypes.size())
             throw new IllegalArgumentException("GraphQL schema doesnt include Query/Where types");

@@ -6,6 +6,7 @@ import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.validation.ValidationResult;
 import org.opensearch.schema.validation.ValidationResult.ValidationResults;
 
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.opensearch.schema.ontology.OntologyFinalizer.ID_FIELD_PTYPE;
@@ -53,32 +54,38 @@ public class SchemaValidator {
 
         // ID field verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
-                .filter(e -> e.containsProperty(ID_FIELD_PTYPE)).toList()
+                .filter(e -> e.containsProperty(ID_FIELD_PTYPE))
+                .collect(Collectors.toList())
                 .forEach(e -> results.with(new ValidationResult(false, String.format("%s entity missing ID field", e.getName()))));
 
         accessor.relations().stream()
-                .filter(r -> r.containsProperty(ID_FIELD_PTYPE)).toList()
+                .filter(r -> r.containsProperty(ID_FIELD_PTYPE))
+                .collect(Collectors.toList())
                 .forEach(r -> results.with(new ValidationResult(false, String.format("%s relation missing ID field", r.getName()))));
 
         // type field verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
-                .filter(e -> e.containsProperty(TYPE_FIELD_PTYPE)).toList()
+                .filter(e -> e.containsProperty(TYPE_FIELD_PTYPE))
+                .collect(Collectors.toList())
                 .forEach(e -> results.with(new ValidationResult(false, String.format("%s entity missing TYPE field", e.getName()))));
 
         accessor.relations().stream()
-                .filter(r -> r.containsProperty(TYPE_FIELD_PTYPE)).toList()
+                .filter(r -> r.containsProperty(TYPE_FIELD_PTYPE))
+                .collect(Collectors.toList())
                 .forEach(r -> results.with(new ValidationResult(false, String.format("%s relation missing TYPE field", r.getName()))));
 
         // general entities/relations properties verification
         StreamSupport.stream(accessor.entities().spliterator(), false)
                 .forEach(e -> e.getProperties()
-                        .stream().filter(p -> accessor.pType(p).isEmpty()).toList()
+                        .stream().filter(p -> accessor.pType(p).isEmpty())
+                        .collect(Collectors.toList())
                         .forEach(p -> results.with(new ValidationResult(false, String.format("%s entity missing %s property definition",e.getName(), p))))
                 );
 
         accessor.relations()
                 .forEach(e -> e.getProperties()
-                        .stream().filter(p -> accessor.pType(p).isEmpty()).toList()
+                        .stream().filter(p -> accessor.pType(p).isEmpty())
+                        .collect(Collectors.toList())
                         .forEach(p -> results.with(new ValidationResult(false, String.format("%s relation missing %s property definition",e.getName(), p))))
                 );
 
