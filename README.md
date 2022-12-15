@@ -7,7 +7,7 @@ The purpose of this Plugin is to enhance open-search engine with user-domain sch
 These capabilities include:
 - **Schema creation**
 - **Code Generation**
-- **Query support** 
+- **Query support**
 - **Endpoint Generation**
 
 ## How does it work?
@@ -79,7 +79,7 @@ Read the [documentation](https://github.com/opensearch-project/simple-schema/blo
 | [![untriaged open][untriaged-badge]][untriaged-link]           |
 | [![nolabel open][nolabel-badge]][nolabel-link]                 |
 
-[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml/badge.svg
+[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml/badge.svg
 [opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml
 
 [opensearch-codecov-badge]: https://codecov.io/gh/opensearch-project/simple-schema/branch/main/graphs/badge.svg?flag=opensearch-simple-schema
