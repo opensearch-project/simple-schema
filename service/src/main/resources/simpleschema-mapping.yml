@@ -1,0 +1,63 @@
+---
+##
+# Copyright OpenSearch Contributors
+# SPDX-License-Identifier: Apache-2.0
+##
+
+# Schema file for the simple schema index
+# "dynamic" is set to "false" so that other fields can be added.
+dynamic: false
+properties:
+  lastUpdatedTimeMs:
+    type: date
+    format: epoch_millis
+  createdTimeMs:
+    type: date
+    format: epoch_millis
+  tenant:
+    type: keyword
+  access: # Array of access details like user,role,backend_role etc
+    type: keyword
+  objectType:
+    type: keyword
+  indexProvider:
+    type: object
+    properties:
+      name:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+      ontology:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+      type:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+      indices:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+  schemaEntityType:
+    type: object
+    properties:
+      name:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+      type:
+        type: text
+        fields:
+          keyword:
+            type: keyword
+      catalog:
+        type: text
+        fields:
+          keyword:
+            type: keyword

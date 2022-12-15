@@ -1,0 +1,434 @@
+{
+  "ont": "user",
+  "directives": [],
+  "entityTypes": [
+    {
+      "eType": "BaseRecord",
+      "name": "BaseRecord",
+      "mandatory": [
+        "timestamp"
+      ],
+      "properties": [
+        "tags",
+        "message",
+        "labels",
+        "timestamp",
+        "attributes"
+      ],
+      "abstract": true
+    },
+    {
+      "eType": "AutonomousSystem",
+      "name": "AutonomousSystem",
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "key",
+          "arguments": [
+            {
+              "name": "fields",
+              "value": [
+                "number"
+              ]
+            },
+            {
+              "name": "name",
+              "value": "number"
+            }
+          ]
+        }
+      ],
+      "mandatory": [
+        "number"
+      ],
+      "properties": [
+        "number",
+        "organizationName"
+      ],
+      "abstract": false
+    },
+    {
+      "eType": "Geo",
+      "name": "Geo",
+      "properties": [
+        "name",
+        "continentName",
+        "regionName",
+        "cityName",
+        "continentCode",
+        "postalCode",
+        "location",
+        "regionIsoCode",
+        "countryName",
+        "countryIsoCode",
+        "timezone"
+      ],
+      "abstract": false
+    },
+    {
+      "idField": [
+        "id"
+      ],
+      "eType": "Group",
+      "name": "Group",
+      "mandatory": [
+        "id"
+      ],
+      "properties": [
+        "name",
+        "id",
+        "domain"
+      ],
+      "abstract": false
+    },
+    {
+      "idField": [
+        "id"
+      ],
+      "eType": "Organization",
+      "name": "Organization",
+      "mandatory": [
+        "id"
+      ],
+      "properties": [
+        "name",
+        "id"
+      ],
+      "abstract": false
+    },
+    {
+      "eType": "StreamSet",
+      "name": "StreamSet",
+      "properties": [
+        "dataset",
+        "namespace",
+        "streamType"
+      ],
+      "abstract": false
+    },
+    {
+      "idField": [
+        "id"
+      ],
+      "eType": "User",
+      "name": "User",
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "model"
+        }
+      ],
+      "mandatory": [
+        "id"
+      ],
+      "properties": [
+        "name",
+        "group",
+        "id",
+        "email",
+        "roles",
+        "domain",
+        "hash",
+        "fullName"
+      ],
+      "abstract": false
+    }
+  ],
+  "relationshipTypes": [
+    {
+      "idField": [
+        "@id"
+      ],
+      "rType": "has_Group",
+      "name": "has_Group",
+      "directional": true,
+      "ePairs": [
+        {
+          "name": "User->Group",
+          "eTypeA": "User",
+          "sideAFieldName": "group",
+          "sideAIdField": "id",
+          "eTypeB": "Group",
+          "sideBIdField": "id"
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "pType": "message",
+      "name": "message",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "name",
+      "name": "name",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "timestamp",
+      "name": "timestamp",
+      "type": {
+        "pType": "Primitive",
+        "type": "TIME",
+        "array": false
+      }
+    },
+    {
+      "pType": "streamType",
+      "name": "streamType",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "attributes",
+      "name": "attributes",
+      "type": {
+        "pType": "Primitive",
+        "type": "JSON",
+        "array": false
+      }
+    },
+    {
+      "pType": "timezone",
+      "name": "timezone",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "email",
+      "name": "email",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "domain",
+      "name": "domain",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "countryName",
+      "name": "countryName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "fullName",
+      "name": "fullName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "number",
+      "name": "number",
+      "type": {
+        "pType": "Primitive",
+        "type": "LONG",
+        "array": false
+      }
+    },
+    {
+      "pType": "continentName",
+      "name": "continentName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "Group",
+      "name": "group",
+      "type": {
+        "pType": "Object",
+        "type": "Group",
+        "array": false
+      }
+    },
+    {
+      "pType": "regionName",
+      "name": "regionName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "organizationName",
+      "name": "organizationName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "continentCode",
+      "name": "continentCode",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "countryIsoCode",
+      "name": "countryIsoCode",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "tags",
+      "name": "tags",
+      "type": {
+        "pType": "PrimitiveList",
+        "type": "STRING",
+        "array": true
+      }
+    },
+    {
+      "pType": "cityName",
+      "name": "cityName",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "labels",
+      "name": "labels",
+      "type": {
+        "pType": "Primitive",
+        "type": "JSON",
+        "array": false
+      }
+    },
+    {
+      "pType": "dataset",
+      "name": "dataset",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "namespace",
+      "name": "namespace",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "id",
+      "name": "id",
+      "type": {
+        "pType": "Primitive",
+        "type": "ID",
+        "array": false
+      }
+    },
+    {
+      "pType": "roles",
+      "name": "roles",
+      "type": {
+        "pType": "PrimitiveList",
+        "type": "STRING",
+        "array": true
+      }
+    },
+    {
+      "pType": "postalCode",
+      "name": "postalCode",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "location",
+      "name": "location",
+      "type": {
+        "pType": "Primitive",
+        "type": "GEOPOINT",
+        "array": false
+      }
+    },
+    {
+      "pType": "hash",
+      "name": "hash",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "regionIsoCode",
+      "name": "regionIsoCode",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    }
+  ],
+  "enumeratedTypes": [
+    {
+      "eType": "StreamType",
+      "values": [
+        {
+          "val": 0,
+          "name": "logs"
+        },
+        {
+          "val": 1,
+          "name": "metrics"
+        },
+        {
+          "val": 2,
+          "name": "traces"
+        },
+        {
+          "val": 3,
+          "name": "synthetics"
+        }
+      ]
+    }
+  ]
+}
