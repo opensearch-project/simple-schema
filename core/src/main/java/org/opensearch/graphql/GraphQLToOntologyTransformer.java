@@ -146,7 +146,8 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
                                 .map(GraphQLNamedSchemaElement::getName)
                 )
                 .filter(p -> !p.startsWith("__"))
-                .filter(p -> !languageTypes.contains(p)).toList());
+                .filter(p -> !languageTypes.contains(p))
+                .collect(Collectors.toList()));
     }
 
     private List<Property> populateProperties(List<GraphQLFieldDefinition> fieldDefinitions) {
