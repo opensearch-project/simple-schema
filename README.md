@@ -79,8 +79,8 @@ Read the [documentation](https://github.com/opensearch-project/simple-schema/blo
 | [![untriaged open][untriaged-badge]][untriaged-link]           |
 | [![nolabel open][nolabel-badge]][nolabel-link]                 |
 
-[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml/badge.svg
-[opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml
+[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml/badge.svg
+[opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml
 
 [opensearch-codecov-badge]: https://codecov.io/gh/opensearch-project/simple-schema/branch/main/graphs/badge.svg?flag=opensearch-simple-schema
 [codecov-link]: https://codecov.io/gh/opensearch-project/simple-schema
