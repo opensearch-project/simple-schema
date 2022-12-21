@@ -67,6 +67,8 @@ opensearchplugin {
     description 'OpenSearch Plugin for OpenSearch Simple schema'
     classname "org.opensearch.simpleschema.SimpleSchemaPlugin"
     extendedPlugins = ['opensearch-job-scheduler']
+    licenseFile rootProject.file("LICENSE.txt")
+    noticeFile rootProject.file("NOTICE")
 }
 
 publishing {
