@@ -49,15 +49,25 @@ public enum CountConstraintOp {
     }
 
     public static ConstraintOp translate(CountConstraintOp op) {
-        return switch (op) {
-            case lt -> ConstraintOp.lt;
-            case le -> ConstraintOp.le;
-            case ge -> ConstraintOp.ge;
-            case gt -> ConstraintOp.gt;
-            case eq -> ConstraintOp.eq;
-            case ne -> ConstraintOp.ne;
-            case within -> ConstraintOp.within;
-            case between -> ConstraintOp.inRange;
-        };
+        switch (op) {
+            case lt:
+                return ConstraintOp.lt;
+            case le:
+                return ConstraintOp.le;
+            case ge:
+                return ConstraintOp.ge;
+            case gt:
+                return ConstraintOp.gt;
+            case eq:
+                return ConstraintOp.eq;
+            case ne:
+                return ConstraintOp.ne;
+            case within:
+                return ConstraintOp.within;
+            case between:
+                return ConstraintOp.inRange;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

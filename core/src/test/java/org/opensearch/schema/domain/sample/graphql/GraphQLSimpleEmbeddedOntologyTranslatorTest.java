@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.*;
 import static org.opensearch.schema.ontology.DirectiveType.Argument.*;
@@ -58,7 +59,9 @@ public class GraphQLSimpleEmbeddedOntologyTranslatorTest {
     @Test
     public void testIndexProviderBuilder() {
         IndexProvider provider = IndexProvider.Builder.generate(ontology);
-        List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName).toList();
+        List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName)
+                .collect(Collectors.toList());
+
         Assertions.assertTrue(names.contains("Author"));
         Assertions.assertTrue(names.contains("Book"));
     }

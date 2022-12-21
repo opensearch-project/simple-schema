@@ -173,19 +173,22 @@ public class IndexProvider {
     }
 
     private static Entity createEntity(EntityType e, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
-        return switch (nestingType) {
-            case NESTED, REFERENCE, NESTED_REFERENCE ->
+        switch (nestingType) {
+            case NESTED:
+                REFERENCE:
+                NESTED_REFERENCE:
                 // create minimal representation  - TODO add redundant here
                 // indices need to be lower cased
-                    new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
-                            createProperties(e.getName(), accessor));
-            default -> new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
-                    e.getDirectives(),
-                    // indices need to be lower cased
-                    createProperties(e.getName(), accessor),
-                    createNestedElements(e, accessor),
-                    Collections.emptyMap());
-        };
+                return new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
+                        createProperties(e.getName(), accessor));
+            default:
+                return new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
+                        e.getDirectives(),
+                        // indices need to be lower cased
+                        createProperties(e.getName(), accessor),
+                        createNestedElements(e, accessor),
+                        Collections.emptyMap());
+        }
     }
 
     private static Map<String, Relation> createNestedElements(RelationshipType r, Accessor accessor) {
