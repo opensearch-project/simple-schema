@@ -1,9 +1,10 @@
-package org.opensearch.schema.index.transform;
+package org.opensearch.schema.domain.sample.mapping.transform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.index.transform.IndexMappingUtils;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 
@@ -17,7 +18,7 @@ public class IndexMappingUtilsTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simple.json");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaEmbeddedBooks.json");
         accessor = new Accessor(new ObjectMapper().readValue(stream, Ontology.class));
     }
 

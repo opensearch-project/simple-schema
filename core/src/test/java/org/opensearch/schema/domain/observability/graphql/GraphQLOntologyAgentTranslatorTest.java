@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.*;
 
@@ -52,9 +52,9 @@ public class GraphQLOntologyAgentTranslatorTest {
     @Test
     public void testIndexProviderBuilder() {
         IndexProvider provider = IndexProvider.Builder.generate(ontology
-                , e -> e.getDirectives().stream().anyMatch(d -> d.getName().equals("model"))
+                , e -> e.getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
                 , r -> r.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("relation") && d.containsArgVal("foreign")));
+                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
 
         Assertions.assertEquals(provider.getEntities().size(), 1);
         Assertions.assertEquals(provider.getRelations().size(), 0);

@@ -82,11 +82,11 @@ type Process implements BaseRecord @model{
     #    An array of supplemental groups.
     supplementalGroups:[Group]
     # The real user (ruid). Identifies the real owner of the process.
-    user:User
+    user:User @relation(mappingType: "foreign")
     #    The saved group (sgid).
     savedGroup:Group
     # The saved user (suid). Identifies the saved owner of the process.
-    savedUser:User
+    savedUser:User  @relation(mappingType: "foreign")
 
     #These fields contain Linux Executable Linkable Format (ELF) metadata.
     elf:ELF

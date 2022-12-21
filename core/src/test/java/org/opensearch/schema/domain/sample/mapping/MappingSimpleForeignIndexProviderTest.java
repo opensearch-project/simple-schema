@@ -1,4 +1,4 @@
-package org.opensearch.schema.domain.sample.index;
+package org.opensearch.schema.domain.sample.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
@@ -15,20 +15,20 @@ import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
+import org.opensearch.schema.index.transform.IndexRelationsMappingBuilder;
 import org.opensearch.schema.ontology.Accessor;
+import org.opensearch.schema.ontology.DirectiveEnumTypes;
 import org.opensearch.schema.ontology.Ontology;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This test is verifying that the process of generating a mapping template from the index provider using the ontology is working as expected
  */
-public class MappingSimpleEntityTemplateGeneratorTest {
+public class MappingSimpleForeignIndexProviderTest {
     static Ontology ontology;
     static IndexProvider indexProvider;
 
@@ -42,13 +42,13 @@ public class MappingSimpleEntityTemplateGeneratorTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simple.json");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaForeignBooks.json");
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("model"))
+                        .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
                 , r -> r.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("relation") && d.containsArgVal("foreign")));
+                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
     }
 
     @Test
@@ -68,16 +68,9 @@ public class MappingSimpleEntityTemplateGeneratorTest {
         Assert.assertNotNull(author.get("properties"));
 
         Map authorPropertiesMap = (Map) author.get("properties");
-        Assert.assertTrue(authorPropertiesMap.containsKey("books"));
-
-        Map groupPropertiesMap = (Map) authorPropertiesMap.get("books");
-        Assert.assertNotNull(groupPropertiesMap.get("properties"));
-        Assert.assertTrue(groupPropertiesMap.get("properties") instanceof Map);
-        Assert.assertTrue(((Map) groupPropertiesMap.get("properties")).containsKey("ISBN"));
-        Assert.assertTrue(((Map) groupPropertiesMap.get("properties")).containsKey("title"));
-        Assert.assertTrue(((Map) groupPropertiesMap.get("properties")).containsKey("description"));
-        Assert.assertTrue(((Map) groupPropertiesMap.get("properties")).containsKey("published"));
-
+        //books is defined as foreign relation to author therefor it will not consider as a property
+        // it will have a dedicated relation index named has_books
+        Assert.assertFalse(authorPropertiesMap.containsKey("books"));
     }
 
     @Test
@@ -97,7 +90,8 @@ public class MappingSimpleEntityTemplateGeneratorTest {
         Assert.assertNotNull(author.get("properties"));
 
         Map authorPropertiesMap = (Map) author.get("properties");
-        Assert.assertTrue(authorPropertiesMap.containsKey("books"));
+        //books are a foreign index
+        Assert.assertFalse(authorPropertiesMap.containsKey("books"));
         Assert.assertTrue(authorPropertiesMap.containsKey("nationality"));
         Assert.assertTrue(authorPropertiesMap.containsKey("name"));
         Assert.assertTrue(authorPropertiesMap.containsKey("born"));
@@ -111,4 +105,24 @@ public class MappingSimpleEntityTemplateGeneratorTest {
         xContent.flush();
         Assert.assertNotNull(BytesReference.bytes(xContent).utf8ToString());
     }
+
+
+    @Test
+    /**
+     * verify the process relations index-provider contains basic structure and properties
+     */
+    public void GenerateAuthorBooksRelationsMappingTest() {
+        IndexRelationsMappingBuilder builder = new IndexRelationsMappingBuilder(indexProvider);
+        HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
+        builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
+
+        //TODO - Fix According to specific tests - we expect here the relationship table be symmetric for both author->book & book->author
+/*
+        Assert.assertNotNull(requests.get("has_Author"));
+        Assert.assertEquals(1, requests.get("author").getMappings().size());
+        Assert.assertNotNull(requests.get("author").getMappings().get("Author"));
+*/
+
+    }
+
 }

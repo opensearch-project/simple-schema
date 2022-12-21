@@ -21,25 +21,23 @@ public class DirectiveType {
     private String range;
     private String name;
 
-    private List<Argument> arguments;
+    private List<Argument> arguments = Collections.emptyList();
 
     public DirectiveType() {
     }
 
-    public DirectiveType(String name, DirectiveClasses type, String domain, String range) {
-        this.type = type;
-        this.domain = domain;
-        this.range = range;
-        this.name = name;
-        this.arguments = new ArrayList<>();
-    }
-
     public DirectiveType(String name, DirectiveClasses type) {
-        this(name, type, Collections.emptyList());
+        this(name, type, null, null, Collections.emptyList());
     }
 
     public DirectiveType(String name, DirectiveClasses type, List<Argument> arguments) {
+        this(name, type, null, null, arguments);
+    }
+
+    public DirectiveType(String name, DirectiveClasses type, String domain, String range, List<Argument> arguments) {
         this.type = type;
+        this.domain = domain;
+        this.range = range;
         this.name = name;
         this.arguments = arguments;
     }

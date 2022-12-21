@@ -1,5 +1,7 @@
 package org.opensearch.schema.index.schema;
 
+import org.opensearch.schema.ontology.PhysicalEntityRelationsDirectiveType;
+
 /**
  * representing the mapping partitioning physical strategy
  */
@@ -14,5 +16,20 @@ public enum NestingType {
     // additional remote index for the actual entity will be generated as well
     REFERENCE,
     //same as REFERENCE but nested to allow one to many type of relationships
-    NESTED_REFERENCE
+    NESTED_REFERENCE,
+    //stored as parent-child model
+    CHILD;
+
+    static NestingType translate(PhysicalEntityRelationsDirectiveType directive) {
+        switch (directive) {
+            case NESTED:
+                return NESTED;
+            case REVERSE:
+                return NONE;
+            case CHILD:
+                return CHILD;
+            default:
+                return EMBEDDED;
+        }
+    }
 }

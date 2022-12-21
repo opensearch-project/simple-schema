@@ -16,21 +16,17 @@ import java.util.stream.Stream;
 /**
  *  ontology relation element type
  */
-public class RelationshipType implements BaseElement {
+public class RelationshipType extends CommonType {
+
     public RelationshipType() {
-        properties = new ArrayList<>();
-        metadata = new ArrayList<>();
-        metadata = new ArrayList<>();
-        ePairs = new ArrayList<>();
+        super();
     }
 
     public RelationshipType(String name, String rType, boolean directional) {
-        this();
+        super(name);
         this.rType = rType;
-        this.name = name;
         this.directional = directional;
-        this.mandatory = new ArrayList<>();
-
+        this.ePairs = new ArrayList<>();
     }
 
     //region Getters & Setters
@@ -40,14 +36,6 @@ public class RelationshipType implements BaseElement {
 
     public void setrType(String rType) {
         this.rType = rType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public boolean isDirectional() {
@@ -87,20 +75,26 @@ public class RelationshipType implements BaseElement {
     }
 
     @JsonIgnore
-    public RelationshipType addPair(EPair pair) {
-        this.getePairs().add(pair);
-        return this;
-    }
-
-    public List<String> getMetadata() {
-        return metadata != null ? metadata : Collections.emptyList();
+    public String idFieldName() {
+        return BaseElement.idFieldName(getIdField());
     }
 
     @JsonIgnore
-    public RelationshipType withMetadata(List<String> metadata) {
-        this.metadata.addAll(metadata);
-        return this;
+    public boolean containsProperty(String key) {
+        return properties.contains(key);
     }
+
+    @JsonIgnore
+    public boolean hasSideA(String eType) {
+        return ePairs.stream().anyMatch(ep -> ep.geteTypeA().equals(eType));
+    }
+
+    @JsonIgnore
+    public boolean hasSideB(String eType) {
+        return ePairs.stream().anyMatch(ep -> ep.geteTypeB().equals(eType));
+    }
+
+    //endregion
 
     @Override
     protected RelationshipType clone() {
@@ -117,79 +111,6 @@ public class RelationshipType implements BaseElement {
         relationshipType.ePairs = this.ePairs.stream().map(EPair::clone).collect(Collectors.toList());
         return relationshipType;
     }
-
-    public List<String> getIdField() {
-        return idField;
-    }
-
-    public void setIdField(List<String> idField) {
-        this.idField = idField;
-    }
-
-    public void setMetadata(List<String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public List<String> getProperties() {
-        return properties != null ? properties : Collections.emptyList();
-    }
-
-    @JsonIgnore
-    public RelationshipType withProperties(List<String> properties) {
-        this.properties.addAll(properties);
-        return this;
-    }
-
-    public List<String> getMandatory() {
-        return mandatory != null ? mandatory : Collections.emptyList();
-    }
-
-    public void setMandatory(List<String> mandatory) {
-        this.mandatory = mandatory;
-    }
-
-    public void setProperties(List<String> properties) {
-        this.properties = properties;
-    }
-
-    @JsonIgnore
-    public List<String> fields() {
-        return Stream.concat(properties.stream(), metadata.stream()).collect(Collectors.toList());
-    }
-
-    @JsonIgnore
-    public RelationshipType addProperty(String type) {
-        this.properties.add(type);
-        return this;
-    }
-
-    @JsonIgnore
-    public RelationshipType withProperty(String... properties) {
-        this.properties.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    @JsonIgnore
-    public RelationshipType addMetadata(String type) {
-        this.metadata.add(type);
-        return this;
-    }
-
-    @JsonIgnore
-    public RelationshipType withMetadata(String... properties) {
-        this.metadata.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    @JsonIgnore
-    public RelationshipType withEPairs(EPair... pairs) {
-        this.setePairs(Arrays.asList(pairs));
-        return this;
-    }
-
-
-    //endregion
-
 
     @Override
     public boolean equals(Object o) {
@@ -216,57 +137,12 @@ public class RelationshipType implements BaseElement {
         return "RelationshipType [name = " + name + ", ePairs = " + ePairs + ", idField = " + idField + ", rType = " + rType + ", directional = " + directional + ", properties = " + properties + ", metadata = " + metadata + ", mandatory = " + mandatory + "]";
     }
 
-    @JsonIgnore
-    public String idFieldName() {
-        return BaseElement.idFieldName(getIdField());
-    }
-
     //region Fields
     private List<String> idField = Collections.singletonList(ID);
     private String rType;
-    private String name;
     private boolean directional;
     private String dbRelationName;
-    private List<DirectiveType> directives = new ArrayList<>();
-    private List<String> mandatory = new ArrayList<>();
     private List<EPair> ePairs;
-    private List<String> properties;
-    private List<String> metadata;
-
-    @JsonIgnore
-    public boolean containsMetadata(String key) {
-        return metadata.contains(key);
-    }
-
-    @JsonIgnore
-    public void directive(DirectiveType value) {
-        directives.add(value);
-    }
-
-    @JsonIgnore
-    public boolean isMandatory(String key) {
-        return mandatory.contains(key);
-    }
-
-    @JsonIgnore
-    public boolean containsProperty(String key) {
-        return properties.contains(key);
-    }
-
-    @JsonIgnore
-    public boolean hasSideA(String eType) {
-        return ePairs.stream().anyMatch(ep -> ep.geteTypeA().equals(eType));
-    }
-
-    @JsonIgnore
-    public boolean hasSideB(String eType) {
-        return ePairs.stream().anyMatch(ep -> ep.geteTypeB().equals(eType));
-    }
-
-    @JsonIgnore
-    public List<DirectiveType> getDirectives() {
-        return directives;
-    }
 
 //endregion
 
@@ -281,8 +157,8 @@ public class RelationshipType implements BaseElement {
         private List<EPair> ePairs = new ArrayList<>();
         private List<String> properties = new ArrayList<>();
         private List<String> metatada = new ArrayList<>();
-
         private List<DirectiveType> directives = new ArrayList<>();
+
 
         private Builder() {
             idField.add(ID);
@@ -294,11 +170,6 @@ public class RelationshipType implements BaseElement {
 
         public Builder withRType(String rType) {
             this.rType = rType;
-            return this;
-        }
-
-        public Builder withDirective(DirectiveType value) {
-            this.directives.add(value);
             return this;
         }
 
@@ -321,12 +192,6 @@ public class RelationshipType implements BaseElement {
             this.mandatory = mandatory;
             return this;
         }
-
-        public Builder withMandatory(String mandatory) {
-            this.mandatory.add(mandatory);
-            return this;
-        }
-
 
         public Builder withDBrName(String DBrName) {
             this.DBrName = DBrName;
@@ -354,7 +219,11 @@ public class RelationshipType implements BaseElement {
         }
 
         public Builder withIdField(String... idField) {
-            this.idField = Arrays.asList(idField);
+            return withIdField(Arrays.asList(idField));
+        }
+
+        public Builder withIdField(List<String> idFields) {
+            this.idField = idFields;
             return this;
         }
 
@@ -370,12 +239,13 @@ public class RelationshipType implements BaseElement {
             relationshipType.setIdField(idField);
             relationshipType.setName(name);
             relationshipType.setDirectional(directional);
+            relationshipType.setDirectional(directional);
             relationshipType.setDbRelationName(DBrName);
             relationshipType.setProperties(properties);
             relationshipType.setMetadata(metatada);
             relationshipType.setMandatory(mandatory);
             relationshipType.setePairs(ePairs);
-            relationshipType.directives.addAll(this.directives);
+            relationshipType.getDirectives().addAll(directives);
             return relationshipType;
         }
     }

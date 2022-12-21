@@ -4,6 +4,8 @@ type Book @model {
     author: Author!
     description: Text
     published: DateTime!
+    genre:Genre
+
 }
 type Author @model{
     name: String!
@@ -12,6 +14,17 @@ type Author @model{
     died: DateTime
     nationality: String!
     books: [Book] @relation(mappingType: "embedded")
+}
+
+enum Genre {
+    AdventureStories
+    Classics
+    Crime
+    FairyTales
+    Fantasy
+    HistoricalFiction
+    Horror
+    Humour
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # auto generated author filter

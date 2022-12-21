@@ -6,6 +6,7 @@ import javaslang.collection.Stream;
 import org.opensearch.schema.SchemaError;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -96,10 +97,12 @@ public class Accessor implements Supplier<Ontology> {
      * get relationship pairs in which the source entity type if given as a parameter
      *
      * @param source
+     * @param relationPredicate
      * @return
      */
-    public Collection<EPair> relationsPairsBySourceEntity(EntityType source) {
+    public Collection<EPair> relationsPairsBySourceEntity(EntityType source, Predicate<RelationshipType> relationPredicate) {
         return relations().stream()
+                .filter(relationPredicate::test)
                 .flatMap(p -> p.getePairs().stream())
                 .filter(p -> source.geteType().equals(p.geteTypeA()))
                 .collect(Collectors.toList());
@@ -140,6 +143,19 @@ public class Accessor implements Supplier<Ontology> {
     public Optional<String> pType(String propertyName) {
         Property property = this.propertiesByName.get(propertyName);
         return property == null ? Optional.empty() : Optional.of(property.getpType());
+    }
+
+    public boolean isForeignRelation(RelationshipType relationshipType) {
+        if(relationshipType.getDirectives().isEmpty())
+            return false;
+
+        if(relationshipType.getDirectives().stream().noneMatch(d->DirectiveEnumTypes.RELATION.isSame(d.getName())))
+            return false;
+
+        return relationshipType.getDirectives()
+                .stream()
+                .filter(d->DirectiveEnumTypes.RELATION.isSame(d.getName()))
+                .anyMatch(d->d.containsArgVal(PhysicalEntityRelationsDirectiveType.FOREIGN.getName()));
     }
 
     public Iterable<EntityType> entities() {
@@ -214,6 +230,7 @@ public class Accessor implements Supplier<Ontology> {
 
         return Optional.empty();
     }
+
 
     public enum NodeType {
         ENUM, PROPERTY, RELATION, ENTITY

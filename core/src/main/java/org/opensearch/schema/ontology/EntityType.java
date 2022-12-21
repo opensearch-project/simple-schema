@@ -14,45 +14,21 @@ import java.util.stream.Stream;
 /**
  * ontology entity element type
  */
-public class EntityType implements BaseElement {
+public class EntityType extends CommonType {
     //region Fields
-    private List<String> idField = new ArrayList<>();
     private boolean isAbstract;
     private String eType;
-    private String name;
-    private List<DirectiveType> directives = new ArrayList<>();
-    private List<String> mandatory = new ArrayList<>();
-    private List<String> properties = new ArrayList<>();
-    private List<String> metadata = new ArrayList<>();
     private List<String> display = new ArrayList<>();
     private List<String> parentType = new ArrayList<>();
 
     public EntityType() {
-    }
-
-    public EntityType(String type, String name, List<String> properties, List<String> metadata) {
-        this(type, name, properties, metadata, Collections.emptyList(), Collections.emptyList());
+        super();
     }
 
     public EntityType(String type, String name, List<String> properties, List<String> metadata, List<String> mandatory, List<String> parentType) {
+        super(name,properties,metadata,mandatory);
         this.eType = type;
-        this.name = name;
-        this.properties = properties;
-        this.metadata = metadata;
-        this.mandatory = mandatory;
         this.parentType = parentType;
-    }
-
-    public EntityType(String type, String name, List<String> properties) {
-        this(type, name, properties, Collections.emptyList());
-    }
-
-    public List<String> getMetadata() {
-        return metadata != null ? metadata : Collections.emptyList();
-    }
-
-    public void setMetadata(List<String> metadata) {
-        this.metadata = metadata;
     }
 
     public boolean isAbstract() {
@@ -63,21 +39,6 @@ public class EntityType implements BaseElement {
         isAbstract = anAbstract;
     }
 
-    public List<DirectiveType> getDirectives() {
-        return directives;
-    }
-
-    @JsonIgnore
-    public void directive(DirectiveType value) {
-        directives.add(value);
-    }
-
-    @JsonIgnore
-    public EntityType withMetadata(List<String> metadata) {
-        this.metadata.addAll(metadata);
-        return this;
-    }
-
     public String geteType() {
         return eType;
     }
@@ -86,22 +47,26 @@ public class EntityType implements BaseElement {
         this.eType = eType;
     }
 
-    public String getName() {
-        return name;
+    public List<String> getParentType() {
+        return parentType != null ? parentType : Collections.emptyList();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setParentType(List<String> parentType) {
+        this.parentType = parentType;
     }
 
-    public List<String> getProperties() {
-        return properties != null ? properties : Collections.emptyList();
+    public List<String> getDisplay() {
+        return display;
     }
+
+    public void setDisplay(List<String> display) {
+        this.display = display;
+    }
+
 
     @JsonIgnore
-    public EntityType withProperties(List<String> properties) {
-        this.properties.addAll(properties);
-        return this;
+    public String idFieldName() {
+        return BaseElement.idFieldName(getIdField());
     }
 
     @Override
@@ -120,55 +85,9 @@ public class EntityType implements BaseElement {
         return entityType;
     }
 
-    public List<String> getParentType() {
-        return parentType != null ? parentType : Collections.emptyList();
-    }
-
-    public void setParentType(List<String> parentType) {
-        this.parentType = parentType;
-    }
-
-    public List<String> getMandatory() {
-        return mandatory != null ? mandatory : Collections.emptyList();
-    }
-
-    public void setMandatory(List<String> mandatory) {
-        this.mandatory = mandatory;
-    }
-
-    public void setProperties(List<String> properties) {
-        this.properties = properties;
-    }
-
-    public List<String> getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(List<String> display) {
-        this.display = display;
-    }
-
-    public List<String> getIdField() {
-        return idField;
-    }
-
-    public void setIdField(List<String> idField) {
-        this.idField = idField;
-    }
-
     @Override
     public String toString() {
         return "EntityType [idField = " + idField + ",eType = " + eType + ",abstract = " + isAbstract + ", name = " + name + ", display = " + display + ", properties = " + properties + ", metadata = " + metadata + ", mandatory = " + mandatory + ", directives = " + directives + "]";
-    }
-
-    @JsonIgnore
-    public String idFieldName() {
-        return BaseElement.idFieldName(getIdField());
-    }
-
-    @JsonIgnore
-    public List<String> fields() {
-        return Stream.concat(properties.stream(), metadata.stream()).collect(Collectors.toList());
     }
 
     @Override
@@ -192,25 +111,9 @@ public class EntityType implements BaseElement {
         return Objects.hash(idField, eType, isAbstract, parentType, name, properties, metadata, display);
     }
 
-
-    @JsonIgnore
-    public boolean containsMetadata(String key) {
-        return metadata.contains(key);
-    }
-
-    @JsonIgnore
-    public boolean isMandatory(String key) {
-        return mandatory.contains(key);
-    }
-
     @JsonIgnore
     public boolean containsProperty(String key) {
         return properties.contains(key);
-    }
-
-    @JsonIgnore
-    public boolean containsSuperType(String key) {
-        return parentType.contains(key);
     }
     //endregion
 
@@ -311,11 +214,7 @@ public class EntityType implements BaseElement {
             this.isAbstract = isAbstract;
             return this;
         }
-        @JsonIgnore
-        public Builder withDirective(DirectiveType value) {
-            this.directives.add(value);
-            return this;
-        }
+
         @JsonIgnore
         public Builder withDirectives(Collection<DirectiveType> values) {
             this.directives.addAll(values);
@@ -330,10 +229,10 @@ public class EntityType implements BaseElement {
             entityType.setMetadata(metadata);
             entityType.setDisplay(display);
             entityType.setParentType(parentType);
-            entityType.eType = this.eType;
-            entityType.idField = this.idField;
-            entityType.isAbstract = this.isAbstract;
-            entityType.directives.addAll(this.directives);
+            entityType.seteType(eType);
+            entityType.setIdField(idField);
+            entityType.setAbstract(isAbstract);
+            entityType.getDirectives().addAll(this.directives);
             return entityType;
         }
     }

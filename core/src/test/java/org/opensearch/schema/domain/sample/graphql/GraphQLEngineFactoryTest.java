@@ -1,4 +1,4 @@
-package org.opensearch.schema.graphql;
+package org.opensearch.schema.domain.sample.graphql;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;

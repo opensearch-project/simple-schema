@@ -1,0 +1,448 @@
+{
+  "ont": "simple",
+  "directives": [],
+  "entityTypes": [
+    {
+      "name": "Author",
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "model"
+        }
+      ],
+      "mandatory": [
+        "nationality",
+        "born",
+        "name"
+      ],
+      "properties": [
+        "nationality",
+        "died",
+        "age",
+        "born",
+        "books",
+        "name"
+      ],
+      "eType": "Author",
+      "abstract": false
+    },
+    {
+      "name": "Book",
+      "idField": [
+        "ISBN"
+      ],
+      "mandatory": [
+        "author",
+        "ISBN",
+        "title",
+        "published"
+      ],
+      "properties": [
+        "author",
+        "ISBN",
+        "title",
+        "published",
+        "description"
+      ],
+      "eType": "Book",
+      "abstract": false
+    },
+    {
+      "name": "DateTimeAggregationFilterResult",
+      "properties": [
+        "agg",
+        "result"
+      ],
+      "eType": "DateTimeAggregationFilterResult",
+      "abstract": false
+    },
+    {
+      "name": "NumericAggregationFilterResult",
+      "properties": [
+        "agg",
+        "resultInt",
+        "resultFloat"
+      ],
+      "eType": "NumericAggregationFilterResult",
+      "abstract": false
+    },
+    {
+      "name": "TextAggregationFilterResult",
+      "properties": [
+        "agg",
+        "resultInt",
+        "resultFloat"
+      ],
+      "eType": "TextAggregationFilterResult",
+      "abstract": false
+    }
+  ],
+  "relationshipTypes": [
+    {
+      "name": "has_Book",
+      "idField": [
+        "@id"
+      ],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "embedded"
+            }
+          ]
+        }
+      ],
+      "rType": "has_Book",
+      "directional": true,
+      "ePairs": [
+        {
+          "name": "Author->Book",
+          "eTypeA": "Author",
+          "sideAFieldName": "books",
+          "sideAIdField": "@id",
+          "eTypeB": "Book",
+          "sideBIdField": "ISBN"
+        }
+      ]
+    },
+    {
+      "name": "has_Author",
+      "idField": [
+        "@id"
+      ],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "reverse"
+            }
+          ]
+        }
+      ],
+      "rType": "has_Author",
+      "directional": true,
+      "ePairs": [
+        {
+          "name": "Book->Author",
+          "eTypeA": "Book",
+          "sideAFieldName": "author",
+          "sideAIdField": "ISBN",
+          "eTypeB": "Author",
+          "sideBIdField": "@id"
+        }
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "pType": "died",
+      "name": "died",
+      "type": {
+        "pType": "Primitive",
+        "type": "DATETIME",
+        "array": false
+      }
+    },
+    {
+      "pType": "age",
+      "name": "age",
+      "type": {
+        "pType": "Primitive",
+        "type": "INT",
+        "array": false
+      }
+    },
+    {
+      "pType": "born",
+      "name": "born",
+      "type": {
+        "pType": "Primitive",
+        "type": "DATETIME",
+        "array": false
+      }
+    },
+    {
+      "pType": "published",
+      "name": "published",
+      "type": {
+        "pType": "Primitive",
+        "type": "DATETIME",
+        "array": false
+      }
+    },
+    {
+      "pType": "description",
+      "name": "description",
+      "type": {
+        "pType": "Primitive",
+        "type": "TEXT",
+        "array": false
+      }
+    },
+    {
+      "pType": "Author",
+      "name": "author",
+      "type": {
+        "pType": "Object",
+        "type": "Author",
+        "array": false
+      }
+    },
+    {
+      "pType": "agg",
+      "name": "agg",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "nationality",
+      "name": "nationality",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "ISBN",
+      "name": "ISBN",
+      "type": {
+        "pType": "Primitive",
+        "type": "ID",
+        "array": false
+      }
+    },
+    {
+      "pType": "title",
+      "name": "title",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    },
+    {
+      "pType": "resultInt",
+      "name": "resultInt",
+      "type": {
+        "pType": "Primitive",
+        "type": "INT",
+        "array": false
+      }
+    },
+    {
+      "pType": "Book",
+      "name": "books",
+      "type": {
+        "pType": "ObjectList",
+        "type": "Book",
+        "array": true
+      }
+    },
+    {
+      "pType": "resultFloat",
+      "name": "resultFloat",
+      "type": {
+        "pType": "Primitive",
+        "type": "FLOAT",
+        "array": false
+      }
+    },
+    {
+      "pType": "result",
+      "name": "result",
+      "type": {
+        "pType": "Primitive",
+        "type": "DATETIME",
+        "array": false
+      }
+    },
+    {
+      "pType": "name",
+      "name": "name",
+      "type": {
+        "pType": "Primitive",
+        "type": "STRING",
+        "array": false
+      }
+    }
+  ],
+  "enumeratedTypes": [
+    {
+      "eType": "ArrayFilterOperation",
+      "values": [
+        {
+          "val": 0,
+          "name": "CONTAINS"
+        },
+        {
+          "val": 1,
+          "name": "NOT_CONTAINS"
+        }
+      ]
+    },
+    {
+      "eType": "DateTimeAggregation",
+      "values": [
+        {
+          "val": 0,
+          "name": "min"
+        },
+        {
+          "val": 1,
+          "name": "max"
+        },
+        {
+          "val": 2,
+          "name": "count"
+        },
+        {
+          "val": 3,
+          "name": "average"
+        },
+        {
+          "val": 4,
+          "name": "sum"
+        }
+      ]
+    },
+    {
+      "eType": "NumericAggregation",
+      "values": [
+        {
+          "val": 0,
+          "name": "min"
+        },
+        {
+          "val": 1,
+          "name": "max"
+        },
+        {
+          "val": 2,
+          "name": "count"
+        },
+        {
+          "val": 3,
+          "name": "average"
+        },
+        {
+          "val": 4,
+          "name": "sum"
+        }
+      ]
+    },
+    {
+      "eType": "NumericFilterOperator",
+      "values": [
+        {
+          "val": 0,
+          "name": "EQUAL"
+        },
+        {
+          "val": 1,
+          "name": "NOT_EQUAL"
+        },
+        {
+          "val": 2,
+          "name": "LT"
+        },
+        {
+          "val": 3,
+          "name": "LTE"
+        },
+        {
+          "val": 4,
+          "name": "GTE"
+        },
+        {
+          "val": 5,
+          "name": "GT"
+        },
+        {
+          "val": 6,
+          "name": "IN"
+        },
+        {
+          "val": 7,
+          "name": "NOT_IN"
+        }
+      ]
+    },
+    {
+      "eType": "TextAggregation",
+      "values": [
+        {
+          "val": 0,
+          "name": "min"
+        },
+        {
+          "val": 1,
+          "name": "max"
+        },
+        {
+          "val": 2,
+          "name": "count"
+        }
+      ]
+    },
+    {
+      "eType": "TextFilterOperation",
+      "values": [
+        {
+          "val": 0,
+          "name": "STARTS_WITH"
+        },
+        {
+          "val": 1,
+          "name": "NOT_STARTS_WITH"
+        },
+        {
+          "val": 2,
+          "name": "ENDS_WITH"
+        },
+        {
+          "val": 3,
+          "name": "NOT_ENDS_WITH"
+        },
+        {
+          "val": 4,
+          "name": "CONTAINS"
+        },
+        {
+          "val": 5,
+          "name": "NOT_CONTAINS"
+        },
+        {
+          "val": 6,
+          "name": "IN"
+        },
+        {
+          "val": 7,
+          "name": "NOT_IN"
+        }
+      ]
+    },
+    {
+      "eType": "UnaryFilterOperation",
+      "values": [
+        {
+          "val": 0,
+          "name": "EMPTY"
+        },
+        {
+          "val": 1,
+          "name": "NOT_EMPTY"
+        }
+      ]
+    }
+  ]
+}

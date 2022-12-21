@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.BaseTypeElement.Type;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
@@ -152,9 +152,9 @@ public class GraphQLOntologyProcessTranslatorTest {
     @Test
     public void testIndexProviderBuilder() throws Exception {
         IndexProvider provider = IndexProvider.Builder.generate(ontology
-                , e -> e.getDirectives().stream().anyMatch(d -> d.getName().equals("model"))
+                , e -> e.getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
                 , r -> r.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("relation") && d.containsArgVal("foreign")));
+                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
 
         String valueAsString = new ObjectMapper().writeValueAsString(provider);
         Assert.assertNotNull(valueAsString);
@@ -164,45 +164,52 @@ public class GraphQLOntologyProcessTranslatorTest {
         Optional<Entity> processEntity = rootEntities.stream().filter(p->p.getType().equals(Type.of("Process"))).findAny();
         Assertions.assertEquals(processEntity.isEmpty(), false);
         Map<String, Entity> nested = processEntity.get().getNested();
-        Assertions.assertEquals(nested.size(), 15);
 
         Assertions.assertTrue(nested.containsKey("source"));
-        Assertions.assertEquals(nested.get("source").getType().getName(),"Source");
+        Assertions.assertEquals("Source",nested.get("source").getType().getName());
 
         Assertions.assertTrue(nested.containsKey("codeSignature"));
-        Assertions.assertEquals(nested.get("codeSignature").getType().getName(),"CodeSignature");
+        Assertions.assertEquals("CodeSignature",nested.get("codeSignature").getType().getName());
 
         Assertions.assertTrue(nested.containsKey("elf"));
-        Assertions.assertEquals(nested.get("elf").getType().getName(),"ELF");
+        Assertions.assertEquals("ELF",nested.get("elf").getType().getName());
 
         Assertions.assertTrue(nested.containsKey("pe"));
-        Assertions.assertEquals(nested.get("pe").getType().getName(),"PE");
+        Assertions.assertEquals("PE",nested.get("pe").getType().getName());
 
-        Assertions.assertTrue(nested.containsKey("user"));
-        Assertions.assertEquals(nested.get("user").getType().getName(),"User");
-        Assertions.assertTrue(nested.containsKey("savedUser"));
-        Assertions.assertEquals(nested.get("savedUser").getType().getName(),"User");
+//      Process.user : is defined as >> user:User @relation(mappingType: "foreign")
+//        Assertions.assertTrue(nested.containsKey("user"));
+//        Assertions.assertEquals("User",nested.get("user").getType().getName());
+
+//      Process.savedUser : is defined as >> user:User @relation(mappingType: "foreign")
+//        Assertions.assertTrue(nested.containsKey("savedUser"));
+//        Assertions.assertEquals("User",nested.get("savedUser").getType().getName());
+
         Assertions.assertTrue(nested.containsKey("group"));
-
-        Assertions.assertEquals(nested.get("group").getType().getName(),"Group");
+        Assertions.assertEquals("Group",nested.get("group").getType().getName());
         Assertions.assertTrue(nested.containsKey("savedGroup"));
-        Assertions.assertEquals(nested.get("savedGroup").getType().getName(),"Group");
-        Assertions.assertTrue(nested.containsKey("supplementalGroups"));
-        Assertions.assertEquals(nested.get("supplementalGroups").getType().getName(),"Group");
 
-        Assertions.assertEquals(nested.get("parent").getType().getName(),"Process");
+        Assertions.assertEquals("Group",nested.get("savedGroup").getType().getName());
+        Assertions.assertTrue(nested.containsKey("supplementalGroups"));
+        Assertions.assertEquals("Group",nested.get("supplementalGroups").getType().getName());
+
+        Assertions.assertEquals("Process",nested.get("parent").getType().getName());
         Assertions.assertTrue(nested.containsKey("parent"));
-        Assertions.assertEquals(nested.get("groupLeader").getType().getName(),"Process");
+        Assertions.assertEquals("Process",nested.get("groupLeader").getType().getName());
         Assertions.assertTrue(nested.containsKey("groupLeader"));
-        Assertions.assertEquals(nested.get("sessionLeader").getType().getName(),"Process");
+        Assertions.assertEquals("Process",nested.get("sessionLeader").getType().getName());
         Assertions.assertTrue(nested.containsKey("sessionLeader"));
-        Assertions.assertEquals(nested.get("leader").getType().getName(),"Process");
+        Assertions.assertEquals("Process",nested.get("leader").getType().getName());
         Assertions.assertTrue(nested.containsKey("leader"));
-        Assertions.assertEquals(nested.get("previous").getType().getName(),"Process");
+        Assertions.assertEquals("Process",nested.get("previous").getType().getName());
         Assertions.assertTrue(nested.containsKey("previous"));
 
-        Assertions.assertEquals(provider.getRelations().size(), 1);
-        Assertions.assertEquals(provider.getRelations().get(0).getType().getName(), "has_User");
+        Assertions.assertEquals(2,provider.getRelations().size());
+        Assertions.assertTrue(provider.getRelations().stream().anyMatch(r->r.getType().getName().equals("has_User")));
+        Assertions.assertTrue(provider.getRelations().stream().anyMatch(r->r.getType().getName().equals("has_AutonomousSystem")));
+
+        Assertions.assertTrue(provider.getRelations().stream().flatMap(r->r.getDirectives().stream()).anyMatch(d->d.containsArgVal(PhysicalEntityRelationsDirectiveType.FOREIGN.getName())));
+        Assertions.assertTrue(provider.getRelations().stream().flatMap(r->r.getDirectives().stream()).anyMatch(d->d.containsArgVal(PhysicalEntityRelationsDirectiveType.EMBEDDED.getName())));
     }
 
 }

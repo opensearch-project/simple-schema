@@ -1,14 +1,14 @@
-package org.opensearch.languages.sql;
+package org.opensearch.languages.oql.query.domain.simple;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
 import org.opensearch.graphql.Transformer;
-import org.opensearch.languages.sql.graphql.GraphQLToSQLTransformer;
-import org.opensearch.languages.sql.query.Query;
+import org.opensearch.languages.oql.query.descriptor.QueryDescriptor;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
+import org.opensearch.languages.oql.graphql.GraphQLToOQLTransformer;
+import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * this test translated the GQL schema into an ontology and takes a GQL query and using the generated ontology generates an intermediate query - Using the IOQL
  * the Intermediate Ontological Query Language
  */
-public class GraphQLToSQLTranslatorTest {
+public class GraphQLToOQLTranslatorTest {
     public static Accessor accessor;
     private static List<InputStream> streams;
     public static Transformer<Query> transformer;
@@ -48,7 +48,7 @@ public class GraphQLToSQLTranslatorTest {
         //expect engine not yet created
         assertTrue(GraphQLEngineFactory.engine().isEmpty());
         //create a GQL to Query IOQL transformer
-        transformer = new GraphQLToSQLTransformer();
+        transformer = new GraphQLToOQLTransformer();
 
         // first create an ontology from the GQL SDL
         GraphQLToOntologyTransformer graphQLToOntologyTransformer = new GraphQLToOntologyTransformer();
@@ -141,9 +141,8 @@ public class GraphQLToSQLTranslatorTest {
     }
 
 
-//    @Test
-    @Ignore
-    public void failTestCorrectTypeWithPartialField() {
+    @Test
+    public void testCorrectTypeWithPartialField() {
         String q = " {\n" +
                 "    author {\n" +
                 "        name,\n" +
@@ -151,13 +150,15 @@ public class GraphQLToSQLTranslatorTest {
                 "    }\n" +
                 "}";
         Query query = transformer.transform(accessor, q);
-        String expected = "select name, born from author";
-        assertEquals(expected, query.getQuery());
+        String expected = "[└── Start, \n" +
+                "    ──Typ[Author:1]──Q[2]:{3|4}, \n" +
+                "                           └─?[3]:[name<IdentityProjection>], \n" +
+                "                           └─?[4]:[born<IdentityProjection>]]";
+        assertEquals(expected, QueryDescriptor.print(query));
     }
 
-//    @Test
-    @Ignore
-    public void failTestCorrectTypeWithAllField() {
+    @Test
+    public void testCorrectTypeWithAllField() {
         String q = " {\n" +
                 "    author {\n" +
                 "        name,\n" +
@@ -167,13 +168,17 @@ public class GraphQLToSQLTranslatorTest {
                 "    }\n" +
                 "}";
         Query query = transformer.transform(accessor, q);
-        String expected = "select name, born, died, nationality from author";
-        assertEquals(expected, query.getQuery());
+        String expected = "[└── Start, \n" +
+                "    ──Typ[Author:1]──Q[2]:{3|4|5|6}, \n" +
+                "                               └─?[3]:[name<IdentityProjection>], \n" +
+                "                               └─?[4]:[born<IdentityProjection>], \n" +
+                "                               └─?[5]:[died<IdentityProjection>], \n" +
+                "                               └─?[6]:[nationality<IdentityProjection>]]";
+        assertEquals(expected, QueryDescriptor.print(query));
     }
 
-//    @Test
-    @Ignore
-    public void failTestCorrectTypeWithAllFieldIncludingInnerNestedPartialField() {
+    @Test
+    public void testCorrectTypeWithAllFieldIncludingInnerNestedPartialField() {
         String q = " {\n" +
                 "    author {\n" +
                 "        name,\n" +
@@ -186,15 +191,19 @@ public class GraphQLToSQLTranslatorTest {
                 "    }\n" +
                 "}";
         Query query = transformer.transform(accessor, q);
-        String expected = "select author.name,author.born,author.died,author.nationality, books.title \n" +
-                "from author, books \n" +
-                "where author.book_id = books.ISBN";
-        assertEquals(expected, query.getQuery());
+        String expected = "[└── Start, \n" +
+                "    ──Typ[Author:1]──Q[2]:{3|4|5|6|7}, \n" +
+                "                                 └─?[3]:[name<IdentityProjection>], \n" +
+                "                                 └─?[4]:[born<IdentityProjection>], \n" +
+                "                                 └─?[5]:[died<IdentityProjection>], \n" +
+                "                                 └─?[6]:[nationality<IdentityProjection>], \n" +
+                "                                 └─Typ[Book:7]──Q[8]:{9}, \n" +
+                "                                                    └─?[9]:[title<IdentityProjection>]]";
+        assertEquals(expected, QueryDescriptor.print(query));
     }
 
-//    @Test
-    @Ignore
-    public void failTestCorrectTypeWithAllFieldIncludingInnerNestedAllField() {
+    @Test
+    public void testCorrectTypeWithAllFieldIncludingInnerNestedAllField() {
         String q = " {\n" +
                 "    author {\n" +
                 "        name,\n" +
@@ -209,9 +218,16 @@ public class GraphQLToSQLTranslatorTest {
                 "    }\n" +
                 "}";
         Query query = transformer.transform(accessor, q);
-        String expected = "select author.name,author.born,author.died,author.nationality, books.ISBN, books.title, books.publish \n" +
-                "from author, books \n" +
-                "where author.book_id = books.ISBN";
-        assertEquals(expected, query.getQuery());
+        String expected = "[└── Start, \n" +
+                "    ──Typ[Author:1]──Q[2]:{3|4|5|6|7}, \n" +
+                "                                 └─?[3]:[name<IdentityProjection>], \n" +
+                "                                 └─?[4]:[born<IdentityProjection>], \n" +
+                "                                 └─?[5]:[died<IdentityProjection>], \n" +
+                "                                 └─?[6]:[nationality<IdentityProjection>], \n" +
+                "                                 └─Typ[Book:7]──Q[8]:{9|10|11}, \n" +
+                "                                                          └─?[9]:[ISBN<IdentityProjection>], \n" +
+                "                                                          └─?[10]:[title<IdentityProjection>], \n" +
+                "                                                          └─?[11]:[published<IdentityProjection>]]";
+        assertEquals(expected, QueryDescriptor.print(query));
     }
 }

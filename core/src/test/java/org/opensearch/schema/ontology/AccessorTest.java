@@ -50,6 +50,11 @@ class AccessorTest {
     }
 
     @Test
+    void isForeignRelation() {
+        //todo implement
+    }
+
+    @Test
     void relationsPairsBySourceEntity() {
         //todo implement
     }

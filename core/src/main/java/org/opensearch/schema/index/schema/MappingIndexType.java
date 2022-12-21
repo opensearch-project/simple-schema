@@ -10,4 +10,6 @@ public enum MappingIndexType {
     UNIFIED,
     //time partitioned index
     TIME,
+    //none represents this (entity) mapping has no Independent mapping of it own
+    NONE,
 }

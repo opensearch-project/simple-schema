@@ -5,16 +5,14 @@ import com.fasterxml.jackson.annotation.*;
 import com.google.common.collect.ImmutableList;
 import javaslang.Tuple2;
 import org.opensearch.schema.index.schema.BaseTypeElement.Type;
-import org.opensearch.schema.ontology.Accessor;
-import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.RelationshipType;
+import org.opensearch.schema.ontology.*;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.opensearch.schema.index.schema.NestingType.NONE;
+import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -137,77 +135,95 @@ public class IndexProvider {
             //generate relations
             provider.relations = ontology.getRelationshipTypes().stream()
                     .filter(relationPredicate)
-                    //simplified assumption of top level entities are static and without nesting
-                    .map(e -> createRelation(e, MappingIndexType.STATIC, NONE, accessor))
+                    .map(r -> createRelation(r, accessor))
                     .collect(Collectors.toSet());
 
             return provider;
         }
 
+        private static Relation createRelation(RelationshipType r, Accessor accessor) {
+            Optional<DirectiveType> relationDirective = r.getDirectives().stream().filter(d -> RELATION.isSame(d.getName())).findAny();
+            if (relationDirective.isEmpty()) {
+                //simplified assumption of top level entities are static and without nesting
+                return createRelation(r, MappingIndexType.STATIC, NONE, accessor);
+            }
+            if (relationDirective.get().getArguments().stream().noneMatch(arg -> arg.name.equals(RELATION.getArguments().get(0)))) {
+                //simplified assumption of default embedded relation hierarchy between parent & child object
+                return createRelation(r, MappingIndexType.NONE, NestingType.EMBEDDED, accessor);
+            }
+
+            // get the directive instruction of how this relationship is to be physically stored
+            DirectiveType.Argument argument = relationDirective.get().getArguments().stream().filter(arg -> arg.name.equals(RELATION.getArguments().get(0))).findAny().get();
+            PhysicalEntityRelationsDirectiveType relationsDirective = PhysicalEntityRelationsDirectiveType.from(argument.value.toString());
+
+            return createRelation(r, MappingIndexType.NONE, NestingType.translate(relationsDirective), accessor);
+        }
+
         private static Relation createRelation(RelationshipType r, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
-            return switch (nestingType) {
-                case NESTED, NESTED_REFERENCE ->
-                    //create minimal representation - TODO add redundant here
-                        new Relation(Type.of(r.getName()), nestingType, mappingIndexType, false,
-                                createProperties(r.getName(), accessor));
-                default -> new Relation(Type.of(r.getName()), nestingType, mappingIndexType, false,
-                        createNestedElements(r, accessor),
-                        // indices need to be lower cased
-                        createProperties(r.getName(), accessor),
-                        Collections.emptySet(), Collections.emptyMap());
-            };
-        }
-
-        private static Entity createEntity(EntityType e, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
-            return switch (nestingType) {
-                case NESTED, REFERENCE, NESTED_REFERENCE ->
-                    // create minimal representation  - TODO add redundant here
+            return new Relation(Type.of(r.getName()), nestingType, mappingIndexType,
+                    false,
+                    r.getDirectives(),
+                    createNestedElements(r, accessor),
                     // indices need to be lower cased
-                        new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
-                                createProperties(e.getName(), accessor));
-                default -> new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
-                        // indices need to be lower cased
-                        createProperties(e.getName(), accessor),
-                        createNestedElements(e, accessor),
-                        Collections.emptyMap());
-            };
+                    createProperties(r.getName(), accessor),
+                    Collections.emptySet(), Collections.emptyMap());
         }
 
-        private static Map<String, Relation> createNestedElements(RelationshipType r, Accessor accessor) {
-            return r.getProperties().stream()
-                    .filter(p -> accessor.getNestedRelationByPropertyName(p).isPresent())
-                    .map(p ->
-                            new Tuple2<>(p, createRelation(
-                                    accessor.getNestedRelationByPropertyName(p).get(),//relation type
-                                    MappingIndexType.STATIC,// simplified assumption of nested types to be in the same static index of owning entity
-                                    accessor.property$(p).getType().isArray() ? NestingType.NESTED : NestingType.EMBEDDED,
-                                    accessor))
-                    ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
-        }
+        ;
+    }
 
-        private static Map<String, Entity> createNestedElements(EntityType e, Accessor accessor) {
-            return accessor.relationsPairsBySourceEntity(e).stream()
-                    .map(p -> {
-                                //in case of mutual reference - using the REFERENCE type mapping
-                                if (p.geteTypeA().equals(p.geteTypeB())) {
-                                    return new Tuple2<>(p.getSideAFieldName(), createEntity(
-                                            accessor.entity$(p.geteTypeB()),// relation destination entity type
-                                            MappingIndexType.STATIC,// simplified assumption of nested types to be in the same static index of owning entity
-                                            accessor.property$(p.getSideAFieldName()).getType().isArray() ? NestingType.NESTED_REFERENCE : NestingType.REFERENCE,
-                                            accessor));
-                                }
-                                //other types of inner entities that are contained inside the wrapping element
+    private static Entity createEntity(EntityType e, MappingIndexType mappingIndexType, NestingType nestingType, Accessor accessor) {
+        return switch (nestingType) {
+            case NESTED, REFERENCE, NESTED_REFERENCE ->
+                // create minimal representation  - TODO add redundant here
+                // indices need to be lower cased
+                    new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
+                            createProperties(e.getName(), accessor));
+            default -> new Entity(Type.of(e.getName()), nestingType, mappingIndexType,
+                    e.getDirectives(),
+                    // indices need to be lower cased
+                    createProperties(e.getName(), accessor),
+                    createNestedElements(e, accessor),
+                    Collections.emptyMap());
+        };
+    }
+
+    private static Map<String, Relation> createNestedElements(RelationshipType r, Accessor accessor) {
+        return r.getProperties().stream()
+                .filter(p -> accessor.getNestedRelationByPropertyName(p).isPresent())
+                .map(p ->
+                        new Tuple2<>(p, Builder.createRelation(
+                                accessor.getNestedRelationByPropertyName(p).get(),//relation type
+                                MappingIndexType.STATIC,// simplified assumption of nested types to be in the same static index of owning entity
+                                accessor.property$(p).getType().isArray() ? NestingType.NESTED : NestingType.EMBEDDED,
+                                accessor))
+                ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
+    }
+
+    private static Map<String, Entity> createNestedElements(EntityType e, Accessor accessor) {
+        //first filter out the logical nested entities which have physical foreign directives
+        return accessor.relationsPairsBySourceEntity(e, r -> !accessor.isForeignRelation(r))
+                .stream()
+                .map(p -> {
+                            //in case of mutual reference - using the REFERENCE type mapping
+                            if (p.geteTypeA().equals(p.geteTypeB())) {
                                 return new Tuple2<>(p.getSideAFieldName(), createEntity(
                                         accessor.entity$(p.geteTypeB()),// relation destination entity type
                                         MappingIndexType.STATIC,// simplified assumption of nested types to be in the same static index of owning entity
-                                        accessor.property$(p.getSideAFieldName()).getType().isArray() ? NestingType.NESTED : NestingType.EMBEDDED,
+                                        accessor.property$(p.getSideAFieldName()).getType().isArray() ? NestingType.NESTED_REFERENCE : NestingType.REFERENCE,
                                         accessor));
                             }
-                    ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
-        }
+                            //other types of inner entities that are contained inside the wrapping element
+                            return new Tuple2<>(p.getSideAFieldName(), createEntity(
+                                    accessor.entity$(p.geteTypeB()),// relation destination entity type
+                                    MappingIndexType.STATIC,// simplified assumption of nested types to be in the same static index of owning entity
+                                    accessor.property$(p.getSideAFieldName()).getType().isArray() ? NestingType.NESTED : NestingType.EMBEDDED,
+                                    accessor));
+                        }
+                ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
+    }
 
-        private static Props createProperties(String name, Accessor accessor) {
-            return new Props(ImmutableList.of(name));
-        }
+    private static Props createProperties(String name, Accessor accessor) {
+        return new Props(ImmutableList.of(name));
     }
 }
