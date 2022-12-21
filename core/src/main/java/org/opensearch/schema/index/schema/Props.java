@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -110,5 +111,18 @@ public class Props {
     @Override
     protected Props clone()  {
         return new Props(this.values);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Props props = (Props) o;
+        return Objects.equals(getValues(), props.getValues()) && Objects.equals(getPartitionField(), props.getPartitionField()) && Objects.equals(getPrefix(), props.getPrefix()) && Objects.equals(getIndexFormat(), props.getIndexFormat()) && Objects.equals(getDateFormat(), props.getDateFormat()) && Objects.equals(getAdditionalProperties(), props.getAdditionalProperties());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getValues(), getPartitionField(), getPrefix(), getIndexFormat(), getDateFormat(), getAdditionalProperties());
     }
 }

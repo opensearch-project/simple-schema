@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,5 +88,12 @@ public abstract class CommonType implements BaseElement {
 
     public void setMetadata(List<String> metadata) {
         this.metadata = metadata;
+    }
+
+    public static class Accessor {
+        public static Optional<DirectiveType> getDirective(CommonType type, String name) {
+            return type.getDirectives().stream().filter(d->d.getName().equals(name)).findAny();
+        }
+
     }
 }

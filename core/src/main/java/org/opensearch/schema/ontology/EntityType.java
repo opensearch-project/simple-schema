@@ -115,6 +115,11 @@ public class EntityType extends CommonType {
     public boolean containsProperty(String key) {
         return properties.contains(key);
     }
+
+    @JsonIgnore
+    public boolean containsMetadata(String key) {
+        return metadata.contains(key);
+    }
     //endregion
 
     //region Builder

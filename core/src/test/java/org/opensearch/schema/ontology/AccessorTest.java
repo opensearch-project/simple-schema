@@ -14,9 +14,19 @@ class AccessorTest {
     @Before
     public static void setup() throws IOException {
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/observability/user.json");
-        Ontology ontology = mapper.readValue(stream,Ontology.class);
+        Ontology ontology = mapper.readValue(stream, Ontology.class);
         accessor = new Accessor(ontology);
 
+    }
+
+    @Test
+    void testIsForeignRelation() {
+        //todo implement
+    }
+
+    @Test
+    void testIsSelfReference() {
+        //todo implement
     }
 
     @Test
@@ -53,9 +63,38 @@ class AccessorTest {
     void isForeignRelation() {
         //todo implement
     }
+    @Test
+    void isNestedRelation() {
+        //todo implement
+    }
+    @Test
+    void isChildRelation() {
+        //todo implement
+    }
+    @Test
+    void isEmbeddedRelation() {
+        //todo implement
+    }
+    @Test
+    void isReverseRelation() {
+        //todo implement
+    }
 
     @Test
     void relationsPairsBySourceEntity() {
+        //todo implement
+    }
+    @Test
+    void relationsPairsByTargetEntity() {
+        //todo implement
+    }
+
+    @Test
+    void relationsBySourceEntity() {
+        //todo implement
+    }
+    @Test
+    void relationsByTargetEntity() {
         //todo implement
     }
 
@@ -141,6 +180,11 @@ class AccessorTest {
 
     @Test
     void matchNameToType() {
+        //todo implement
+    }
+
+    @Test
+    void getDirective() {
         //todo implement
     }
 }

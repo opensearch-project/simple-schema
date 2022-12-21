@@ -9,6 +9,7 @@ import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
+import org.opensearch.schema.validation.SchemaValidator;
 import org.opensearch.schema.validation.ValidationResult;
 
 import java.io.FileInputStream;

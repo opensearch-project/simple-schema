@@ -35,7 +35,7 @@ public class IndexSimpleForeignIndexProviderTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaForeignBooks.json");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaReferenceBooks.json");
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
@@ -101,14 +101,12 @@ public class IndexSimpleForeignIndexProviderTest {
         Relation has_book = indexProvider.getRelation("has_Book").get();
         Assert.assertEquals(1, has_book.getDirectives().size());
         Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 has_book.getDirectives().get(0));
 
         //TODO - Fix According to specific tests
-/*
         Assert.assertEquals(MappingIndexType.STATIC, has_book.getMapping());
         Assert.assertEquals(NestingType.NONE, has_book.getNesting());
-*/
 
     }
 
@@ -121,7 +119,7 @@ public class IndexSimpleForeignIndexProviderTest {
         Relation has_author = indexProvider.getRelation("has_Author").get();
         Assert.assertEquals(1, has_author.getDirectives().size());
         Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 has_author.getDirectives().get(0));
 
         //TODO - Fix According to specific tests

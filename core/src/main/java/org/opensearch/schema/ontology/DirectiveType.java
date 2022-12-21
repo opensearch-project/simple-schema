@@ -1,13 +1,11 @@
 package org.opensearch.schema.ontology;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -52,6 +50,11 @@ public class DirectiveType {
 
     public List<Argument> getArguments() {
         return arguments;
+    }
+
+    @JsonIgnore
+    public Optional<Argument> getArgument(String name) {
+        return arguments.stream().filter(arg -> arg.name.equals(name)).findAny();
     }
 
     public void setArguments(List<Argument> arguments) {
@@ -127,6 +130,10 @@ public class DirectiveType {
 
         public String name;
         public Object value;
+
+        public boolean equalsValue(Object o) {
+            return value.equals(o);
+        }
 
         @Override
         public boolean equals(Object o) {

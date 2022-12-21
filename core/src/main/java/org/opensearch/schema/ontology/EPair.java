@@ -8,6 +8,8 @@ import org.opensearch.schema.index.schema.MappingIndexType;
 
 import java.util.Objects;
 
+import static org.opensearch.schema.ontology.EPair.RelationReferenceType.ONE_TO_ONE;
+
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -22,9 +24,17 @@ import java.util.Objects;
  */
 public class EPair {
     /**
+     * describes the nature of the relationship
+     */
+    public enum RelationReferenceType {
+        ONE_TO_ONE, ONE_TO_MANY, MANY_TO_MANY
+    }
+
+    /**
      * DO-NOT-REMOVE - @Jackson required
      */
-    public EPair() {}
+    public EPair() {
+    }
 
     public EPair(String eTypeA, String eTypeB) {
         this(String.format("%s->%s", eTypeA, eTypeB), eTypeA, eTypeB);
@@ -37,11 +47,12 @@ public class EPair {
         this.name = name;
     }
 
-    public EPair(String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
-        this(String.format("%s->%s", eTypeA, eTypeB), eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+    public EPair(String eTypeA,RelationReferenceType referenceType, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+        this(String.format("%s->%s", eTypeA, eTypeB), referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
     }
 
-    public EPair(String name, String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+    public EPair(String name, RelationReferenceType referenceType, String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+        this.referenceType = referenceType;
         this.name = name;
         this.eTypeA = eTypeA;
         this.sideAFieldName = sideAFieldName;
@@ -115,6 +126,13 @@ public class EPair {
         this.mappingTypeSideB = mappingTypeSideB;
     }
 
+    public RelationReferenceType getReferenceType() {
+        return referenceType;
+    }
+
+    public void setReferenceType(RelationReferenceType referenceType) {
+        this.referenceType = referenceType;
+    }
     @JsonIgnore
     public EPair withSideAIdField(String sideAIdField) {
         this.sideAIdField = sideAIdField;
@@ -127,6 +145,8 @@ public class EPair {
         return this;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,10 +154,11 @@ public class EPair {
         EPair ePair = (EPair) o;
         return
                 Objects.equals(name, ePair.name) &&
+                        Objects.equals(referenceType, ePair.referenceType) &&
                         Objects.equals(eTypeA, ePair.eTypeA) &&
                         Objects.equals(mappingTypeSideA, ePair.mappingTypeSideA) &
-                        Objects.equals(mappingTypeSideB, ePair.mappingTypeSideB) &
-                        Objects.equals(sideAFieldName, ePair.sideAFieldName) &
+                                Objects.equals(mappingTypeSideB, ePair.mappingTypeSideB) &
+                                Objects.equals(sideAFieldName, ePair.sideAFieldName) &
                                 Objects.equals(sideAIdField, ePair.sideAIdField) &
                                 Objects.equals(eTypeB, ePair.eTypeB) &
                                 Objects.equals(sideBIdField, ePair.sideBIdField);
@@ -145,19 +166,20 @@ public class EPair {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField,mappingTypeSideA,mappingTypeSideB);
+        return Objects.hash(name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField, mappingTypeSideA, mappingTypeSideB);
     }
 
     @Override
     public String toString() {
-        return "EPair [name= " + name + ",eTypeA= " + eTypeA + ",sideAId= " + sideAIdField + ",sideAField= " + sideAFieldName + ",mappingTypeSideA= " + mappingTypeSideA + ", eTypeB = " + eTypeB + ", sideBId = " + sideBIdField+ ", mappingTypeSideB = " + mappingTypeSideB + "]";
+        return "EPair [name= " + name + ",referenceType= " + referenceType + ",eTypeA= " + eTypeA + ",sideAId= " + sideAIdField + ",sideAField= " + sideAFieldName + ",mappingTypeSideA= " + mappingTypeSideA + ", eTypeB = " + eTypeB + ", sideBId = " + sideBIdField + ", mappingTypeSideB = " + mappingTypeSideB + "]";
     }
 
     @Override
     public EPair clone() {
-        return new EPair(name, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+        return new EPair(name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
     }
 
+    private RelationReferenceType referenceType;
     //region Fields
     private String name;
     private String eTypeA;

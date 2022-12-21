@@ -85,7 +85,28 @@ public class RelationsCreationTranslation implements TranslationStrategy {
         EntityType sideA = context.getBuilder().getEntityType(name).get();
         String sideAFieldName = t._1;
         EntityType sideB = t._2;
-        return new EPair(sideA.geteType(), sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
+        EPair.RelationReferenceType relationReferenceType = calculateReferenceType(name, t, context);
+        return new EPair(sideA.geteType(), relationReferenceType, sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
+    }
+
+    /**
+     * calculate the RelationReferenceType according to the next rules:
+     * <br>
+     * - one-to-one : in case the sideB entity is not a list
+     * <br>
+     * - one-to-many : in case the sideB entity is a list
+     * <br>
+     * - many-to-many : in case the sideB entity is a list and the relation's opposite side is also a list
+     * this will be calculated in a post build pass only after all the relationships are creted
+     *
+     * @param name
+     * @param tuple2
+     * @param context
+     * @return
+     */
+    private EPair.RelationReferenceType calculateReferenceType(String name, Tuple2<String, EntityType> tuple2, TranslationContext context) {
+        //todo implement
+        return null;
     }
 
 }

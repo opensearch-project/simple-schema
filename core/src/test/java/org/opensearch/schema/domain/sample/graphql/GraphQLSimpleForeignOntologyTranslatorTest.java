@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.MODEL;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
@@ -60,7 +61,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
     @Test
     public void testIndexProviderBuilder() {
         IndexProvider provider = IndexProvider.Builder.generate(ontology);
-        List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName).toList();
+        List<String> names = provider.getEntities().stream().map(Entity::getType).map(BaseTypeElement.Type::getName).collect(Collectors.toList());
         Assertions.assertTrue(names.contains("Author"));
         Assertions.assertTrue(names.contains("Book"));
     }
@@ -135,7 +136,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 ontologyAccessor.relation$("has_Book").getDirectives().get(0));
     }
 
@@ -145,7 +146,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 ontologyAccessor.relation$("has_Author").getDirectives().get(0));
     }
 

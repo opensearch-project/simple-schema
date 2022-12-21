@@ -246,8 +246,28 @@ Mapping of the entity type to a multiple indices where each index is called afte
          }
   ```
 
+##### Unified
+Mapping of all the entities types to form a consolidated index for all types of entities 
+
+ ```json
+        {
+           "type": "Unified",    => this is the name of the physical index
+           "mapping":"Index",
+           "symmetric":true
+           ],
+            "props": {
+              "values": ["unified"]  => this is the name of the physical index
+            }
+         }
+  ```
+
 ##### Nested
-Mapping the entity (sub)type to an index containing as an embedded/nested document
+Mapping the entity (sub)type to an index containing as an embedded/nested/child document
+
+The mapping field can have one of the following nesting options:
+ - Embedded
+ - Nested
+ - Child
 
 In this example the Profession is the nested entity here ...
 
@@ -331,7 +351,7 @@ Lets consider a 'Call' relationship type between two **person** entity
 * **SideA** - is the left Side of the relationship  - a Person
 * **SideB** - is the right Side of the relationship - a Person
 
-  ```json
+```json
     {
         "type": "Call",
         "partition": "time", 

@@ -138,7 +138,7 @@ public class GraphQLSimpleEmbeddedOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
                 ontologyAccessor.relation$("has_Book").getDirectives().get(0));
     }
 
@@ -148,7 +148,7 @@ public class GraphQLSimpleEmbeddedOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
                 ontologyAccessor.relation$("has_Author").getDirectives().get(0));
     }
 

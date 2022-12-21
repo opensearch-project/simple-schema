@@ -98,13 +98,13 @@ type Process implements BaseRecord @model{
     codeSignature: CodeSignature
 
     # An array of previous executions for the process, including the initial fork. Only executable and args are set.
-    previous:[Process]
+    previous:[Process] @relation(mappingType: "foreign")
     # Often the same as entry_leader. When it differs, it represents a session started within another session. e.g. using tmux
-    leader:Process
+    leader:Process @relation(mappingType: "foreign")
     # Often the same as entry_leader. When it differs, it represents a session started within another session. e.g. using tmux
-    sessionLeader:Process
+    sessionLeader:Process @relation(mappingType: "foreign")
     #    Information about the parent’s process group leader. Only pid, start and entity_id fields are set.
-    groupLeader:Process
+    groupLeader:Process @relation(mappingType: "foreign")
     #    Information about the parent process.
-    parent:Process
+    parent:Process @relation(mappingType: "foreign")
 }

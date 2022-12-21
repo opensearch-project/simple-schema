@@ -53,7 +53,7 @@ class RelationsCreationTranslationTest {
         Assert.assertEquals("author", has_authorPair.getSideAFieldName());
 
         Assert.assertEquals(new DirectiveType(RELATION.getName(), DirectiveType.DirectiveClasses.DATATYPE,
-                        List.of(of(RELATION.getArguments().get(0),FOREIGN.getName()))),
+                        List.of(of(RELATION.getArgument(0),FOREIGN.getName()))),
                 accessor.relation("has_Author").get().getDirectives().get(0));
     }
 
@@ -75,7 +75,7 @@ class RelationsCreationTranslationTest {
         Assert.assertEquals("books", has_authorPair.getSideAFieldName());
 
         Assert.assertEquals(new DirectiveType(RELATION.getName(), DirectiveType.DirectiveClasses.DATATYPE,
-                        List.of(of(RELATION.getArguments().get(0),FOREIGN.getName()))),
+                        List.of(of(RELATION.getArgument(0),FOREIGN.getName()))),
                 accessor.relation("has_Book").get().getDirectives().get(0));
     }
 

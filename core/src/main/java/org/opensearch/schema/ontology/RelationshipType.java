@@ -85,6 +85,11 @@ public class RelationshipType extends CommonType {
     }
 
     @JsonIgnore
+    public boolean containsMetadata(String key) {
+        return metadata.contains(key);
+    }
+
+    @JsonIgnore
     public boolean hasSideA(String eType) {
         return ePairs.stream().anyMatch(ep -> ep.geteTypeA().equals(eType));
     }

@@ -62,7 +62,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
                 case STATIC:
                     buildStaticMapping(ontology, client, requests, e, entity);
                     break;
-                case TIME:
+                case PARTITIONED:
                     buildTimebasedMapping(ontology, client, requests, e, entity);
                     break;
             }

@@ -11,7 +11,8 @@ import java.util.stream.Stream;
  * <br>
  * - child - physical entities (documents) are using parent-child relationship
  * <br>
- * - foreign - physical entities (documents) are saved in separate indices
+ * - foreign - physical entities (documents) are saved in separate indices - references to the remote ID is saved in the index
+ *             in case of referencing many elements - the reference will be saved in a nested form
  * <br>
  * - reverse - physical entities (documents) are the inner relationship subject of the main entity and therefore reverse pointing back to it
  * <br>

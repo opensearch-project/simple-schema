@@ -42,7 +42,7 @@ public class MappingSimpleForeignIndexProviderTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaForeignBooks.json");
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaReferenceBooks.json");
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
@@ -117,11 +117,9 @@ public class MappingSimpleForeignIndexProviderTest {
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
 
         //TODO - Fix According to specific tests - we expect here the relationship table be symmetric for both author->book & book->author
-/*
         Assert.assertNotNull(requests.get("has_Author"));
         Assert.assertEquals(1, requests.get("author").getMappings().size());
         Assert.assertNotNull(requests.get("author").getMappings().get("Author"));
-*/
 
     }
 

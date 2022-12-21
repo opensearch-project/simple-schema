@@ -105,7 +105,7 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Relation has_book = indexProvider.getRelation("has_Book").get();
         Assert.assertEquals(1, has_book.getDirectives().size());
         Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
                 has_book.getDirectives().get(0));
 
         Assert.assertEquals(MappingIndexType.NONE, has_book.getMapping());
@@ -122,7 +122,7 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Relation has_author = indexProvider.getRelation("has_Author").get();
         Assert.assertEquals(1, has_author.getDirectives().size());
         Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArguments().get(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
+                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
                 has_author.getDirectives().get(0));
 
         Assert.assertEquals(MappingIndexType.NONE, has_author.getMapping());

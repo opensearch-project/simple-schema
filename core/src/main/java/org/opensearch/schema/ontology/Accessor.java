@@ -9,6 +9,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
 
 /**
  * General helper utility that helps to query and investigate the Ontology metadata
@@ -47,6 +50,14 @@ public class Accessor implements Supplier<Ontology> {
 
     public Optional<EntityType> entity(String entityName) {
         return Optional.ofNullable(this.entitiesByName.get(entityName));
+    }
+
+    public Optional<? extends BaseElement> $element(String type) {
+        if (this.entitiesByEtype.get(type) != null)
+            return Optional.of(this.entitiesByEtype.get(type));
+        if (this.relationsByName.get(type) != null)
+            return Optional.of(this.relationsByName.get(type));
+        return Optional.empty();
     }
 
     public EntityType entity$(String entityName) {
@@ -108,6 +119,46 @@ public class Accessor implements Supplier<Ontology> {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * get relationship in which pair's target entity type if given as a parameter
+     * @param target
+     * @return
+     */
+    public List<RelationshipType> relationByTargetEntity(EntityType target) {
+        return relations().stream()
+                .filter(r -> r.getePairs().stream()
+                        .anyMatch(p->p.geteTypeB().equals(target.geteType())))
+                .collect(Collectors.toList());
+
+    }
+
+    /**
+     * get relationship in which pair's source entity type if given as a parameter
+     * @param source
+     * @return
+     */
+    public List<RelationshipType> relationBySourceEntity(EntityType source) {
+        return relations().stream()
+                .filter(r -> r.getePairs().stream()
+                        .anyMatch(p->p.geteTypeA().equals(source.geteType())))
+                .collect(Collectors.toList());
+
+    }
+    /**
+     * get relationship pairs in which the target entity type if given as a parameter
+     *
+     * @param target
+     * @param relationPredicate
+     * @return
+     */
+    public Collection<EPair> relationsPairsByTargetEntity(EntityType target, Predicate<RelationshipType> relationPredicate) {
+        return relations().stream()
+                .filter(relationPredicate::test)
+                .flatMap(p -> p.getePairs().stream())
+                .filter(p -> target.geteType().equals(p.geteTypeB()))
+                .collect(Collectors.toList());
+    }
+
     public RelationshipType relation$(String relationName) {
         return relation(relationName)
                 .orElseThrow(() -> new SchemaError.SchemaErrorException(new SchemaError("No Ontology relationName for value ", "No Ontology relationName for value[" + relationName + "]")));
@@ -145,17 +196,69 @@ public class Accessor implements Supplier<Ontology> {
         return property == null ? Optional.empty() : Optional.of(property.getpType());
     }
 
+    public boolean isSelfReference(EPair relationshipType) {
+        return relationshipType.geteTypeA().equals(relationshipType.geteTypeB());
+    }
+
+    /**
+     * check is the given type is a foreign entity to other entity
+     *
+     * @param relationshipType
+     * @return
+     */
     public boolean isForeignRelation(RelationshipType relationshipType) {
-        if(relationshipType.getDirectives().isEmpty())
+        return isRelationDirectiveOfType(relationshipType,PhysicalEntityRelationsDirectiveType.FOREIGN);
+    }
+
+    /**
+     * check is the given type is an embedded entity to other entity
+     *
+     * @param relationshipType
+     * @return
+     */
+    public boolean isEmbeddedRelation(RelationshipType relationshipType) {
+        return isRelationDirectiveOfType(relationshipType,PhysicalEntityRelationsDirectiveType.EMBEDDED);
+    }
+
+    /**
+     * check is the given type is a nested entity to other entity
+     *
+     * @param relationshipType
+     * @return
+     */
+    public boolean isNestedRelation(RelationshipType relationshipType) {
+        return isRelationDirectiveOfType(relationshipType,PhysicalEntityRelationsDirectiveType.NESTED);
+    }
+
+    /**
+     * check is the given type is a child entity to other entity
+     *
+     * @param relationshipType
+     * @return
+     */
+    public boolean isChildRelation(RelationshipType relationshipType) {
+        return isRelationDirectiveOfType(relationshipType,PhysicalEntityRelationsDirectiveType.CHILD);
+     }
+
+    /**
+     * test is the given relationship type holds the specific directive out of @org.opensearch.schema.ontology.PhysicalEntityRelationsDirectiveType
+     * @param relationshipType
+     * @param directiveType
+     * @return
+     */
+    public boolean isRelationDirectiveOfType(RelationshipType relationshipType,PhysicalEntityRelationsDirectiveType directiveType) {
+        if (relationshipType.getDirectives().isEmpty())
             return false;
 
-        if(relationshipType.getDirectives().stream().noneMatch(d->DirectiveEnumTypes.RELATION.isSame(d.getName())))
+        if (relationshipType.getDirectives().stream().noneMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())))
             return false;
 
         return relationshipType.getDirectives()
                 .stream()
-                .filter(d->DirectiveEnumTypes.RELATION.isSame(d.getName()))
-                .anyMatch(d->d.containsArgVal(PhysicalEntityRelationsDirectiveType.FOREIGN.getName()));
+                .filter(d -> DirectiveEnumTypes.RELATION.isSame(d.getName()))
+                .filter(d -> d.getArgument(MAPPING_TYPE).isPresent())
+                .anyMatch(d -> d.getArgument(MAPPING_TYPE).get()
+                        .equalsValue(directiveType.getName()));
     }
 
     public Iterable<EntityType> entities() {
@@ -194,19 +297,25 @@ public class Accessor implements Supplier<Ontology> {
     public EnumeratedType enumeratedType$(String typeName) {
         return enumeratedType(typeName).get();
     }
-    //endregion
 
-    //region Fields
-    private Ontology ontology;
+    /**
+     * check is the given type is a nested entity under any other entity
+     *
+     * @param eType
+     * @return
+     */
+    public boolean isNestedEntity(String eType) {
+        if (!entity(eType).isPresent()) return false;
+        // for each existing entity, try each field and verify is its of an entity type - therefor a nested entity of some other entity
+        return StreamSupport.stream(entities().spliterator(), false)
+                .anyMatch(en -> en.fields().stream()
+                        .filter(p -> property(p).isPresent())
+                        .filter(p -> property(p).get().getType().getType().equals(eType))
+                        .anyMatch(p->entity(property(p).get().getType().getType())
+                                .isPresent())
+                );
+    }
 
-    private Map<String, EntityType> entitiesByEtype;
-    private Map<String, EntityType> entitiesByName;
-
-    private Map<String, RelationshipType> relationsByRtype;
-    private Map<String, RelationshipType> relationsByName;
-
-    private Map<String, Property> propertiesByName;
-    private Map<String, Property> propertiesByPtype;
 
     /**
      * match named element to true type (included typed value identifier)
@@ -230,6 +339,30 @@ public class Accessor implements Supplier<Ontology> {
 
         return Optional.empty();
     }
+
+    /**
+     * search a named directive in an entity's directives
+     *
+     * @param element
+     * @param directiveName
+     * @return
+     */
+    public Optional<DirectiveType> getDirective(CommonType element, String directiveName) {
+        return element.getDirectives().stream().filter(d -> d.getName().equals(directiveName)).findFirst();
+    }
+    //endregion
+
+    //region Fields
+    private Ontology ontology;
+
+    private Map<String, EntityType> entitiesByEtype;
+    private Map<String, EntityType> entitiesByName;
+
+    private Map<String, RelationshipType> relationsByRtype;
+    private Map<String, RelationshipType> relationsByName;
+
+    private Map<String, Property> propertiesByName;
+    private Map<String, Property> propertiesByPtype;
 
 
     public enum NodeType {

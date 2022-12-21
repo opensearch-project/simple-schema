@@ -49,7 +49,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
                         case STATIC:
                             createStaticMapping(ontology, client, requests, r, relation);
                             break;
-                        case TIME:
+                        case PARTITIONED:
                             createTimePartitionMapping(ontology, client, requests, r, relation);
                             break;
                         default:
