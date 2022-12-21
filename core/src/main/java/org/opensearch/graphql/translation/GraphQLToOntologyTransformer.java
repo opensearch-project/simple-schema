@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This component is the transformation element which takes a GQL SDL files and translates them into the ontological structure
@@ -115,7 +116,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
 
     private void validateLanguageType(GraphQLSchema graphQLSchema, TranslationStrategy.TranslationContext context) {
         List<GraphQLNamedType> types = graphQLSchema.getAllTypesAsList().stream()
-                .filter(p -> context.getLanguageTypes().contains(p.getName())).toList();
+                .filter(p -> context.getLanguageTypes().contains(p.getName())).collect(Collectors.toList());
 
         if (types.size() != context.getLanguageTypes().size())
             throw new IllegalArgumentException("GraphQL schema doesnt include Query/Where types");

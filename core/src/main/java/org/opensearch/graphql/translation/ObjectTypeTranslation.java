@@ -5,6 +5,7 @@ import graphql.schema.GraphQLNamedSchemaElement;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +22,7 @@ public class ObjectTypeTranslation implements TranslationStrategy{
                                 .map(GraphQLNamedSchemaElement::getName)
                 )
                 .filter(p -> !p.startsWith("__"))
-                .filter(p -> !context.getLanguageTypes().contains(p)).toList());
+                .filter(p -> !context.getLanguageTypes().contains(p)).collect(Collectors.toList()));
     }
 
 }
