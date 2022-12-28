@@ -20,6 +20,7 @@ private const val DEFAULT_TIME_ACCURACY_SEC = 5L
 var ontology = "{}"
 
 var schemaEntityType = "type Author {\n" +
+    "    id: ID!\n" +
     "    name: String!\n" +
     "    born: DateTime!\n" +
     "    died: DateTime\n" +
@@ -46,6 +47,7 @@ fun constructSampleSchemaObjectDoc(
             null,
             listOf("a", "b"),
             "type Author {\n" +
+                "    id: ID!\n" +
                 "    name: String!\n" +
                 "    born: DateTime!\n" +
                 "    died: DateTime\n" +
@@ -63,7 +65,7 @@ fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): Strin
                 "name" : "$name",
                 "type" : "${SimpleSchemaObjectType.SCHEMA_ENTITY}",
                 "catalog" : ["test"],
-                "content" : "type Author { name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
+                "content" : "type Author { id: ID! \nname: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
                 }
             }
     """.trimIndent()

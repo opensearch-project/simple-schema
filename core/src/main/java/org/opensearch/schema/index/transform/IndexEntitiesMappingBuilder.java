@@ -43,11 +43,11 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
                 .filter(e -> !e.isAbstract())
                 // ignore none top-level entities (only top level element will appear in the index provider config file)
                 .filter(e -> this.indexProvider.getEntity(e.getName()).isPresent())
-                .forEach(e -> mappingFunc(e, ontology, client, requests));
+                .forEach(e -> generateMapping(e, ontology, client, requests));
         return requests.values();
     }
 
-    private void mappingFunc(EntityType e, Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
+    private void generateMapping(EntityType e, Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests) {
         MappingIndexType mapping = this.indexProvider.getEntity(e.getName()).orElseThrow(
                         () -> new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No entity with name " + e + " found in ontology")))
                 .getMapping();
@@ -63,7 +63,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
                     buildStaticMapping(ontology, client, requests, e, entity);
                     break;
                 case PARTITIONED:
-                    buildTimebasedMapping(ontology, client, requests, e, entity);
+                    buildPartitionedMapping(ontology, client, requests, e, entity);
                     break;
             }
         } catch (Throwable typeNotFound) {
@@ -71,7 +71,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         }
     }
 
-    private void buildTimebasedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
+    private void buildPartitionedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
         //time partitioned index
         PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, e.getName().toLowerCase());
         String label = entity.getType().getName();

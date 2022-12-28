@@ -134,21 +134,23 @@ public class GraphQLSimpleNestedOntologyTranslatorTest {
     @Test
     public void testAuthorToBooksRelationTranslation() {
         Assertions.assertTrue(ontologyAccessor.$relation("has_Book").isPresent());
-        Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getDirectives().isEmpty());
+        Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getePairs().isEmpty());
+        Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getePairs().get(0).getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
                         Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.NESTED.getName()))),
-                ontologyAccessor.relation$("has_Book").getDirectives().get(0));
+                ontologyAccessor.relation$("has_Book").getePairs().get(0).getDirectives().get(0));
     }
 
     @Test
     public void testBooksToAuthorRelationTranslation() {
         Assertions.assertTrue(ontologyAccessor.$relation("has_Author").isPresent());
-        Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getDirectives().isEmpty());
+        Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getePairs().isEmpty());
+        Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getePairs().get(0).getDirectives().isEmpty());
 
         Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
                         Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
-                ontologyAccessor.relation$("has_Author").getDirectives().get(0));
+                ontologyAccessor.relation$("has_Author").getePairs().get(0).getDirectives().get(0));
     }
 
 

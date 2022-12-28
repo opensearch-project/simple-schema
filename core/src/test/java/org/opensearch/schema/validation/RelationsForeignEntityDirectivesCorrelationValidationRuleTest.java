@@ -15,7 +15,7 @@ import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class IndexProviderTypesValidationRuleTest {
+class RelationsForeignEntityDirectivesCorrelationValidationRuleTest {
 
     public static Ontology ontology;
     public static IndexProvider indexProvider;

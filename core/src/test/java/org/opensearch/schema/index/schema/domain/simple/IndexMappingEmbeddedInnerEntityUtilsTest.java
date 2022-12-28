@@ -9,7 +9,9 @@ import org.opensearch.schema.index.schema.MappingIndexType;
 import org.opensearch.schema.index.schema.NestingType;
 import org.opensearch.schema.index.schema.Props;
 import org.opensearch.schema.ontology.Accessor;
+import org.opensearch.schema.ontology.EPair;
 import org.opensearch.schema.ontology.Ontology;
+import org.opensearch.schema.ontology.RelationshipType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +50,14 @@ class IndexMappingEmbeddedInnerEntityUtilsTest {
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         accessor = new Accessor(ontology);
 
-        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Author"), accessor));
-        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Book"), accessor));
+
+        RelationshipType has_author = accessor.relation$("has_Author");
+        EPair authorPair = has_author.getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(has_author, authorPair, accessor));
+
+        RelationshipType has_book = accessor.relation$("has_Book");
+        EPair bookPair = has_book.getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(has_book, bookPair, accessor));
     }
 
     @Test
@@ -59,7 +67,7 @@ class IndexMappingEmbeddedInnerEntityUtilsTest {
         accessor = new Accessor(ontology);
 
         Assertions.assertEquals(NestingType.NONE, IndexMappingUtils.calculateNestingType(accessor.entity$("Author"), accessor));
-        assertEquals(NestingType.EMBEDDED, IndexMappingUtils.calculateNestingType(accessor.entity$("Book"), accessor));
+        assertEquals(NestingType.EMBEDDING, IndexMappingUtils.calculateNestingType(accessor.entity$("Book"), accessor));
     }
 
     @Test
@@ -68,7 +76,13 @@ class IndexMappingEmbeddedInnerEntityUtilsTest {
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         accessor = new Accessor(ontology);
 
-        assertEquals(NestingType.NONE, IndexMappingUtils.calculateNestingType(accessor.relation$("has_Author"), accessor));
-        assertEquals(NestingType.NONE, IndexMappingUtils.calculateNestingType(accessor.relation$("has_Book"), accessor));
+
+        RelationshipType has_author = accessor.relation$("has_Author");
+        EPair authorPair = has_author.getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(has_author, authorPair, accessor));
+
+        RelationshipType has_book = accessor.relation$("has_Book");
+        EPair bookPair = has_book.getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(has_book, bookPair, accessor));
     }
 }

@@ -5,16 +5,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.schema.index.schema.*;
-import org.opensearch.schema.ontology.Accessor;
-import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.RelationshipType;
+import org.opensearch.schema.ontology.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IndexProviderSimpleChildTest {
     static Ontology ontology;
@@ -31,37 +28,41 @@ public class IndexProviderSimpleChildTest {
     @Test
     public void createHasAuthorRelationTest() {
         RelationshipType has_author = accessor.relation$("has_Author");
-        Relation relation = new RelationMappingTranslator().translate(has_author, new MappingTranslator.MappingTranslatorContext(accessor));
-        assertEquals(has_author.getrType(), relation.getType().getName());
-        assertEquals(has_author.getDirectives(), relation.getDirectives());
-        Assertions.assertEquals(new Props(List.of("has_Author")), relation.getProps());
+        List<Relation> relation = new RelationMappingTranslator().translate(has_author, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse( relation.isEmpty());
+        assertEquals(has_author.getrType(), relation.get(0).getType().getName());
+        assertEquals(has_author.getDirectives(), relation.get(0).getDirectives());
+        Assertions.assertEquals(new Props(List.of("has_Author")), relation.get(0).getProps());
     }
 
     @Test
     public void createHasBooksRelationTest() {
         RelationshipType has_book = accessor.relation$("has_Book");
-        Relation relation = new RelationMappingTranslator().translate(has_book, new MappingTranslator.MappingTranslatorContext(accessor));
-        assertEquals(has_book.getrType(), relation.getType().getName());
-        assertEquals(has_book.getDirectives(), relation.getDirectives());
-        assertEquals(new Props(List.of("has_Book")), relation.getProps());
+        List<Relation> relation = new RelationMappingTranslator().translate(has_book, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse( relation.isEmpty());
+        assertEquals(has_book.getrType(), relation.get(0).getType().getName());
+        assertEquals(has_book.getDirectives(), relation.get(0).getDirectives());
+        assertEquals(new Props(List.of("has_Book")), relation.get(0).getProps());
     }
 
     @Test
     public void createAuthorEntityTest() {
         EntityType author = accessor.entity$("Author");
-        Entity entity = new EntityMappingTranslator().translate(author, new MappingTranslator.MappingTranslatorContext(accessor));
-        assertEquals(author.geteType(), entity.getType().getName());
-        assertEquals(author.getDirectives(), entity.getDirectives());
-        assertEquals(new Props(List.of("Author")), entity.getProps());
+        List<Entity> entity = new EntityMappingTranslator().translate(author, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse( entity.isEmpty());
+        assertEquals(author.geteType(), entity.get(0).getType().getName());
+        assertEquals(author.getDirectives(), entity.get(0).getDirectives());
+        assertEquals(new Props(List.of("Author")), entity.get(0).getProps());
     }
 
     @Test
     public void createBookEntityTest() {
         EntityType book = accessor.entity$("Book");
-        Entity entity = new EntityMappingTranslator().translate(book, new MappingTranslator.MappingTranslatorContext(accessor));
-        assertEquals(book.geteType(), entity.getType().getName());
-        assertEquals(book.getDirectives(), entity.getDirectives());
-        assertEquals(new Props(List.of("Book")), entity.getProps());
+        List<Entity> entity = new EntityMappingTranslator().translate(book, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse( entity.isEmpty());
+        assertEquals(book.geteType(), entity.get(0).getType().getName());
+        assertEquals(book.getDirectives(), entity.get(0).getDirectives());
+        assertEquals(new Props(List.of("Book")), entity.get(0).getProps());
     }
 
 }

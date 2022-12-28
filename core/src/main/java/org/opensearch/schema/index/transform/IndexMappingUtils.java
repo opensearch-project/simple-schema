@@ -122,7 +122,7 @@ public abstract class IndexMappingUtils {
         Map<String, Object> mapping = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         switch (nest._2().getNesting()) {
-            case NESTED:
+            case NESTING:
             case REFERENCE:
             case NESTED_REFERENCE:
                 mapping.put(OntologyIndexGenerator.IndexSchemaConfig.TYPE, OntologyIndexGenerator.IndexSchemaConfig.NESTED);

@@ -9,6 +9,7 @@ import org.opensearch.schema.index.schema.MappingIndexType;
 import org.opensearch.schema.index.schema.NestingType;
 import org.opensearch.schema.index.schema.Props;
 import org.opensearch.schema.ontology.Accessor;
+import org.opensearch.schema.ontology.EPair;
 import org.opensearch.schema.ontology.Ontology;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class IndexMappingReferenceInnerEntityUtilsTest {
 
@@ -48,8 +50,13 @@ class IndexMappingReferenceInnerEntityUtilsTest {
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         accessor = new Accessor(ontology);
 
-        assertEquals(MappingIndexType.STATIC, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Author"), accessor));
-        assertEquals(MappingIndexType.STATIC, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Book"), accessor));
+        assertFalse(accessor.relation$("has_Author").getePairs().isEmpty());
+        EPair has_author = accessor.relation$("has_Author").getePairs().get(0);
+        assertEquals(MappingIndexType.STATIC, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Author"),has_author, accessor));
+
+        assertFalse(accessor.relation$("has_Book").getePairs().isEmpty());
+        EPair has_book = accessor.relation$("has_Book").getePairs().get(0);
+        assertEquals(MappingIndexType.STATIC, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Book"),has_book, accessor));
     }
 
     @Test
@@ -68,7 +75,13 @@ class IndexMappingReferenceInnerEntityUtilsTest {
         ontology = new ObjectMapper().readValue(stream, Ontology.class);
         accessor = new Accessor(ontology);
 
-        assertEquals(NestingType.NONE, IndexMappingUtils.calculateNestingType(accessor.relation$("has_Author"), accessor));
-        assertEquals(NestingType.NONE, IndexMappingUtils.calculateNestingType(accessor.relation$("has_Book"), accessor));
+        assertFalse(accessor.relation$("has_Author").getePairs().isEmpty());
+        EPair has_author = accessor.relation$("has_Author").getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Author"),has_author, accessor));
+
+
+        assertFalse(accessor.relation$("has_Book").getePairs().isEmpty());
+        EPair has_book = accessor.relation$("has_Book").getePairs().get(0);
+        assertEquals(MappingIndexType.NONE, IndexMappingUtils.calculateMappingType(accessor.relation$("has_Book"),has_book, accessor));
     }
 }

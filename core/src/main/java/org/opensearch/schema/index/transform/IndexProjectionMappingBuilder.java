@@ -87,14 +87,14 @@ public class IndexProjectionMappingBuilder {
                     //todo remove nested entities since they already appear as a qualified ontological entity
                     try {
                         //generate entity mapping - each entity should be a nested objects array
-                        entity.setNesting(NestingType.NESTED);
+                        entity.setNesting(NestingType.NESTING);
                         Map<String, Object> objectMap = IndexMappingUtils.generateNestedEntityMapping(ontology, rootProperties,
                                 new Tuple2<>(entity.getType().getName(), entity));
                         //generate relation mapping - each entity's relation should be a nested objects array inside the entity
                         List<RelationshipType> relationshipTypes = ontology.relationBySideA(entity.getType().getName());
                         relationshipTypes.forEach(rel -> {
                             Relation relation = this.indexProvider.getRelation(rel.getName()).get();
-                            relation.setNesting(NestingType.NESTED);
+                            relation.setNesting(NestingType.NESTING);
                             relationsMappingBuilder.generateNestedRelationMapping(ontology, (Map<String, Object>) objectMap.get(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES),
                                     new Tuple2<>(relation.getType().getName(),relation));
                         });

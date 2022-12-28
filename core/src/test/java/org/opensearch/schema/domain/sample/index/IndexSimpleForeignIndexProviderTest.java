@@ -40,8 +40,7 @@ public class IndexSimpleForeignIndexProviderTest {
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
+                , r -> true);
     }
 
     @Test
@@ -104,7 +103,6 @@ public class IndexSimpleForeignIndexProviderTest {
                         Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 has_book.getDirectives().get(0));
 
-        //TODO - Fix According to specific tests
         Assert.assertEquals(MappingIndexType.STATIC, has_book.getMapping());
         Assert.assertEquals(NestingType.NONE, has_book.getNesting());
 
@@ -122,10 +120,7 @@ public class IndexSimpleForeignIndexProviderTest {
                         Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.FOREIGN.getName()))),
                 has_author.getDirectives().get(0));
 
-        //TODO - Fix According to specific tests
-/*
         Assert.assertEquals(NestingType.NONE, has_author.getNesting());
         Assert.assertEquals(MappingIndexType.STATIC, has_author.getMapping());
-*/
     }
 }

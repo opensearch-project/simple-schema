@@ -3,15 +3,9 @@ package org.opensearch.schema.validation;
 
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.Accessor;
-import org.opensearch.schema.validation.ValidationResult;
 import org.opensearch.schema.validation.ValidationResult.ValidationResults;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.opensearch.schema.ontology.OntologyFinalizer.ID_FIELD_PTYPE;
-import static org.opensearch.schema.ontology.OntologyFinalizer.TYPE_FIELD_PTYPE;
 
 
 /**
@@ -49,7 +43,8 @@ public class SchemaValidator {
                 new TypeValidationRule(),
                 new PropertiesValidationRule(),
                 new RelationsPairsValidationRule(),
-                new RelationsEntitiesDirectivesCorrelationValidationRule(),
+                new RelationsForeignEntityDirectivesCorrelationValidationRule(),
+                new RelationsNestedEntityDirectivesCorrelationValidationRule(),
                 new IndexProviderTypesValidationRule(),
                 new IndexProviderRelationsRedundantPropertiesValidationRule()
                 ));

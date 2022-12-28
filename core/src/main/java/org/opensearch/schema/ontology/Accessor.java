@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
+import static org.opensearch.schema.ontology.PhysicalEntityRelationsDirectiveType.*;
 
 /**
  * General helper utility that helps to query and investigate the Ontology metadata
@@ -199,6 +200,61 @@ public class Accessor implements Supplier<Ontology> {
     public boolean isSelfReference(EPair relationshipType) {
         return relationshipType.geteTypeA().equals(relationshipType.geteTypeB());
     }
+    public boolean isMutualReference(EPair relationshipType) {
+        return relationshipType.geteTypeA().equals(relationshipType.geteTypeB());
+    }
+
+    /**
+     * verify is an entity type has @model directive
+     * @param type
+     * @return
+     */
+    public boolean isModel(String type) {
+        if(entity(type).isEmpty())
+            return false;
+
+        if (entity$(type).getDirectives().isEmpty())
+            return false;
+
+        return  entity$(type).getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()));
+    }
+
+    /**
+     * check is the given pair is a foreign entity to other entity
+     *
+     * @param pair
+     * @return
+     */
+    public boolean isForeignRelation(EPair pair) {
+        return isOfGivenRelation(pair.getDirectives(), FOREIGN);
+
+    }
+
+    /**
+     * check is the given pair is a reverse back to main entity type of relation
+     *
+     * @param pair
+     * @return
+     */
+    public boolean isReverseRelation(EPair pair) {
+        return isOfGivenRelation(pair.getDirectives(), REVERSE);
+
+    }
+
+    private boolean isOfGivenRelation(List<DirectiveType> pair, PhysicalEntityRelationsDirectiveType foreign) {
+        if (pair.isEmpty())
+            return false;
+
+        if (pair.stream().noneMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())))
+            return false;
+
+        return pair
+                .stream()
+                .filter(d -> DirectiveEnumTypes.RELATION.isSame(d.getName()))
+                .filter(d -> d.getArgument(MAPPING_TYPE).isPresent())
+                .anyMatch(d -> d.getArgument(MAPPING_TYPE).get()
+                        .equalsValue(foreign.getName()));
+    }
 
     /**
      * check is the given type is a foreign entity to other entity
@@ -207,7 +263,17 @@ public class Accessor implements Supplier<Ontology> {
      * @return
      */
     public boolean isForeignRelation(RelationshipType relationshipType) {
-        return isRelationDirectiveOfType(relationshipType,PhysicalEntityRelationsDirectiveType.FOREIGN);
+        return isRelationDirectiveOfType(relationshipType, FOREIGN);
+    }
+
+    /**
+     * check is the given type is a mutual-foreign entity to other entity
+     *
+     * @param relationshipType
+     * @return
+     */
+    public boolean isMutualForeignRelation(RelationshipType relationshipType) {
+        return isRelationDirectiveOfType(relationshipType, JOIN_INDEX_FOREIGN);
     }
 
     /**
@@ -247,18 +313,7 @@ public class Accessor implements Supplier<Ontology> {
      * @return
      */
     public boolean isRelationDirectiveOfType(RelationshipType relationshipType,PhysicalEntityRelationsDirectiveType directiveType) {
-        if (relationshipType.getDirectives().isEmpty())
-            return false;
-
-        if (relationshipType.getDirectives().stream().noneMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())))
-            return false;
-
-        return relationshipType.getDirectives()
-                .stream()
-                .filter(d -> DirectiveEnumTypes.RELATION.isSame(d.getName()))
-                .filter(d -> d.getArgument(MAPPING_TYPE).isPresent())
-                .anyMatch(d -> d.getArgument(MAPPING_TYPE).get()
-                        .equalsValue(directiveType.getName()));
+        return isOfGivenRelation(relationshipType.getDirectives(), directiveType);
     }
 
     public Iterable<EntityType> entities() {
@@ -350,6 +405,44 @@ public class Accessor implements Supplier<Ontology> {
     public Optional<DirectiveType> getDirective(CommonType element, String directiveName) {
         return element.getDirectives().stream().filter(d -> d.getName().equals(directiveName)).findFirst();
     }
+
+    /**
+     * search a named directive in a relation's ePair's directives
+     *
+     * @param pair
+     * @param directiveName
+     * @return
+     */
+    public Optional<DirectiveType> getDirective(EPair pair,String directiveName) {
+        return pair.getDirectives().stream().filter(d->d.getName().equals(directiveName)).findFirst();
+    }
+
+    /**
+     * search a named directive in the relationship's ePair's directives
+     *
+     * @param relation
+     * @param directive
+     * @return
+     */
+    public List<DirectiveType> getRelationsInnerDirective(RelationshipType relation, DirectiveEnumTypes directive) {
+        return relation.getePairs().stream()
+                .filter(pair->getDirective(pair,directive.getName()).isPresent())
+                .map(pair->getDirective(pair,directive.getName()).get())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search an EPair by a named directive in the relationship's ePair's
+     *
+     * @param relation
+     * @param directive
+     * @return
+     */
+    public List<EPair> getEpairByDirective(RelationshipType relation, DirectiveEnumTypes directive) {
+        return relation.getePairs().stream()
+                .filter(pair->getDirective(pair,directive.getName()).isPresent())
+                .collect(Collectors.toList());
+    }
     //endregion
 
     //region Fields
@@ -363,6 +456,7 @@ public class Accessor implements Supplier<Ontology> {
 
     private Map<String, Property> propertiesByName;
     private Map<String, Property> propertiesByPtype;
+
 
 
     public enum NodeType {

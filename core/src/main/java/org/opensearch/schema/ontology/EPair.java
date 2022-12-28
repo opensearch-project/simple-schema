@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.opensearch.schema.index.schema.MappingIndexType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.opensearch.schema.ontology.EPair.RelationReferenceType.ONE_TO_ONE;
@@ -47,11 +49,16 @@ public class EPair {
         this.name = name;
     }
 
-    public EPair(String eTypeA,RelationReferenceType referenceType, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
-        this(String.format("%s->%s", eTypeA, eTypeB), referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+    public EPair(List<DirectiveType> directives, String eTypeA, RelationReferenceType referenceType, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+        this(directives, String.format("%s->%s", eTypeA, eTypeB), referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
     }
 
     public EPair(String name, RelationReferenceType referenceType, String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+        this(new ArrayList<>(), name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+    }
+
+    public EPair(List<DirectiveType> directives, String name, RelationReferenceType referenceType, String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
+        this.directives = directives;
         this.referenceType = referenceType;
         this.name = name;
         this.eTypeA = eTypeA;
@@ -61,6 +68,13 @@ public class EPair {
         this.sideBIdField = sideBIdField;
     }
 
+    public List<DirectiveType> getDirectives() {
+        return directives;
+    }
+
+    public void setDirectives(List<DirectiveType> directives) {
+        this.directives = directives;
+    }
 
     public String getName() {
         return name;
@@ -133,6 +147,7 @@ public class EPair {
     public void setReferenceType(RelationReferenceType referenceType) {
         this.referenceType = referenceType;
     }
+
     @JsonIgnore
     public EPair withSideAIdField(String sideAIdField) {
         this.sideAIdField = sideAIdField;
@@ -146,7 +161,6 @@ public class EPair {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,6 +168,7 @@ public class EPair {
         EPair ePair = (EPair) o;
         return
                 Objects.equals(name, ePair.name) &&
+                        Objects.equals(directives, ePair.directives) &&
                         Objects.equals(referenceType, ePair.referenceType) &&
                         Objects.equals(eTypeA, ePair.eTypeA) &&
                         Objects.equals(mappingTypeSideA, ePair.mappingTypeSideA) &
@@ -166,17 +181,17 @@ public class EPair {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField, mappingTypeSideA, mappingTypeSideB);
+        return Objects.hash(name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField, mappingTypeSideA, mappingTypeSideB, directives);
     }
 
     @Override
     public String toString() {
-        return "EPair [name= " + name + ",referenceType= " + referenceType + ",eTypeA= " + eTypeA + ",sideAId= " + sideAIdField + ",sideAField= " + sideAFieldName + ",mappingTypeSideA= " + mappingTypeSideA + ", eTypeB = " + eTypeB + ", sideBId = " + sideBIdField + ", mappingTypeSideB = " + mappingTypeSideB + "]";
+        return "EPair [name= " + name + ",referenceType= " + referenceType + ",eTypeA= " + eTypeA + ",sideAId= " + sideAIdField + ",sideAField= " + sideAFieldName + ",mappingTypeSideA= " + mappingTypeSideA + ", eTypeB = " + eTypeB + ", sideBId = " + sideBIdField + ", mappingTypeSideB = " + mappingTypeSideB + ", directives = " + directives + "]";
     }
 
     @Override
     public EPair clone() {
-        return new EPair(name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+        return new EPair(directives, name, referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
     }
 
     private RelationReferenceType referenceType;
@@ -185,6 +200,8 @@ public class EPair {
     private String eTypeA;
 
     private MappingIndexType mappingTypeSideA;
+
+    protected List<DirectiveType> directives = new ArrayList<>();
 
     private MappingIndexType mappingTypeSideB;
     private String sideAFieldName = "field_name";

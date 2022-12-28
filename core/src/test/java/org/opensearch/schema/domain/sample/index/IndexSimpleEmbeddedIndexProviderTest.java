@@ -41,8 +41,7 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
+                , r -> true);
 
         Assert.assertNotNull(new ObjectMapper().writeValueAsString(indexProvider));
     }
@@ -83,8 +82,8 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Entity book = indexProvider.getEntity("Author").get().getNested().get("books");
         Assert.assertEquals("Book", book.getType().getName());
 
-        Assert.assertEquals(NestingType.NESTED, book.getNesting());
-        Assert.assertEquals(MappingIndexType.STATIC, book.getMapping());
+        Assert.assertEquals(MappingIndexType.NESTED, book.getMapping());
+        Assert.assertEquals(NestingType.NESTING, book.getNesting());
 
         Assert.assertEquals(0, book.getNested().size());
 
@@ -103,13 +102,14 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Assert.assertEquals(2, indexProvider.getRelations().size());
         Assert.assertTrue(indexProvider.getRelation("has_Book").isPresent());
         Relation has_book = indexProvider.getRelation("has_Book").get();
+
         Assert.assertEquals(1, has_book.getDirectives().size());
         Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
                         Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
                 has_book.getDirectives().get(0));
 
         Assert.assertEquals(MappingIndexType.NONE, has_book.getMapping());
-        Assert.assertEquals(NestingType.EMBEDDED, has_book.getNesting());
+        Assert.assertEquals(NestingType.NONE, has_book.getNesting());
 
     }
 

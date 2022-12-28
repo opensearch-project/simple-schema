@@ -53,8 +53,7 @@ public class GraphQLOntologyAgentTranslatorTest {
     public void testIndexProviderBuilder() {
         IndexProvider provider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
+                , r -> true);
 
         Assertions.assertEquals(provider.getEntities().size(), 1);
         Assertions.assertEquals(provider.getRelations().size(), 0);

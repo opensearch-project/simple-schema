@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class IndexProviderSimpleNestedTest {
     static Ontology ontology;
@@ -31,7 +32,11 @@ public class IndexProviderSimpleNestedTest {
     @Test
     public void createHasAuthorRelationTest() {
         RelationshipType has_author = accessor.relation$("has_Author");
-        Relation relation = new RelationMappingTranslator().translate(has_author, new MappingTranslator.MappingTranslatorContext(accessor));
+        List<Relation> relations = new RelationMappingTranslator().translate(has_author, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse(relations.isEmpty());
+        assertEquals(1, relations.size());
+
+        Relation relation = relations.get(0);
         assertEquals(has_author.getrType(), relation.getType().getName());
         assertEquals(has_author.getDirectives(), relation.getDirectives());
         Assertions.assertEquals(new Props(List.of("has_Author")), relation.getProps());
@@ -40,7 +45,11 @@ public class IndexProviderSimpleNestedTest {
     @Test
     public void createHasBooksRelationTest() {
         RelationshipType has_book = accessor.relation$("has_Book");
-        Relation relation = new RelationMappingTranslator().translate(has_book, new MappingTranslator.MappingTranslatorContext(accessor));
+        List<Relation> relations = new RelationMappingTranslator().translate(has_book, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse(relations.isEmpty());
+        assertEquals(1, relations.size());
+
+        Relation relation = relations.get(0);
         assertEquals(has_book.getrType(), relation.getType().getName());
         assertEquals(has_book.getDirectives(), relation.getDirectives());
         assertEquals(new Props(List.of("has_Book")), relation.getProps());
@@ -49,7 +58,11 @@ public class IndexProviderSimpleNestedTest {
     @Test
     public void createAuthorEntityTest() {
         EntityType author = accessor.entity$("Author");
-        Entity entity = new EntityMappingTranslator().translate(author, new MappingTranslator.MappingTranslatorContext(accessor));
+        List<Entity> entities = new EntityMappingTranslator().translate(author, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
+
+        Entity entity = entities.get(0);
         assertEquals(author.geteType(), entity.getType().getName());
         assertEquals(author.getDirectives(), entity.getDirectives());
         assertEquals(new Props(List.of("Author")), entity.getProps());
@@ -58,7 +71,11 @@ public class IndexProviderSimpleNestedTest {
     @Test
     public void createBookEntityTest() {
         EntityType book = accessor.entity$("Book");
-        Entity entity = new EntityMappingTranslator().translate(book, new MappingTranslator.MappingTranslatorContext(accessor));
+        List<Entity> entities = new EntityMappingTranslator().translate(book, new MappingTranslator.MappingTranslatorContext(accessor));
+        assertFalse(entities.isEmpty());
+        assertEquals(1, entities.size());
+
+        Entity entity = entities.get(0);
         assertEquals(book.geteType(), entity.getType().getName());
         assertEquals(book.getDirectives(), entity.getDirectives());
         assertEquals(new Props(List.of("Book")), entity.getProps());

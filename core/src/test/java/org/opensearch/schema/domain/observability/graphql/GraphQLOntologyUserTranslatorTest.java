@@ -109,8 +109,7 @@ public class GraphQLOntologyUserTranslatorTest {
     public void testIndexProviderBuilder() throws Exception {
         IndexProvider provider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
+                , r -> true);
 
         String valueAsString = new ObjectMapper().writeValueAsString(provider);
         Assert.assertNotNull(valueAsString);

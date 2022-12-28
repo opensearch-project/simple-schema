@@ -47,15 +47,14 @@ public class MappingSimpleForeignIndexProviderTest {
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> DirectiveEnumTypes.RELATION.isSame(d.getName())));
+                , r -> true);
     }
 
     @Test
     /**
      * verify the process entity index-provider contains basic structure and properties
      */
-    public void GenerateAuthorEntityNestedBooksMappingTest() {
+    public void generateAuthorEntityNestedBooksMappingTest() {
         IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
@@ -77,7 +76,7 @@ public class MappingSimpleForeignIndexProviderTest {
     /**
      * verify the process entity index-provider contains basic structure and properties
      */
-    public void GenerateAuthorEntityMappingTest() throws IOException, JSONException {
+    public void generateAuthorEntityMappingTest() throws IOException, JSONException {
         IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
@@ -111,12 +110,12 @@ public class MappingSimpleForeignIndexProviderTest {
     /**
      * verify the process relations index-provider contains basic structure and properties
      */
-    public void GenerateAuthorBooksRelationsMappingTest() {
+    public void generateAuthorBooksRelationsMappingTest() {
         IndexRelationsMappingBuilder builder = new IndexRelationsMappingBuilder(indexProvider);
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
 
-        //TODO - Fix According to specific tests - we expect here the relationship table be symmetric for both author->book & book->author
+        // we expect here the relationship table be symmetric for both author->book & book->author
         Assert.assertNotNull(requests.get("has_Author"));
         Assert.assertEquals(1, requests.get("author").getMappings().size());
         Assert.assertNotNull(requests.get("author").getMappings().get("Author"));

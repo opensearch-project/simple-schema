@@ -100,7 +100,7 @@ internal class GetSimpleSchemaObjectResponseTests {
                         "type":"test schema entity type",
                         "name":"test schema entity type",
                         "catalog":["a","b"],
-                        "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
+                        "content":"type Author {\n    id: ID!\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
                     }
                 }
             ],
@@ -131,7 +131,7 @@ internal class GetSimpleSchemaObjectResponseTests {
                         "type":"test schema entity type",
                         "name":"test schema entity type",
                         "catalog":["a","b"],
-                        "content":"type Author {\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
+                        "content":"type Author {\n    id: ID!\n    name: String!\n    born: DateTime!\n    died: DateTime\n    nationality: String!\n    books: [Book]\n}"
                     }
                 }
             ]

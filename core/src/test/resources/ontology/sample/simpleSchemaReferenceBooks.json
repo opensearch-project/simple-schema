@@ -89,18 +89,6 @@
       "idField": [
         "@id"
       ],
-      "directives": [
-        {
-          "type": "DATATYPE",
-          "name": "relation",
-          "arguments": [
-            {
-              "name": "mappingType",
-              "value": "foreign"
-            }
-          ]
-        }
-      ],
       "rType": "has_Book",
       "directional": true,
       "ePairs": [
@@ -110,7 +98,19 @@
           "sideAFieldName": "books",
           "sideAIdField": "@id",
           "eTypeB": "Book",
-          "sideBIdField": "ISBN"
+          "sideBIdField": "ISBN",
+          "directives": [
+            {
+              "type": "DATATYPE",
+              "name": "relation",
+              "arguments": [
+                {
+                  "name": "mappingType",
+                  "value": "foreign"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -118,18 +118,6 @@
       "name": "has_Author",
       "idField": [
         "@id"
-      ],
-      "directives": [
-        {
-          "type": "DATATYPE",
-          "name": "relation",
-          "arguments": [
-            {
-              "name": "mappingType",
-              "value": "foreign"
-            }
-          ]
-        }
       ],
       "rType": "has_Author",
       "directional": true,
@@ -140,7 +128,19 @@
           "sideAFieldName": "author",
           "sideAIdField": "ISBN",
           "eTypeB": "Author",
-          "sideBIdField": "@id"
+          "sideBIdField": "@id",
+          "directives": [
+            {
+              "type": "DATATYPE",
+              "name": "relation",
+              "arguments": [
+                {
+                  "name": "mappingType",
+                  "value": "foreign"
+                }
+              ]
+            }
+          ]
         }
       ]
     }

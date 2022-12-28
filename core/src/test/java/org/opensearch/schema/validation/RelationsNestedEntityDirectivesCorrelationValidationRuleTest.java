@@ -13,9 +13,7 @@ import org.opensearch.schema.ontology.Ontology;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class IndexProviderTypesValidationRuleTest {
+class RelationsNestedEntityDirectivesCorrelationValidationRuleTest {
 
     public static Ontology ontology;
     public static IndexProvider indexProvider;

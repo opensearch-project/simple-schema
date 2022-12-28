@@ -64,13 +64,11 @@ public class RelationsCreationTranslation implements TranslationStrategy {
                 .map(t -> new Tuple2<>(t._1, t._2.get()))
                 .map(t -> RelationshipType.Builder.get()
                         .withIdField(t._2().getIdField())
-                        //get the directives for the relationships
-                        .withDirectives(formatDirective(getFieldByName(fieldDefinitions, t._1)))
                         //nested objects are directional by nature (nesting dictates the direction)
                         .withDirectional(true)
                         .withName(getRelationName(t._2.geteType()))//field name
                         .withRType(getRelationName(t._2.geteType()))//field name is the relation type
-                        .withEPairs(singletonList(createEPair(name, t, context)))
+                        .withEPairs(singletonList(createEPair(name, fieldDefinitions, t, context)))
                         .build())
                 .collect(Collectors.toList());
 
@@ -81,12 +79,13 @@ public class RelationsCreationTranslation implements TranslationStrategy {
         return name.startsWith(HAS) ? name : HAS + name;
     }
 
-    private EPair createEPair(String name, Tuple2<String, EntityType> t, TranslationStrategy.TranslationContext context) {
+    private EPair createEPair(String name, List<GraphQLFieldDefinition> fieldDefinitions, Tuple2<String, EntityType> t, TranslationContext context) {
         EntityType sideA = context.getBuilder().getEntityType(name).get();
         String sideAFieldName = t._1;
         EntityType sideB = t._2;
         EPair.RelationReferenceType relationReferenceType = calculateReferenceType(name, t, context);
-        return new EPair(sideA.geteType(), relationReferenceType, sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
+        //get the directives for the relationship pair
+        return new EPair(formatDirective(getFieldByName(fieldDefinitions, t._1)), sideA.geteType(), relationReferenceType, sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
     }
 
     /**
