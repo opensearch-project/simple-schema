@@ -1,4 +1,5 @@
-<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
+<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">    <img src="docs/assets/img/icons8-alpha-100.png" height="64px">  
+
 
 ## Simple Schema for Open Search
 
@@ -9,6 +10,7 @@ These capabilities include:
 - **Code Generation**
 - **Query support**
 - **Endpoint Generation**
+
 
 ## How does it work?
 
@@ -27,6 +29,13 @@ The simple-schema plugin-Library presents a large feature set for interacting wi
 - Extensive Filtering and Sorting options
 - Options for index Autogeneration and Default Values
 - Multiple Pagination options
+
+### Project Maturity:
+The project is currently under 'Alpha' stage.
+
+```
+Alpha - The code is released with instructions to build. Built distributions of the software may not be available. Some features many not be complete. Additional testing and developement work is planned.
+```
 
 ### Documentation
 
@@ -79,8 +88,8 @@ Read the [documentation](https://github.com/opensearch-project/simple-schema/blo
 | [![untriaged open][untriaged-badge]][untriaged-link]           |
 | [![nolabel open][nolabel-badge]][nolabel-link]                 |
 
-[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml/badge.svg
-[opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simple-schema-test-and-build-workflow.yml
+[opensearch-build-badge]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml/badge.svg
+[opensearch-build-link]: https://github.com/opensearch-project/simple-schema/actions/workflows/opensearch-simpleschema-test-and-build-workflow.yml
 
 [opensearch-codecov-badge]: https://codecov.io/gh/opensearch-project/simple-schema/branch/main/graphs/badge.svg?flag=opensearch-simple-schema
 [codecov-link]: https://codecov.io/gh/opensearch-project/simple-schema

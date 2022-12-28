@@ -1,15 +1,17 @@
-type Book {
+type Book @model {
     ISBN: ID!
     title: String!
     author: Author!
+    description: Text
     published: DateTime!
 }
-type Author {
+type Author @model{
     name: String!
     born: DateTime!
+    age: Int
     died: DateTime
     nationality: String!
-    books: [Book]
+    books: [Book] @relation(mappingType: "embedded")
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # auto generated author filter
@@ -17,6 +19,7 @@ input AuthorFilter {
     name:TextFilter
     born :TimeFilter
     died :TimeFilter
+    age  :NumericFilter
     nationality :TextFilter
     books:[BookFilter]
 
@@ -28,6 +31,7 @@ input AuthorFilter {
 input BookFilter {
     ISBN:TextFilter
     title:TextFilter
+    description :TextFilter
     published:TimeFilter
     author:AuthorFilter
 
@@ -46,7 +50,7 @@ input BookAggregationFilter {
     OR : [BookAggregationFilter]
 }
 # auto generated book aggregation filter results
-type BookAggregationResults {
+type BookAggregationResults @autoGen{
     ISBN:TextAggregationFilterResult
     title:TextAggregationFilterResult
     published:DateTimeAggregationFilterResult
@@ -67,7 +71,7 @@ input AuthorAggregationFilter {
 }
 
 # auto generated author aggregation filter
-type AuthorAggregationResult {
+type AuthorAggregationResults @autoGen{
     name:TextAggregationFilterResult
     born :DateTimeAggregationFilterResult
     died :DateTimeAggregationFilterResult
@@ -76,14 +80,14 @@ type AuthorAggregationResult {
     booksCount:Int
 }
 # auto generated book results
-type BookResults {
+type BookResults @autoGen{
     results:[Book]
     aggResults:[BookAggregationResults]
 }
 # auto generated book results
-type AuthorResults {
+type AuthorResults @autoGen{
     results:[Author]
-    aggResults:[AuthorAggregationResult]
+    aggResults:[AuthorAggregationResults]
 }
 # auto generated queries
 type Query {
