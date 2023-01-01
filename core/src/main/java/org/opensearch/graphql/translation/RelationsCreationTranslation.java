@@ -1,20 +1,22 @@
 package org.opensearch.graphql.translation;
 
+import graphql.language.ListType;
+import graphql.language.NonNullType;
 import graphql.language.Type;
 import graphql.language.TypeName;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import javaslang.Tuple2;
-import org.opensearch.schema.ontology.EPair;
-import org.opensearch.schema.ontology.EntityType;
-import org.opensearch.schema.ontology.RelationshipType;
+import org.opensearch.schema.ontology.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.opensearch.graphql.GraphQLSchemaUtils.*;
+import static org.opensearch.schema.index.schema.IndexMappingUtils.NAME;
+import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
 
 /**
  * translate the GQL relations into ontological entities
@@ -79,13 +81,31 @@ public class RelationsCreationTranslation implements TranslationStrategy {
         return name.startsWith(HAS) ? name : HAS + name;
     }
 
-    private EPair createEPair(String name, List<GraphQLFieldDefinition> fieldDefinitions, Tuple2<String, EntityType> t, TranslationContext context) {
+    private EPair createEPair(String name, List<GraphQLFieldDefinition> fieldDefinitions, Tuple2<String, EntityType> namedEntityTuple, TranslationContext context) {
         EntityType sideA = context.getBuilder().getEntityType(name).get();
-        String sideAFieldName = t._1;
-        EntityType sideB = t._2;
-        EPair.RelationReferenceType relationReferenceType = calculateReferenceType(name, t, context);
+        String sideAFieldName = namedEntityTuple._1;
+        EntityType sideB = namedEntityTuple._2;
+        EPair.RelationReferenceType relationReferenceType = calculateReferenceType(sideAFieldName, fieldDefinitions, context);
         //get the directives for the relationship pair
-        return new EPair(formatDirective(getFieldByName(fieldDefinitions, t._1)), sideA.geteType(), relationReferenceType, sideAFieldName, sideA.idFieldName(), sideB.geteType(), sideB.idFieldName());
+        List<DirectiveType> directives = formatDirective(getFieldByName(fieldDefinitions, namedEntityTuple._1));
+
+        //try to find a name from the relation directive
+        String relationPairName = EPair.formatName(sideA.geteType(), sideB.geteType());
+        if (directives.stream().anyMatch(d -> RELATION.isSame(d.getName())) &&
+                directives.stream().filter(d -> RELATION.isSame(d.getName())).findFirst().get().containsArgVal(NAME)) {
+            //get the relationPairName directly from the relation directive
+            relationPairName = directives.stream().filter(d -> RELATION.isSame(d.getName())).findFirst().get()
+                    .getArgument(NAME).get().value.toString();
+        }
+        return new EPair(
+                directives,
+                relationPairName,
+                relationReferenceType,
+                sideA.geteType(),
+                sideAFieldName,
+                sideA.idFieldName(),
+                sideB.geteType(),
+                sideB.idFieldName());
     }
 
     /**
@@ -99,13 +119,24 @@ public class RelationsCreationTranslation implements TranslationStrategy {
      * this will be calculated in a post build pass only after all the relationships are creted
      *
      * @param name
-     * @param tuple2
+     * @param namedEntityTuple
      * @param context
      * @return
      */
-    private EPair.RelationReferenceType calculateReferenceType(String name, Tuple2<String, EntityType> tuple2, TranslationContext context) {
-        //todo implement
-        return null;
-    }
+    private EPair.RelationReferenceType calculateReferenceType(String name, List<GraphQLFieldDefinition> namedEntityTuple, TranslationContext context) {
+        Optional<GraphQLFieldDefinition> fieldDefinition = namedEntityTuple.stream().filter(ent -> ent.getName().equals(name)).findFirst();
+        if (fieldDefinition.isPresent()) {
+            Type type = fieldDefinition.get().getDefinition().getType();
+            if (type instanceof ListType)
+                return EPair.RelationReferenceType.ONE_TO_MANY;
 
+            if (type instanceof NonNullType) {
+                //non-null type - may contain all sub-types (wrapper)
+                type = ((NonNullType) type).getType();
+                if (type instanceof ListType)
+                    return EPair.RelationReferenceType.ONE_TO_MANY;
+            }
+        }
+        return EPair.RelationReferenceType.ONE_TO_ONE;
+    }
 }

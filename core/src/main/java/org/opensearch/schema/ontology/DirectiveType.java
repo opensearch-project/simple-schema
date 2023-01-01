@@ -85,8 +85,26 @@ public class DirectiveType {
         this.name = name;
     }
 
+    /**
+     * check is any argument value equals the given value
+     * @param value
+     * @return
+     */
     public boolean containsArgVal(Object value) {
-        return getArguments().stream().anyMatch(arg -> arg.value.toString().equals(value));
+        return getArguments().stream()
+                .filter(arg->Objects.nonNull(arg.value))
+                .anyMatch(arg -> arg.value.toString().equals(value));
+    }
+
+    /**
+     * check is any argument with the given name contains non-null value
+     * @param name
+     * @return
+     */
+    public boolean containsArgVal(String name) {
+        return getArguments().stream()
+                .filter(arg->Objects.nonNull(arg.value))
+                .anyMatch(arg -> arg.name.equals(name));
     }
 
     public boolean containsArg(String name) {

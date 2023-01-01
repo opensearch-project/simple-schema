@@ -12,7 +12,7 @@ type Author @model{
     age: Int
     died: DateTime
     nationality: String!
-    books: [Book] @relation(mappingType: "foreign")
+    books: [Book] @relation(mappingType: "foreign", name: "written")
 }
 
 # auto generated queries

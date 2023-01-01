@@ -8,7 +8,9 @@ import java.util.List;
 
 public class IndexMappingUtils {
 
+    public static final String FIELDS = "fields";
     public static final String MAPPING_TYPE = "mappingType";
+    public static final String NAME = "name";
 
     public static Props createProperties(String name, Accessor accessor) {
         return new Props(ImmutableList.of(name));

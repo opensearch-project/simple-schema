@@ -33,13 +33,23 @@ public class EPair {
     }
 
     /**
+     * relationship name formatting method
+     * @param eTypeA
+     * @param eTypeB
+     * @return
+     */
+    public static String formatName(String eTypeA, String eTypeB) {
+        return String.format("%s->%s", eTypeA, eTypeB);
+    }
+
+    /**
      * DO-NOT-REMOVE - @Jackson required
      */
     public EPair() {
     }
 
     public EPair(String eTypeA, String eTypeB) {
-        this(String.format("%s->%s", eTypeA, eTypeB), eTypeA, eTypeB);
+        this(formatName(eTypeA, eTypeB), eTypeA, eTypeB);
     }
 
 
@@ -50,7 +60,7 @@ public class EPair {
     }
 
     public EPair(List<DirectiveType> directives, String eTypeA, RelationReferenceType referenceType, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
-        this(directives, String.format("%s->%s", eTypeA, eTypeB), referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
+        this(directives, formatName(eTypeA, eTypeB), referenceType, eTypeA, sideAFieldName, sideAIdField, eTypeB, sideBIdField);
     }
 
     public EPair(String name, RelationReferenceType referenceType, String eTypeA, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {
