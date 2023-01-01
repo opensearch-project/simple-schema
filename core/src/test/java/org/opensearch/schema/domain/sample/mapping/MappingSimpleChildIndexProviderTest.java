@@ -12,6 +12,8 @@ import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleChildOntologyTranslatorTest;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleEmbeddedOntologyTranslatorTest;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
@@ -41,8 +43,8 @@ public class MappingSimpleChildIndexProviderTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaChildBooks.json");
-        ontology = new ObjectMapper().readValue(stream, Ontology.class);
+        GraphQLSimpleChildOntologyTranslatorTest.setUp();
+        ontology = GraphQLSimpleChildOntologyTranslatorTest.ontology;
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))

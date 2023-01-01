@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleChildOntologyTranslatorTest;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleEmbeddedOntologyTranslatorTest;
 import org.opensearch.schema.index.transform.IndexMappingUtils;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
@@ -17,9 +19,9 @@ public class IndexMappingUtilsTest {
     private static Accessor accessor;
 
     @BeforeAll
-    public static void setup() throws IOException {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaEmbeddedBooks.json");
-        accessor = new Accessor(new ObjectMapper().readValue(stream, Ontology.class));
+    public static void setup() throws Exception {
+        GraphQLSimpleEmbeddedOntologyTranslatorTest.setUp();
+        accessor = new Accessor(GraphQLSimpleEmbeddedOntologyTranslatorTest.ontology);
     }
 
     @Test

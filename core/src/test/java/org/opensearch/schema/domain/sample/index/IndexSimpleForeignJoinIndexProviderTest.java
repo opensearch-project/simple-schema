@@ -1,31 +1,24 @@
 package org.opensearch.schema.domain.sample.index;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleForeignJoinIndexOntologyTranslatorTest;
-import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleForeignOntologyTranslatorTest;
 import org.opensearch.schema.index.schema.*;
 import org.opensearch.schema.ontology.DirectiveEnumTypes;
 import org.opensearch.schema.ontology.DirectiveType;
 import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.PhysicalEntityRelationsDirectiveType;
 
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 
 import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
-import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
-import static org.opensearch.schema.ontology.DirectiveType.Argument.of;
 
 /**
  * This test is verifying that the process of generating an index provider from the ontology is working as expected
  */
-public class IndexSimpleForeignIndexProviderTest {
+public class IndexSimpleForeignJoinIndexProviderTest {
     static Ontology ontology;
     static IndexProvider indexProvider;
 
@@ -38,8 +31,8 @@ public class IndexSimpleForeignIndexProviderTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        GraphQLSimpleForeignOntologyTranslatorTest.setUp();
-        ontology = GraphQLSimpleForeignOntologyTranslatorTest.ontology;
+        GraphQLSimpleForeignJoinIndexOntologyTranslatorTest.setUp();
+        ontology = GraphQLSimpleForeignJoinIndexOntologyTranslatorTest.ontology;
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
@@ -97,31 +90,17 @@ public class IndexSimpleForeignIndexProviderTest {
     /**
      * verify the relationships exist according to the expected original entities hierarchy
      */
-    public void testHasBookRelationshipsIndexProviderTest() {
-        Assert.assertEquals(2, indexProvider.getRelations().size());
-        Assert.assertTrue(indexProvider.getRelation("has_Book").isPresent());
-        Relation has_book = indexProvider.getRelation("has_Book").get();
-        Assert.assertEquals(1, has_book.getDirectives().size());
-        Assert.assertTrue( has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
-        Assert.assertEquals( "foreign",has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
+    public void testWrittenRelationshipsIndexProviderTest() {
+        Assert.assertEquals(1, indexProvider.getRelations().size());
+        Assert.assertTrue(indexProvider.getRelation("written").isPresent());
+        Relation written = indexProvider.getRelation("written").get();
+        Assert.assertEquals(1, written.getDirectives().size());
+        Assert.assertTrue( written.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
+        Assert.assertEquals( "join_index_foreign",written.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
 
-        Assert.assertEquals(MappingIndexType.STATIC, has_book.getMapping());
-        Assert.assertEquals(NestingType.NONE, has_book.getNesting());
+        Assert.assertEquals(MappingIndexType.STATIC, written.getMapping());
+        Assert.assertEquals(NestingType.NONE, written.getNesting());
 
     }
 
-    @Test
-    /**
-     * verify the relationships exist according to the expected original entities hierarchy
-     */
-    public void testHasAuthorRelationshipsIndexProviderTest() {
-        Assert.assertTrue(indexProvider.getRelation("has_Author").isPresent());
-        Relation has_author = indexProvider.getRelation("has_Author").get();
-        Assert.assertEquals(1, has_author.getDirectives().size());
-        Assert.assertTrue( has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
-        Assert.assertEquals( "foreign",has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
-
-        Assert.assertEquals(NestingType.NONE, has_author.getNesting());
-        Assert.assertEquals(MappingIndexType.STATIC, has_author.getMapping());
-    }
 }

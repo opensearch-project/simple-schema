@@ -14,7 +14,6 @@ import org.opensearch.schema.ontology.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,6 @@ import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
 import static org.opensearch.schema.index.schema.IndexMappingUtils.NAME;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.MODEL;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
-import static org.opensearch.schema.ontology.DirectiveType.Argument.of;
 import static org.opensearch.schema.ontology.PrimitiveType.Types.*;
 import static org.opensearch.schema.ontology.Property.equal;
 
@@ -30,7 +28,7 @@ import static org.opensearch.schema.ontology.Property.equal;
 /**
  * This test is verifying that the (example) simple SDL is correctly transformed into ontology & index-provider components
  */
-public class GraphQLSimpleForeignOntologyTranslatorTest {
+public class GraphQLSimpleForeignJoinIndexOntologyTranslatorTest {
     public static Ontology ontology;
     public static Accessor ontologyAccessor;
 
@@ -44,7 +42,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
      */
     public static void setUp() throws Exception {
         InputStream utilsSchemaInput = new FileInputStream("../schema/utils.graphql");
-        InputStream simpleSchemaInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("graphql/sample/simpleGQLForeignBooks.graphql");
+        InputStream simpleSchemaInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("graphql/sample/simpleGQLForeignJoinIndexBooks.graphql");
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
         ontology = transformer.transform("simple", utilsSchemaInput,  simpleSchemaInput);
@@ -139,7 +137,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
         Assertions.assertEquals(RELATION.getName(),has_book_directive.getName());
         Assertions.assertFalse(has_book_directive.getArguments().isEmpty());
         Assertions.assertTrue(has_book_directive.getArgument(MAPPING_TYPE).isPresent());
-        Assertions.assertEquals("foreign",has_book_directive.getArgument(MAPPING_TYPE).get().value.toString());
+        Assertions.assertEquals("join_index_foreign",has_book_directive.getArgument(MAPPING_TYPE).get().value.toString());
         Assertions.assertTrue(has_book_directive.getArgument(NAME).isPresent());
     }
 
@@ -153,7 +151,7 @@ public class GraphQLSimpleForeignOntologyTranslatorTest {
         Assertions.assertEquals(RELATION.getName(),has_author_directive.getName());
         Assertions.assertFalse(has_author_directive.getArguments().isEmpty());
         Assertions.assertTrue(has_author_directive.getArgument(MAPPING_TYPE).isPresent());
-        Assertions.assertEquals("foreign",has_author_directive.getArgument(MAPPING_TYPE).get().value.toString());
+        Assertions.assertEquals("join_index_foreign",has_author_directive.getArgument(MAPPING_TYPE).get().value.toString());
         Assertions.assertTrue(has_author_directive.getArgument(NAME).isPresent());
     }
 

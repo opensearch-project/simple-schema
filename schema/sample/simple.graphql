@@ -1,7 +1,7 @@
 type Book @model {
     ISBN: ID!
     title: String!
-    author: Author!
+    author: Author! @relation(mappingType: "reverse")
     description: Text
     published: DateTime!
     genre:Genre

@@ -43,8 +43,9 @@ public class SchemaValidator {
                 new TypeValidationRule(),
                 new PropertiesValidationRule(),
                 new RelationsPairsValidationRule(),
-                new RelationsForeignEntityDirectivesCorrelationValidationRule(),
                 new RelationsNestedEntityDirectivesCorrelationValidationRule(),
+                new RelationsForeignEntityDirectivesCorrelationValidationRule(),
+                new RelationsJoinIndexForeignEntityDirectivesCorrelationValidationRule(),
                 new IndexProviderTypesValidationRule(),
                 new IndexProviderRelationsRedundantPropertiesValidationRule()
                 ));

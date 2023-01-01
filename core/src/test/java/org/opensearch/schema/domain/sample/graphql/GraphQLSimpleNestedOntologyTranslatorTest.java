@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
+import static org.opensearch.schema.index.schema.IndexMappingUtils.NAME;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.MODEL;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
 import static org.opensearch.schema.ontology.DirectiveType.Argument.of;
@@ -41,18 +43,14 @@ public class GraphQLSimpleNestedOntologyTranslatorTest {
      * load sample graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream filterSchemaInput = new FileInputStream("../schema/filter.graphql");
-        InputStream aggregationSchemaInput = new FileInputStream("../schema/aggregation.graphql");
         InputStream utilsSchemaInput = new FileInputStream("../schema/utils.graphql");
-
         InputStream simpleSchemaInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("graphql/sample/simpleGQLNestedBooks.graphql");
         GraphQLToOntologyTransformer transformer = new GraphQLToOntologyTransformer();
 
-        ontology = transformer.transform("simple", utilsSchemaInput, filterSchemaInput, aggregationSchemaInput, simpleSchemaInput);
+        ontology = transformer.transform("simple", utilsSchemaInput,  simpleSchemaInput);
         Assertions.assertNotNull(ontology);
         ontologyAccessor = new Accessor(ontology);
         Assertions.assertNotNull(new ObjectMapper().writeValueAsString(ontology));
-
     }
 
     /**
@@ -137,9 +135,13 @@ public class GraphQLSimpleNestedOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getePairs().isEmpty());
         Assertions.assertFalse(ontologyAccessor.relation$("has_Book").getePairs().get(0).getDirectives().isEmpty());
 
-        Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.NESTED.getName()))),
-                ontologyAccessor.relation$("has_Book").getePairs().get(0).getDirectives().get(0));
+
+        DirectiveType has_book_directive = ontologyAccessor.relation$("has_Book").getePairs().get(0).getDirectives().get(0);
+        Assertions.assertEquals(RELATION.getName(),has_book_directive.getName());
+        Assertions.assertFalse(has_book_directive.getArguments().isEmpty());
+        Assertions.assertTrue(has_book_directive.getArgument(MAPPING_TYPE).isPresent());
+        Assertions.assertEquals("nested",has_book_directive.getArgument(MAPPING_TYPE).get().value.toString());
+        Assertions.assertTrue(has_book_directive.getArgument(NAME).isPresent());
     }
 
     @Test
@@ -148,9 +150,12 @@ public class GraphQLSimpleNestedOntologyTranslatorTest {
         Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getePairs().isEmpty());
         Assertions.assertFalse(ontologyAccessor.relation$("has_Author").getePairs().get(0).getDirectives().isEmpty());
 
-        Assertions.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
-                ontologyAccessor.relation$("has_Author").getePairs().get(0).getDirectives().get(0));
+        DirectiveType has_author_directive = ontologyAccessor.relation$("has_Author").getePairs().get(0).getDirectives().get(0);
+        Assertions.assertEquals(RELATION.getName(),has_author_directive.getName());
+        Assertions.assertFalse(has_author_directive.getArguments().isEmpty());
+        Assertions.assertTrue(has_author_directive.getArgument(MAPPING_TYPE).isPresent());
+        Assertions.assertEquals("reverse",has_author_directive.getArgument(MAPPING_TYPE).get().value.toString());
+        Assertions.assertTrue(has_author_directive.getArgument(NAME).isPresent());
     }
 
 

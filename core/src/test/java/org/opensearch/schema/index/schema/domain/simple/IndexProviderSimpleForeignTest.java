@@ -1,9 +1,13 @@
 package org.opensearch.schema.index.schema.domain.simple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleForeignOntologyTranslatorTest;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleNestedOntologyTranslatorTest;
 import org.opensearch.schema.index.schema.*;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.EntityType;
@@ -19,12 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IndexProviderSimpleForeignTest {
     static Ontology ontology;
     static Accessor accessor;
-
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
-    public static void setup() throws IOException {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaReferenceBooks.json");
-        ontology = new ObjectMapper().readValue(stream, Ontology.class);
-        accessor = new Accessor(ontology);
+    public static void setup() throws Exception {
+        GraphQLSimpleForeignOntologyTranslatorTest.setUp();
+        accessor = new Accessor(GraphQLSimpleForeignOntologyTranslatorTest.ontology);
 
     }
 
@@ -37,7 +43,9 @@ public class IndexProviderSimpleForeignTest {
 
         Relation relation = relations.get(0);
         assertEquals(has_author.getrType(), relation.getType().getName());
-        assertEquals(has_author.getDirectives(), relation.getDirectives());
+        assertFalse( has_author.getePairs().isEmpty());
+
+        assertEquals(has_author.getePairs().get(0).getDirectives(), relation.getDirectives());
         Assertions.assertEquals(new Props(List.of("has_Author")), relation.getProps());
     }
 
@@ -50,7 +58,9 @@ public class IndexProviderSimpleForeignTest {
 
         Relation relation = relations.get(0);
         assertEquals(has_book.getrType(), relation.getType().getName());
-        assertEquals(has_book.getDirectives(), relation.getDirectives());
+
+        assertFalse( has_book.getePairs().isEmpty());
+        assertEquals(has_book.getePairs().get(0).getDirectives(), relation.getDirectives());
         assertEquals(new Props(List.of("has_Book")), relation.getProps());
     }
 

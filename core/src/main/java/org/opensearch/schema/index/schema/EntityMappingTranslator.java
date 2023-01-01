@@ -5,9 +5,7 @@ import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.EPair;
 import org.opensearch.schema.ontology.EntityType;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.opensearch.schema.index.schema.IndexMappingUtils.*;
@@ -25,10 +23,11 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
         // 3->  NESTED would generate adding a nested document entity
         // 4->  CHILD would generate adding a Child document entity (as part of parent-child mapping)
         // 5->  EMBEDDED would generate adding an embedded document entity
+        // 5->  NONE would not generate anything
 
         MappingIndexType mappingIndexType = calculateMappingType(entity, context.getAccessor());
-        NestingType nestingType = calculateNestingType(entity, context.getAccessor());
-        return List.of(createEntity(entity, mappingIndexType, nestingType, context.getAccessor()));
+        NestingType nestingType = calculateNestingType(Optional.empty(),entity, context.getAccessor());
+        return List.of(Objects.requireNonNull(createEntity(entity, mappingIndexType, nestingType, context.getAccessor())));
     }
 
 
@@ -64,14 +63,15 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
 
                 .map(p -> {
                             MappingIndexType mappingIndexType = calculateMappingType(accessor.entity$(p.geteTypeB()), accessor);
-                            NestingType nestingType = calculateNestingType(accessor.entity$(p.geteTypeB()), accessor);
+                            NestingType nestingType = calculateNestingType(Optional.of(e),accessor.entity$(p.geteTypeB()), accessor);
                             // when an entity is self referencing (they must reside in the same index)
                             if (accessor.isSelfReference(p)) {
                                 nestingType = p.getReferenceType().equals(EPair.RelationReferenceType.ONE_TO_ONE) ? NestingType.REFERENCE : NestingType.NESTED_REFERENCE;
                             }
-                            //in case of mutual reference - using the REFERENCE type mapping
-                            if (accessor.isMutualReference(p) & accessor.isForeignRelation(p)) {
-                                nestingType = p.getReferenceType().equals(EPair.RelationReferenceType.ONE_TO_ONE) ? NestingType.REFERENCE : NestingType.NESTED_REFERENCE;
+                            //in case of mutual reference - using the NONE type mapping since all keys are located in the join index
+                            if (accessor.isJoinIndexForeignRelation(p)) {
+                                //no physical representation of nested elements here - all fields reside in the join table
+                                return null;
                             }
                             //in case of foreign reference - using the REFERENCE type mapping
                             if (accessor.isForeignRelation(p)) {
@@ -79,7 +79,8 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
                             }
                             //in case of a reverse reference - there is no physical representation to this logical relationship
                             if (accessor.isReverseRelation(p)) {
-                                nestingType = p.getReferenceType().equals(EPair.RelationReferenceType.ONE_TO_ONE) ? NestingType.REFERENCE : NestingType.NESTED_REFERENCE;
+                                //no physical representation of nested elements here - all fields reside in the parent document
+                                return null;
                             }
                             //other types of inner entities that are contained inside the wrapping element
                             return new Tuple2<>(p.getSideAFieldName(),
@@ -90,7 +91,8 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
                                             nestingType,
                                             accessor));
                         }
-                ).collect(Collectors.toMap(p -> p._1, p -> p._2()));
+                ).filter(Objects::nonNull)
+                .collect(Collectors.toMap(p -> p._1, p -> p._2()));
     }
 
 

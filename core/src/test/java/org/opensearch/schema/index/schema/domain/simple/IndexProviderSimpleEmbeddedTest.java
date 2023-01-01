@@ -1,8 +1,12 @@
 package org.opensearch.schema.index.schema.domain.simple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleEmbeddedOntologyTranslatorTest;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleNestedOntologyTranslatorTest;
 import org.opensearch.schema.index.schema.*;
 import org.opensearch.schema.ontology.*;
 
@@ -15,13 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IndexProviderSimpleEmbeddedTest {
     static Ontology ontology;
     static Accessor accessor;
-
+    @AfterAll
+    public static void tearDown() throws Exception {
+        GraphQLEngineFactory.reset();
+    }
     @BeforeAll
-    public static void setup() throws IOException {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaEmbeddedBooks.json");
-        ontology = new ObjectMapper().readValue(stream, Ontology.class);
-        accessor = new Accessor(ontology);
-
+    public static void setup() throws Exception {
+        GraphQLSimpleEmbeddedOntologyTranslatorTest.setUp();
+        accessor = new Accessor(GraphQLSimpleEmbeddedOntologyTranslatorTest.ontology);
     }
 
     @Test
@@ -34,7 +39,10 @@ public class IndexProviderSimpleEmbeddedTest {
         Relation relation = relations.get(0);
         assertEquals(has_author.getrType(), relation.getType().getName());
         assertFalse(relation.getDirectives().isEmpty());
-        assertTrue(CommonType.Accessor.getDirective(has_author, relation.getDirectives().get(0).getName()).isPresent());
+
+        assertFalse( has_author.getePairs().isEmpty());
+        assertEquals(has_author.getePairs().get(0).getDirectives(), relation.getDirectives());
+
         assertTrue(relation.getProps().getValues().stream().anyMatch(v -> v.equals("has_Author")));
         assertEquals(NestingType.NONE, relation.getNesting());
         assertEquals(MappingIndexType.NONE, relation.getMapping());
@@ -52,9 +60,13 @@ public class IndexProviderSimpleEmbeddedTest {
         Relation relation = relations.get(0);
         assertEquals(has_book.getrType(), relation.getType().getName());
         assertFalse(relation.getDirectives().isEmpty());
-        assertTrue(CommonType.Accessor.getDirective(has_book, relation.getDirectives().get(0).getName()).isPresent());
+
+        assertFalse( has_book.getePairs().isEmpty());
+        assertEquals(has_book.getePairs().get(0).getDirectives(), relation.getDirectives());
+
         assertTrue(relation.getProps().getValues().stream().anyMatch(v -> v.equals("has_Book")));
-        assertEquals(NestingType.EMBEDDING, relation.getNesting());
+
+        assertEquals(NestingType.NONE, relation.getNesting());
         assertEquals(MappingIndexType.NONE, relation.getMapping());
         assertTrue(relation.getRedundant().isEmpty());
         assertFalse(relation.isSymmetric());

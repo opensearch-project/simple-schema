@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.opensearch.schema.ontology.EPair.RelationReferenceType.ONE_TO_MANY;
 import static org.opensearch.schema.ontology.EPair.RelationReferenceType.ONE_TO_ONE;
 
 
@@ -54,9 +55,7 @@ public class EPair {
 
 
     public EPair(String name, String eTypeA, String eTypeB) {
-        this.eTypeA = eTypeA;
-        this.eTypeB = eTypeB;
-        this.name = name;
+        this(new ArrayList<>(),name,ONE_TO_MANY,eTypeA,null,eTypeB,null,null);
     }
 
     public EPair(List<DirectiveType> directives, String eTypeA, RelationReferenceType referenceType, String sideAFieldName, String sideAIdField, String eTypeB, String sideBIdField) {

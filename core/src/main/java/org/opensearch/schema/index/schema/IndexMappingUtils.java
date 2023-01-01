@@ -5,6 +5,7 @@ import org.opensearch.schema.ontology.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class IndexMappingUtils {
 
@@ -60,30 +61,33 @@ public class IndexMappingUtils {
     /**
      * derive the physical index nesting type
      *
+     * @param parent
      * @param entity
      * @param accessor
      * @return
      */
-    public static NestingType calculateNestingType(EntityType entity, Accessor accessor) {
+    public static NestingType calculateNestingType(Optional<EntityType> parent, EntityType entity, Accessor accessor) {
         //entity is considered nested if its mapping type was determined nesting due to its being internal in another entity
         if (!calculateMappingType(entity, accessor).equals(MappingIndexType.NESTED))
             return NestingType.NONE;
 
-        //get the relationship where the given entity is the target (sideB)
-        Collection<EPair> pairs = accessor.relationsPairsByTargetEntity(entity, r -> !accessor.isForeignRelation(r));
+        //expecting to have a parent entity for NESTED MappingIndexType entities
+        if(parent.isEmpty())
+            return NestingType.NONE;
+
+        //get the relationship where the given entity is the target (sideB) and the parent is the source
+        List<EPair> pairs = accessor.relationsPairs(parent.get(), entity );
         if (pairs.isEmpty()) {
             //without any other indication the default nesting strategy would become 'nesting documents'
             return NestingType.NESTING;
         }
 
-        //relation pair where sideA is the container and sideB is the nested
-        List<RelationshipType> relationshipTypes = accessor.relationByTargetEntity(entity);
         //todo - here we need to select the appropriate one according to the context of the container entity - for now selecting the first one
-        RelationshipType relationshipType = relationshipTypes.get(0);
+        EPair pair = pairs.get(0);
 
         // if relation has directive stating a @relation -
-        if (accessor.getDirective(relationshipType, DirectiveEnumTypes.RELATION.getName()).isPresent()) {
-            DirectiveType relationDirective = accessor.getDirective(relationshipType, DirectiveEnumTypes.RELATION.getName()).get();
+        if (accessor.getDirective(pair, DirectiveEnumTypes.RELATION.getName()).isPresent()) {
+            DirectiveType relationDirective = accessor.getDirective(pair, DirectiveEnumTypes.RELATION.getName()).get();
             DirectiveType.Argument mappingType = relationDirective.getArgument(MAPPING_TYPE).get();
             //first: if relation has directive with mappingType = EMBEDDED
             if (mappingType.equalsValue(PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))

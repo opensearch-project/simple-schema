@@ -106,6 +106,19 @@ public class Accessor implements Supplier<Ontology> {
     }
 
     /**
+     * get relationship by source & target pairs
+     *
+     * @param source
+     * @param target
+     * @return
+     */
+    public List<EPair> relationsPairs(EntityType source, EntityType target) {
+        return relations().stream()
+                .flatMap(p -> p.getePairs().stream())
+                .filter(p -> source.geteType().equals(p.geteTypeA()) && target.geteType().equals(p.geteTypeB()))
+                .collect(Collectors.toList());
+    }
+    /**
      * get relationship pairs in which the source entity type if given as a parameter
      *
      * @param source
@@ -231,6 +244,17 @@ public class Accessor implements Supplier<Ontology> {
     }
 
     /**
+     * check is the given pair is a join_index_foreign entity to other entity
+     *
+     * @param pair
+     * @return
+     */
+    public boolean isJoinIndexForeignRelation(EPair pair) {
+        return isOfGivenRelation(pair.getDirectives(), JOIN_INDEX_FOREIGN);
+
+    }
+
+    /**
      * check is the given pair is a reverse back to main entity type of relation
      *
      * @param pair
@@ -332,6 +356,14 @@ public class Accessor implements Supplier<Ontology> {
     public List<RelationshipType> relationBySideA(String eType) {
         return Stream.ofAll(ontology.getRelationshipTypes()).filter(r -> r.hasSideA(eType)).toJavaList();
     }
+
+    public List<RelationshipType> relationsByPair(EntityType source, EntityType target) {
+        return relations().stream()
+                .filter(p -> p.getePairs().stream()
+                        .anyMatch(pair -> source.geteType().equals(pair.geteTypeA())
+                                      && target.geteType().equals(pair.geteTypeB())))
+                .collect(Collectors.toList());
+}
 
     public Optional<PrimitiveType> primitiveType(String typeName) {
         return Stream.ofAll(ontology.getPrimitiveTypes())

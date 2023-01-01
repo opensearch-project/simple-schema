@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.schema.domain.sample.graphql.GraphQLSimpleEmbeddedOntologyTranslatorTest;
 import org.opensearch.schema.index.schema.*;
 import org.opensearch.schema.ontology.DirectiveEnumTypes;
 import org.opensearch.schema.ontology.DirectiveType;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+import static org.opensearch.schema.index.schema.IndexMappingUtils.MAPPING_TYPE;
 import static org.opensearch.schema.ontology.DirectiveEnumTypes.RELATION;
 import static org.opensearch.schema.ontology.DirectiveType.Argument.of;
 
@@ -36,8 +38,8 @@ public class IndexSimpleEmbeddedIndexProviderTest {
      * load process (including all it's dependencies) graphQL SDL files, transform them into the ontology & index-provider components
      */
     public static void setUp() throws Exception {
-        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("ontology/sample/simpleSchemaEmbeddedBooks.json");
-        ontology = new ObjectMapper().readValue(stream, Ontology.class);
+        GraphQLSimpleEmbeddedOntologyTranslatorTest.setUp();
+        ontology = GraphQLSimpleEmbeddedOntologyTranslatorTest.ontology;
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
                         .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
@@ -83,7 +85,7 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Assert.assertEquals("Book", book.getType().getName());
 
         Assert.assertEquals(MappingIndexType.NESTED, book.getMapping());
-        Assert.assertEquals(NestingType.NESTING, book.getNesting());
+        Assert.assertEquals(NestingType.EMBEDDING, book.getNesting());
 
         Assert.assertEquals(0, book.getNested().size());
 
@@ -104,9 +106,9 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Relation has_book = indexProvider.getRelation("has_Book").get();
 
         Assert.assertEquals(1, has_book.getDirectives().size());
-        Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.EMBEDDED.getName()))),
-                has_book.getDirectives().get(0));
+        Assert.assertEquals(RELATION.getName(), has_book.getDirectives().get(0).getName());
+        Assert.assertTrue( has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
+        Assert.assertEquals( "embedded",has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
 
         Assert.assertEquals(MappingIndexType.NONE, has_book.getMapping());
         Assert.assertEquals(NestingType.NONE, has_book.getNesting());
@@ -121,9 +123,9 @@ public class IndexSimpleEmbeddedIndexProviderTest {
         Assert.assertTrue(indexProvider.getRelation("has_Author").isPresent());
         Relation has_author = indexProvider.getRelation("has_Author").get();
         Assert.assertEquals(1, has_author.getDirectives().size());
-        Assert.assertEquals(new DirectiveType(RELATION.name().toLowerCase(), DirectiveType.DirectiveClasses.DATATYPE,
-                        Collections.singletonList(of(RELATION.getArgument(0), PhysicalEntityRelationsDirectiveType.REVERSE.getName()))),
-                has_author.getDirectives().get(0));
+        Assert.assertEquals(RELATION.getName(), has_author.getDirectives().get(0).getName());
+        Assert.assertTrue( has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
+        Assert.assertEquals( "reverse",has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
 
         Assert.assertEquals(MappingIndexType.NONE, has_author.getMapping());
         Assert.assertEquals(NestingType.NONE, has_author.getNesting());
