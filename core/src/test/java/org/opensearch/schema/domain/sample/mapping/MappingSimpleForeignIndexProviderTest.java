@@ -69,16 +69,14 @@ public class MappingSimpleForeignIndexProviderTest {
         Assert.assertNotNull(author.get("properties"));
 
         Map authorPropertiesMap = (Map) author.get("properties");
-        //books is defined as foreign relation to author therefor it will not consider as a property
-        // it will have a dedicated relation index named has_books
-        Assert.assertFalse(authorPropertiesMap.containsKey("books"));
+        Assert.assertTrue(authorPropertiesMap.containsKey("books"));
     }
 
     @Test
     /**
      * verify the process entity index-provider contains basic structure and properties
      */
-    public void generateAuthorEntityMappingTest() throws IOException, JSONException {
+    public void generateAuthorEntityMappingTest() throws IOException {
         IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
@@ -91,8 +89,13 @@ public class MappingSimpleForeignIndexProviderTest {
         Assert.assertNotNull(author.get("properties"));
 
         Map authorPropertiesMap = (Map) author.get("properties");
-        //books are a foreign index
-        Assert.assertFalse(authorPropertiesMap.containsKey("books"));
+        //books are a foreign index - only store FK reference (nested object with ISBN field in this case)
+        Assert.assertTrue(authorPropertiesMap.containsKey("books"));
+        Assert.assertTrue(authorPropertiesMap.get("books") instanceof Map);
+        Assert.assertTrue(((Map)authorPropertiesMap.get("books")).containsKey("properties"));
+        Assert.assertTrue(((Map)authorPropertiesMap.get("books")).get("properties") instanceof Map);
+        Assert.assertTrue(((Map)((Map)authorPropertiesMap.get("books")).get("properties")).containsKey("ISBN"));
+
         Assert.assertTrue(authorPropertiesMap.containsKey("nationality"));
         Assert.assertTrue(authorPropertiesMap.containsKey("name"));
         Assert.assertTrue(authorPropertiesMap.containsKey("born"));
@@ -102,6 +105,44 @@ public class MappingSimpleForeignIndexProviderTest {
 
         //test template generation structure
         XContentBuilder xContent = requests.get("author").request().toXContent(XContentBuilder.builder(XContentType.JSON.xContent()), ToXContent.EMPTY_PARAMS);
+        xContent.prettyPrint();
+        xContent.flush();
+        Assert.assertNotNull(BytesReference.bytes(xContent).utf8ToString());
+    }
+
+    @Test
+    /**
+     * verify the process entity index-provider contains basic structure and properties
+     */
+    public void generateBookEntityMappingTest() throws IOException {
+        IndexEntitiesMappingBuilder builder = new IndexEntitiesMappingBuilder(indexProvider);
+        HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
+        builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
+
+        Assert.assertNotNull(requests.get("book"));
+        Assert.assertEquals(1, requests.get("book").getMappings().size());
+        Assert.assertNotNull(requests.get("book").getMappings().get("Book"));
+
+        Map book = (Map) requests.get("book").getMappings().get("Book");
+        Assert.assertNotNull(book.get("properties"));
+
+        Map bookPropertiesMap = (Map) book.get("properties");
+        //books are a foreign index - only store FK reference (nested object with ISBN field in this case)
+        Assert.assertTrue(bookPropertiesMap.containsKey("author"));
+        Assert.assertTrue(bookPropertiesMap.get("author") instanceof Map);
+        Assert.assertTrue(((Map)bookPropertiesMap.get("author")).containsKey("properties"));
+        Assert.assertTrue(((Map)bookPropertiesMap.get("author")).get("properties") instanceof Map);
+        Assert.assertTrue(((Map)((Map)bookPropertiesMap.get("author")).get("properties")).containsKey("id"));
+
+        Assert.assertTrue(bookPropertiesMap.containsKey("ISBN"));
+        Assert.assertTrue(bookPropertiesMap.containsKey("title"));
+        Assert.assertTrue(bookPropertiesMap.containsKey("published"));
+        Assert.assertTrue(bookPropertiesMap.containsKey("genre"));
+        Assert.assertTrue(bookPropertiesMap.containsKey("description"));
+
+
+        //test template generation structure
+        XContentBuilder xContent = requests.get("book").request().toXContent(XContentBuilder.builder(XContentType.JSON.xContent()), ToXContent.EMPTY_PARAMS);
         xContent.prettyPrint();
         xContent.flush();
         Assert.assertNotNull(BytesReference.bytes(xContent).utf8ToString());
@@ -117,11 +158,8 @@ public class MappingSimpleForeignIndexProviderTest {
         HashMap<String, PutIndexTemplateRequestBuilder> requests = new HashMap<>();
         builder.map(new Accessor(ontology), new NoOpClient("test"), requests);
 
-        // we expect here the relationship table be symmetric for both author->book & book->author
-        Assert.assertNotNull(requests.get("has_Author"));
-        Assert.assertEquals(1, requests.get("author").getMappings().size());
-        Assert.assertNotNull(requests.get("author").getMappings().get("Author"));
-
+        // since the reference is maintained in the entity nested structure (Author has book's FK's) there is no physical relationship index of its own
+        Assert.assertTrue(requests.isEmpty());
     }
 
 }

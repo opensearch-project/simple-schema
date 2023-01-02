@@ -59,7 +59,7 @@ public class IndexSimpleForeignIndexProviderTest {
         Assert.assertEquals(NestingType.NONE,author.getNesting());
         Assert.assertEquals(MappingIndexType.STATIC,author.getMapping());
 
-        Assert.assertEquals(0,author.getNested().size());
+        Assert.assertEquals(1,author.getNested().size());//reference to books entity
 
         Assert.assertEquals(0,author.getAdditionalProperties().size());
         Assert.assertEquals(List.of("Author"),author.getProps().getValues());
@@ -83,7 +83,7 @@ public class IndexSimpleForeignIndexProviderTest {
         Assert.assertEquals(NestingType.NONE,book.getNesting());
         Assert.assertEquals(MappingIndexType.STATIC,book.getMapping());
 
-        Assert.assertEquals(0,book.getNested().size());
+        Assert.assertEquals(1,book.getNested().size());// reference to author entity
 
         Assert.assertEquals(0,book.getAdditionalProperties().size());
         Assert.assertEquals(List.of("Book"),book.getProps().getValues());
@@ -105,8 +105,8 @@ public class IndexSimpleForeignIndexProviderTest {
         Assert.assertTrue( has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
         Assert.assertEquals( "foreign",has_book.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
 
-        Assert.assertEquals(MappingIndexType.STATIC, has_book.getMapping());
-        Assert.assertEquals(NestingType.NONE, has_book.getNesting());
+        Assert.assertEquals(MappingIndexType.NONE, has_book.getMapping());// relationship has no physical index representation
+        Assert.assertEquals(NestingType.NONE, has_book.getNesting());// relationship has no nesting
 
     }
 
@@ -121,7 +121,7 @@ public class IndexSimpleForeignIndexProviderTest {
         Assert.assertTrue( has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).isPresent());
         Assert.assertEquals( "foreign",has_author.getDirectives().get(0).getArgument(MAPPING_TYPE).get().value);
 
-        Assert.assertEquals(NestingType.NONE, has_author.getNesting());
-        Assert.assertEquals(MappingIndexType.STATIC, has_author.getMapping());
+        Assert.assertEquals(MappingIndexType.NONE, has_author.getMapping());// relationship has no physical index representation
+        Assert.assertEquals(NestingType.NONE, has_author.getNesting());// relationship has no nesting
     }
 }

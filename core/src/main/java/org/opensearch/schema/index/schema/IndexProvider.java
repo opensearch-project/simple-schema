@@ -127,22 +127,20 @@ public class IndexProvider {
             IndexProvider provider = new IndexProvider();
             provider.ontology = ontology.getOnt();
 
-            MappingTranslator.MappingTranslatorContext context = new MappingTranslator.MappingTranslatorContext(accessor);
+            MappingTranslator.MappingTranslatorContext<Entity> entitiesContext = new MappingTranslator.MappingTranslatorContext<>(accessor);
+            MappingTranslator.MappingTranslatorContext<Relation> relationsContext = new MappingTranslator.MappingTranslatorContext<Relation>(accessor);
             EntityMappingTranslator entityTranslator = new EntityMappingTranslator();
             RelationMappingTranslator relationTranslator = new RelationMappingTranslator();
 
             //generate entities
             provider.entities = ontology.getEntityTypes().stream()
                     .filter(entityPredicate)
-                    //simplified assumption of top level entities are static and without nesting
-//                    .map(e -> createEntity(e, MappingIndexType.STATIC, NONE, accessor))
-                    .flatMap(e -> entityTranslator.translate(e,context).stream())
+                    .flatMap(e -> entityTranslator.translate(e,entitiesContext).stream())
                     .collect(Collectors.toSet());
             //generate relations
             provider.relations = ontology.getRelationshipTypes().stream()
                     .filter(relationPredicate)
-//                    .map(r -> createRelation(r, accessor))
-                    .flatMap(r -> relationTranslator.translate(r, context).stream())
+                    .flatMap(r -> relationTranslator.translate(r, relationsContext).stream())
                     .collect(Collectors.toSet());
 
             return provider;

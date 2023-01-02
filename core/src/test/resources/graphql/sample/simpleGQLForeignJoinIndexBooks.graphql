@@ -7,6 +7,7 @@ type Book @model {
     genre:Genre
 }
 type Author @model{
+    id : ID!
     name: String!
     born: DateTime!
     age: Int

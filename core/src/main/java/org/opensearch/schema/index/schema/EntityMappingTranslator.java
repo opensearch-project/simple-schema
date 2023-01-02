@@ -14,7 +14,7 @@ import static org.opensearch.schema.index.schema.IndexMappingUtils.*;
 public class EntityMappingTranslator implements MappingTranslator<EntityType, Entity> {
 
     @Override
-    public List<Entity> translate(EntityType entity, MappingTranslatorContext context) {
+    public List<Entity> translate(EntityType entity, MappingTranslatorContext<Entity> context) {
         //inferring MappingIndexType & NestingType - according to the directives and the nesting composition of the elements
 
         // switch for the different type of nesting
@@ -27,7 +27,7 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
 
         MappingIndexType mappingIndexType = calculateMappingType(entity, context.getAccessor());
         NestingType nestingType = calculateNestingType(Optional.empty(),entity, context.getAccessor());
-        return List.of(Objects.requireNonNull(createEntity(entity, mappingIndexType, nestingType, context.getAccessor())));
+        return List.of(Objects.requireNonNull(context.putElement(createEntity(entity, mappingIndexType, nestingType, context.getAccessor()))));
     }
 
 
@@ -50,9 +50,9 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
         }
     }
 
-    public static Map<String, Entity> createNestedElements(EntityType e, Accessor accessor) {
+    public static Map<String, Entity> createNestedElements(EntityType parent, Accessor accessor) {
         //first filter out the logical nested entities which have physical foreign directives
-        return accessor.relationsPairsBySourceEntity(e, r -> true)
+        return accessor.relationsPairsBySourceEntity(parent, r -> true)
                 .stream()
                 //switch for the different type of nesting
                 // REFERENCE would generate adding a FK field
@@ -63,7 +63,7 @@ public class EntityMappingTranslator implements MappingTranslator<EntityType, En
 
                 .map(p -> {
                             MappingIndexType mappingIndexType = calculateMappingType(accessor.entity$(p.geteTypeB()), accessor);
-                            NestingType nestingType = calculateNestingType(Optional.of(e),accessor.entity$(p.geteTypeB()), accessor);
+                            NestingType nestingType = calculateNestingType(Optional.of(parent),accessor.entity$(p.geteTypeB()), accessor);
                             // when an entity is self referencing (they must reside in the same index)
                             if (accessor.isSelfReference(p)) {
                                 nestingType = p.getReferenceType().equals(EPair.RelationReferenceType.ONE_TO_ONE) ? NestingType.REFERENCE : NestingType.NESTED_REFERENCE;

@@ -46,14 +46,14 @@ class RelationsCreationTranslationTest {
         //verify relation created
         Assert.assertTrue(accessor.relation("has_Author").isPresent());
         Assert.assertEquals("has_Author",accessor.relation("has_Author").get().getrType());
-        Assert.assertEquals("@id",accessor.relation("has_Author").get().idFieldName());
+        Assert.assertEquals("id",accessor.relation("has_Author").get().idFieldName());
         Assert.assertFalse(accessor.relation("has_Author").get().getePairs().isEmpty());
 
         EPair has_authorPair = accessor.relation("has_Author").get().getePairs().get(0);
         Assert.assertEquals("Book->Author", has_authorPair.getName());
         Assert.assertEquals(ONE_TO_ONE, has_authorPair.getReferenceType());
         Assert.assertEquals("Author", has_authorPair.geteTypeB());
-        Assert.assertEquals("@id", has_authorPair.getSideBIdField());
+        Assert.assertEquals("id", has_authorPair.getSideBIdField());
         Assert.assertEquals("Book", has_authorPair.geteTypeA());
         Assert.assertEquals("ISBN", has_authorPair.getSideAIdField());
         Assert.assertEquals("author", has_authorPair.getSideAFieldName());
@@ -78,7 +78,7 @@ class RelationsCreationTranslationTest {
         Assert.assertEquals(ONE_TO_MANY, has_bookPair.getReferenceType());
         Assert.assertEquals("written", has_bookPair.getName());
         Assert.assertEquals("Author", has_bookPair.geteTypeA());
-        Assert.assertEquals("@id", has_bookPair.getSideAIdField());
+        Assert.assertEquals("id", has_bookPair.getSideAIdField());
         Assert.assertEquals("Book", has_bookPair.geteTypeB());
         Assert.assertEquals("ISBN", has_bookPair.getSideBIdField());
         Assert.assertEquals("books", has_bookPair.getSideAFieldName());

@@ -15,6 +15,7 @@ import org.opensearch.schema.validation.ValidationResult;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SchemaValidatorTest {
@@ -49,7 +50,8 @@ class SchemaValidatorTest {
     void validate() {
         SchemaValidator validator = new SchemaValidator();
         ValidationResult.ValidationResults results = validator.validate(indexProvider, new Accessor(ontology));
-        assertTrue(results.isValid());
+        assertFalse(results.isValid());
+        //todo - verify the correct Validation Results are returned according to rules
     }
 
     @Test

@@ -14,6 +14,7 @@ type Book @model {
     genre:Genre
 }
 type Author implements Person @model{
+    id : ID!
     name: String!
     born: DateTime!
     age: Int

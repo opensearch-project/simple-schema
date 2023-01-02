@@ -6,20 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static java.util.stream.Stream.concat;
 
 /**
  * this common class represents the common attributes of both EntityType & RelationshipType
  */
 public abstract class CommonType implements BaseElement {
     protected String name;
-    protected List<String> idField = new ArrayList<>();
     protected List<DirectiveType> directives = new ArrayList<>();
+    protected List<String> idField = new ArrayList<>();
     protected List<String> mandatory = new ArrayList<>();
     protected List<String> properties = new ArrayList<>();
     protected List<String> metadata = new ArrayList<>();
 
-    public CommonType() {}
+    public CommonType() {
+    }
 
     public CommonType(String name) {
         this.name = name;
@@ -53,7 +55,8 @@ public abstract class CommonType implements BaseElement {
 
     @JsonIgnore
     public List<String> fields() {
-        return Stream.concat(properties.stream(), metadata.stream()).collect(Collectors.toList());
+        return concat(concat(idField.stream(), properties.stream()), metadata.stream())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -92,7 +95,7 @@ public abstract class CommonType implements BaseElement {
 
     public static class Accessor {
         public static Optional<DirectiveType> getDirective(CommonType type, String name) {
-            return type.getDirectives().stream().filter(d->d.getName().equals(name)).findAny();
+            return type.getDirectives().stream().filter(d -> d.getName().equals(name)).findAny();
         }
 
     }

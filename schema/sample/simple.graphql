@@ -1,4 +1,4 @@
-type Book @model {
+type Book {
     ISBN: ID!
     title: String!
     author: Author! @relation(mappingType: "reverse")
@@ -8,6 +8,7 @@ type Book @model {
 
 }
 type Author @model{
+    id : ID!
     name: String!
     born: DateTime!
     age: Int

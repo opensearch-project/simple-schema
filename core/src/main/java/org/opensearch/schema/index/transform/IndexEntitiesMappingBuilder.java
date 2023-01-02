@@ -56,7 +56,7 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         try {
             switch (mapping) {//common general index - unifies all entities under the same physical index
                 case UNIFIED:
-                    buildUnifiedMapping(ontology, client, requests, e, entity);
+                    buildUnifiedMapping(ontology, client, requests, entity, e);
                     break;
 //static index
                 case STATIC:
@@ -71,27 +71,27 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         }
     }
 
-    private void buildPartitionedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
+    private void buildPartitionedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType indexProviderEntity, Entity ontologyEntity) {
         //time partitioned index
-        PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, e.getName().toLowerCase());
-        String label = entity.getType().getName();
-        request.setPatterns(new ArrayList<>(Arrays.asList(e.getName().toLowerCase(), label, e.getName(), String.format(entity.getProps().getIndexFormat(), "*"))))
-                .setSettings(generateSettings(ontology, e, entity, label));
-        request.addMapping(label, generateElementMapping(ontology, e, entity, label.toLowerCase()));
+        PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, indexProviderEntity.getName().toLowerCase());
+        String label = ontologyEntity.getType().getName();
+        request.setPatterns(new ArrayList<>(Arrays.asList(indexProviderEntity.getName().toLowerCase(), label, indexProviderEntity.getName(), String.format(ontologyEntity.getProps().getIndexFormat(), "*"))))
+                .setSettings(generateSettings(ontology, indexProviderEntity, ontologyEntity, label));
+        request.addMapping(label, generateElementMapping(ontology, indexProviderEntity, ontologyEntity, label.toLowerCase()));
         //dedup patterns -
         request.setPatterns(request.request().patterns().stream().distinct().collect(Collectors.toList()));
 
         //add response to list of responses
-        requests.put(e.getName().toLowerCase(), request);
+        requests.put(indexProviderEntity.getName().toLowerCase(), request);
     }
 
-    private void buildStaticMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
-        entity.getProps().getValues().forEach(v -> {
-            String label = e.geteType();
+    private void buildStaticMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType indexProviderEntity, Entity ontologyEntity) {
+        ontologyEntity.getProps().getValues().forEach(v -> {
+            String label = indexProviderEntity.geteType();
             PutIndexTemplateRequestBuilder request = new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, v.toLowerCase());
-            request.setPatterns(new ArrayList<>(Arrays.asList(e.getName().toLowerCase(), label, e.getName(), String.format("%s%s", v, "*"))))
-                    .setSettings(generateSettings(ontology, e, entity, label));
-            request.addMapping(label, generateElementMapping(ontology, e, entity, label));
+            request.setPatterns(new ArrayList<>(Arrays.asList(indexProviderEntity.getName().toLowerCase(), label, indexProviderEntity.getName(), String.format("%s%s", v, "*"))))
+                    .setSettings(generateSettings(ontology, indexProviderEntity, ontologyEntity, label));
+            request.addMapping(label, generateElementMapping(ontology, indexProviderEntity, ontologyEntity, label));
 
             //dedup patterns -
             request.setPatterns(request.request().patterns().stream().distinct().collect(Collectors.toList()));
@@ -101,13 +101,13 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
         });
     }
 
-    private void buildUnifiedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, EntityType e, Entity entity) {
-        entity.getProps().getValues().forEach(v -> {
-            String label = e.geteType();
-            String unifiedName = entity.getProps().getValues().isEmpty() ? label : entity.getProps().getValues().get(0);
+    private void buildUnifiedMapping(Accessor ontology, Client client, Map<String, PutIndexTemplateRequestBuilder> requests, Entity ontologyEntity, EntityType indexProviderEntity) {
+        ontologyEntity.getProps().getValues().forEach(v -> {
+            String label = indexProviderEntity.geteType();
+            String unifiedName = ontologyEntity.getProps().getValues().isEmpty() ? label : ontologyEntity.getProps().getValues().get(0);
             PutIndexTemplateRequestBuilder request = requests.computeIfAbsent(unifiedName, s -> new PutIndexTemplateRequestBuilder(client, PutIndexTemplateAction.INSTANCE, unifiedName));
 
-            List<String> patterns = new ArrayList<>(Arrays.asList(e.getName().toLowerCase(), label, e.getName(), String.format("%s%s", v, "*")));
+            List<String> patterns = new ArrayList<>(Arrays.asList(indexProviderEntity.getName().toLowerCase(), label, indexProviderEntity.getName(), String.format("%s%s", v, "*")));
             if (Objects.isNull(request.request().patterns())) {
                 request.setPatterns(new ArrayList<>(patterns));
             } else {
@@ -115,51 +115,51 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
             }
             //dedup patterns -
             request.setPatterns(request.request().patterns().stream().distinct().collect(Collectors.toList()));
-            //no specific index sort order since it contains multiple entity types -
+            //no specific index sort order since it contains multiple ontologyEntity types -
             if (request.request().settings().isEmpty()) {
                 request.setSettings(getDefaultSettings().build());
             }
-            //create new mapping only when no prior entity set this mapping before
+            //create new mapping only when no prior ontologyEntity set this mapping before
             if (request.request().mappings().isEmpty()) {
-                request.addMapping(unifiedName, generateElementMapping(ontology, e, entity, unifiedName));
+                request.addMapping(unifiedName, generateElementMapping(ontology, indexProviderEntity, ontologyEntity, unifiedName));
             } else {
-                populateProperty(ontology, entity, request.getMappingsProperties(unifiedName), e);
+                populateProperty(ontology, ontologyEntity, request.getMappingsProperties(unifiedName), indexProviderEntity);
             }
         });
     }
 
-    private Map<String, Object> populateMappingIndexFields(Accessor ontology, Entity ent, Optional<EntityType> entity) {
+    private Map<String, Object> populateMappingIndexFields(Accessor ontology, Entity ontologyEntity, Optional<EntityType> indexProviderEntity) {
         Map<String, Object> mapping = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         mapping.put(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES, properties);
         //populate fields & metadata
-        EntityType entityType = entity.get();
+        EntityType entityType = indexProviderEntity.get();
 
         //generate field id -> only if field id array size > 1
         if (entityType.getIdField().size() > 1) {
             properties.put(entityType.idFieldName(), Collections.singletonMap("type", "keyword"));
         }//otherwise that field id is already a part of the regular fields
 
-        populateProperty(ontology, ent, properties, entityType);
+        populateProperty(ontology, ontologyEntity, properties, entityType);
         return mapping;
     }
 
     /**
      * generate specific entity type mapping
      *
-     * @param entityType
-     * @param ent
+     * @param indexProviderEntity
+     * @param ontologyEntity
      * @param label
      * @return
      */
-    public Map<String, Object> generateElementMapping(Accessor ontology, EntityType entityType, Entity ent, String label) {
-        Optional<EntityType> entity = ontology.entity(entityType.getName());
+    public Map<String, Object> generateElementMapping(Accessor ontology, EntityType indexProviderEntity, Entity ontologyEntity, String label) {
+        Optional<EntityType> entity = ontology.entity(indexProviderEntity.getName());
         if (!entity.isPresent())
             throw new SchemaError.SchemaErrorException(new SchemaError("Mapping generation exception", "No entity with name " + label + " found in ontology"));
 
         Map<String, Object> jsonMap = new HashMap<>();
         //populate index fields
-        jsonMap.put(label, populateMappingIndexFields(ontology, ent, entity));
+        jsonMap.put(label, populateMappingIndexFields(ontology, ontologyEntity, entity));
 
         return jsonMap;
     }
@@ -169,13 +169,13 @@ public class IndexEntitiesMappingBuilder implements TemplateMapping<EntityType, 
      *
      * @return
      */
-    private Settings generateSettings(Accessor ontology, EntityType entityType, Entity entity, String label) {
-        ontology.entity(entityType.getName()).get().getIdField().forEach(idField -> {
-            if (!ontology.entity(entityType.getName()).get().fields().contains(idField))
+    private Settings generateSettings(Accessor ontology, EntityType indexProviderEntity, Entity ontologyEntity, String label) {
+        ontology.entity(indexProviderEntity.getName()).get().getIdField().forEach(idField -> {
+            if (!ontology.entity(indexProviderEntity.getName()).get().fields().contains(idField))
                 throw new SchemaError.SchemaErrorException(new SchemaError("Entity Schema generation exception", " Entity " + label + " not containing id metadata property "));
         });
-        // TODO: 05/12/2019  - use index provider to correctly build index settings
-        return builder(ontology, entity);
+        // TODO: - use index provider to correctly build index settings
+        return builder(ontology, ontologyEntity);
     }
 
     private Settings builder(Accessor ontology, Entity entity) {

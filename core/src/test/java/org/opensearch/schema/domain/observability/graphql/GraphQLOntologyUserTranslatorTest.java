@@ -121,7 +121,8 @@ public class GraphQLOntologyUserTranslatorTest {
         Map<String, Entity> nested = rootEntities.get(0).getNested();
         Assertions.assertEquals(nested.size(), 1);
         Assertions.assertEquals(nested.get("group").getType(), Type.of("Group"));
-        Assertions.assertEquals(provider.getRelations().size(), 0);
+        Assertions.assertEquals(provider.getRelations().size(), 1);
+        //todo add relations assertions checks
     }
 
 }

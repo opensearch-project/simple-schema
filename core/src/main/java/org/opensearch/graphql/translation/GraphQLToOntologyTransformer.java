@@ -7,6 +7,7 @@ import graphql.schema.idl.EchoingWiringFactory;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.GraphQLSchemaUtils;
 import org.opensearch.schema.ontology.Ontology;
+import org.opensearch.schema.ontology.OntologyFinalizer;
 import org.opensearch.schema.ontology.OntologyTransformerIfc;
 
 import java.io.FileInputStream;
@@ -110,7 +111,7 @@ public class GraphQLToOntologyTransformer implements OntologyTransformerIfc<Stri
         //run translations strategy chain
         chain.forEach(element -> element.translate(graphQLSchema, context));
         //generate the ontology
-        return context.build();
+        return OntologyFinalizer.finalize(context.build());
     }
 
 

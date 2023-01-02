@@ -51,7 +51,7 @@ public class IndexMappingUtils {
         }
 
         //second: if relation is foreign to another relation -> its considered as static
-        if (accessor.isForeignRelation(relation)) {
+        if (accessor.isJoinIndexForeignRelation(pair)) {
             return MappingIndexType.STATIC;
         }
 

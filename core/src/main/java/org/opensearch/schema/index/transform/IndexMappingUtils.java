@@ -89,6 +89,7 @@ public abstract class IndexMappingUtils {
                     Map<String, Object> parseType = parseType(ontology, ontology.property$(v).getType());
                     if (!parseType.isEmpty()) properties.put(v, parseType);
                 });
+                //todo - add warning if ID field is missing / Or add default...
                 break;
 //populate mandatory fields
             default:
