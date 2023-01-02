@@ -24,6 +24,9 @@ public interface BaseElement {
 
     List<DirectiveType> getDirectives();
 
+    boolean containsProperty(String key);
+    boolean containsMetadata(String key);
+
     @JsonIgnore
     static String idFieldName(List<String> values) {
         StringJoiner joiner = new StringJoiner("_");

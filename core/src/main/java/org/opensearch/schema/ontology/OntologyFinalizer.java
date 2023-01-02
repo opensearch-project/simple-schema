@@ -19,8 +19,6 @@ public class OntologyFinalizer {
      * @return
      */
     public static Ontology finalize(Ontology ontology) {
-        Accessor accessor = new Accessor(ontology);
-
         if (ontology.getProperties().stream().noneMatch(p -> p.getpType().equals(ID_FIELD_PTYPE)))
             ontology.getProperties().add(Property.Builder.get().withName(ID_FIELD_NAME).withPType(ID_FIELD_PTYPE)
                     .withType(new PrimitiveType(STRING,String.class))

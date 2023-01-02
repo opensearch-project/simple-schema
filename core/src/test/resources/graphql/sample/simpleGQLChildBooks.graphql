@@ -1,0 +1,34 @@
+type Book {
+    ISBN: ID!
+    title: String!
+    author: Author!@relation(mappingType: "reverse")
+    description: Text
+    published: DateTime!
+    genre:Genre
+
+}
+type Author @model{
+    id : ID!
+    name: String!
+    born: DateTime!
+    age: Int
+    died: DateTime
+    nationality: String!
+    books: [Book] @relation(mappingType: "child")
+}
+
+# auto generated queries
+type Query {
+    book : [Book]
+    author : [Author]
+}
+enum Genre {
+    AdventureStories
+    Classics
+    Crime
+    FairyTales
+    Fantasy
+    HistoricalFiction
+    Horror
+    Humour
+}

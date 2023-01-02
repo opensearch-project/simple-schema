@@ -49,7 +49,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
                         case STATIC:
                             createStaticMapping(ontology, client, requests, r, relation);
                             break;
-                        case TIME:
+                        case PARTITIONED:
                             createTimePartitionMapping(ontology, client, requests, r, relation);
                             break;
                         default:
@@ -172,7 +172,7 @@ public class IndexRelationsMappingBuilder implements TemplateMapping<Relationshi
         Map<String, Object> mapping = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         switch (nest._2().getNesting()) {
-            case NESTED:
+            case NESTING:
                 mapping.put(TYPE, NESTED);
                 break;
         }

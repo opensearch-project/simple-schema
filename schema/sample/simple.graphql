@@ -1,17 +1,31 @@
-type Book @model {
+type Book {
     ISBN: ID!
     title: String!
-    author: Author!
+    author: Author! @relation(mappingType: "reverse")
     description: Text
     published: DateTime!
+    genre:Genre
+
 }
 type Author @model{
+    id : ID!
     name: String!
     born: DateTime!
     age: Int
     died: DateTime
     nationality: String!
     books: [Book] @relation(mappingType: "embedded")
+}
+
+enum Genre {
+    AdventureStories
+    Classics
+    Crime
+    FairyTales
+    Fantasy
+    HistoricalFiction
+    Horror
+    Humour
 }
 #-----------------------------------------------------------------------------------------------------------------------
 # auto generated author filter
