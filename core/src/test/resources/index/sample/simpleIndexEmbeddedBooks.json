@@ -1,0 +1,183 @@
+{
+  "entities": [
+    {
+      "type": {
+        "name": "Author",
+        "field": {
+          "empty": true,
+          "present": false
+        },
+        "implicit": false
+      },
+      "partition": "NONE",
+      "props": {
+        "values": [
+          "Author"
+        ]
+      },
+      "nested": {
+        "books": {
+          "type": {
+            "name": "Book",
+            "field": {
+              "empty": true,
+              "present": false
+            },
+            "implicit": false
+          },
+          "partition": "NESTED",
+          "props": {
+            "values": [
+              "Book"
+            ]
+          },
+          "nested": {},
+          "directives": [],
+          "nesting": "NESTED",
+          "mapping": "STATIC"
+        }
+      },
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "model"
+        }
+      ],
+      "nesting": "NONE",
+      "mapping": "STATIC"
+    }
+  ],
+  "relations": [
+    {
+      "type": {
+        "name": "has_Author",
+        "field": {
+          "empty": true,
+          "present": false
+        },
+        "implicit": false
+      },
+      "partition": "NONE",
+      "symmetric": false,
+      "props": {
+        "values": [
+          "has_Author"
+        ]
+      },
+      "nested": {},
+      "redundant": [],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "reverse"
+            }
+          ]
+        }
+      ],
+      "mapping": "NONE"
+    },
+    {
+      "type": {
+        "name": "has_Book",
+        "field": {
+          "empty": true,
+          "present": false
+        },
+        "implicit": false
+      },
+      "partition": "EMBEDDED",
+      "symmetric": false,
+      "props": {
+        "values": [
+          "has_Book"
+        ]
+      },
+      "nested": {},
+      "redundant": [],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "embedded"
+            }
+          ]
+        }
+      ],
+      "mapping": "NONE"
+    }
+  ],
+  "ontology": "simple",
+  "rootRelations": [
+    {
+      "type": {
+        "name": "has_Author",
+        "field": {
+          "empty": true,
+          "present": false
+        },
+        "implicit": false
+      },
+      "partition": "NONE",
+      "symmetric": false,
+      "props": {
+        "values": [
+          "has_Author"
+        ]
+      },
+      "nested": {},
+      "redundant": [],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "reverse"
+            }
+          ]
+        }
+      ],
+      "mapping": "NONE"
+    },
+    {
+      "type": {
+        "name": "has_Book",
+        "field": {
+          "empty": true,
+          "present": false
+        },
+        "implicit": false
+      },
+      "partition": "EMBEDDED",
+      "symmetric": false,
+      "props": {
+        "values": [
+          "has_Book"
+        ]
+      },
+      "nested": {},
+      "redundant": [],
+      "directives": [
+        {
+          "type": "DATATYPE",
+          "name": "relation",
+          "arguments": [
+            {
+              "name": "mappingType",
+              "value": "embedded"
+            }
+          ]
+        }
+      ],
+      "mapping": "NONE"
+    }
+  ]
+}

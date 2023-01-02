@@ -428,10 +428,9 @@ public class QueryDescriptor implements Descriptor<Query>, GraphDescriptor<Query
             EBase below = findByEnum(query, element.getB()).get();
             //populate prop
             if (BaseProp.class.isAssignableFrom(below.getClass())) {
-                //todo
-                //populate prop group
+                //todo populate prop group
             } else if (BasePropGroup.class.isAssignableFrom(below.getClass())) {
-                //todo
+                //todo populate below props
             }
         }
         return builder.toString();

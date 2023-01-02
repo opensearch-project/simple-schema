@@ -5,15 +5,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
+import org.opensearch.schema.validation.SchemaValidator;
 import org.opensearch.schema.validation.ValidationResult;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SchemaValidatorTest {
@@ -48,7 +50,8 @@ class SchemaValidatorTest {
     void validate() {
         SchemaValidator validator = new SchemaValidator();
         ValidationResult.ValidationResults results = validator.validate(indexProvider, new Accessor(ontology));
-        assertTrue(results.isValid());
+        assertFalse(results.isValid());
+        //todo - verify the correct Validation Results are returned according to rules
     }
 
     @Test

@@ -15,6 +15,7 @@ import org.opensearch.simpleschema.getJsonString
 
 internal class SchemaEntityTypeTests {
     val entity = "type Author {\n" +
+        "    id: ID!\n" +
         "    name: String!\n" +
         "    born: DateTime!\n" +
         "    died: DateTime\n" +
@@ -40,7 +41,7 @@ internal class SchemaEntityTypeTests {
     @Test
     fun `SchemaEntityType should deserialize json object using parser`() {
         val jsonString =
-            "{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}"
+            "{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    id: ID!\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}"
         val recreatedObject = createObjectFromJsonString(jsonString) { SchemaEntityType.parse(it) }
         assertEquals(sample, recreatedObject)
     }
@@ -56,7 +57,7 @@ internal class SchemaEntityTypeTests {
     @Test
     fun `SchemaEntityType should safely ignore extra field in json object`() {
         val jsonString =
-            "{\"type\":\"test\",\"foo\":\"bar\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}"
+            "{\"type\":\"test\",\"foo\":\"bar\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    id: ID!\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}"
         val recreatedObject = createObjectFromJsonString(jsonString) { SchemaEntityType.parse(it) }
         assertEquals(sample, recreatedObject)
     }

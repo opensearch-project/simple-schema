@@ -1,13 +1,11 @@
 package org.opensearch.schema.ontology;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,25 +19,23 @@ public class DirectiveType {
     private String range;
     private String name;
 
-    private List<Argument> arguments;
+    private List<Argument> arguments = Collections.emptyList();
 
     public DirectiveType() {
     }
 
-    public DirectiveType(String name, DirectiveClasses type, String domain, String range) {
-        this.type = type;
-        this.domain = domain;
-        this.range = range;
-        this.name = name;
-        this.arguments = new ArrayList<>();
-    }
-
     public DirectiveType(String name, DirectiveClasses type) {
-        this(name, type, Collections.emptyList());
+        this(name, type, null, null, Collections.emptyList());
     }
 
     public DirectiveType(String name, DirectiveClasses type, List<Argument> arguments) {
+        this(name, type, null, null, arguments);
+    }
+
+    public DirectiveType(String name, DirectiveClasses type, String domain, String range, List<Argument> arguments) {
         this.type = type;
+        this.domain = domain;
+        this.range = range;
         this.name = name;
         this.arguments = arguments;
     }
@@ -54,6 +50,11 @@ public class DirectiveType {
 
     public List<Argument> getArguments() {
         return arguments;
+    }
+
+    @JsonIgnore
+    public Optional<Argument> getArgument(String name) {
+        return arguments.stream().filter(arg -> arg.name.equals(name)).findAny();
     }
 
     public void setArguments(List<Argument> arguments) {
@@ -84,8 +85,26 @@ public class DirectiveType {
         this.name = name;
     }
 
+    /**
+     * check is any argument value equals the given value
+     * @param value
+     * @return
+     */
     public boolean containsArgVal(Object value) {
-        return getArguments().stream().anyMatch(arg -> arg.value.toString().equals(value));
+        return getArguments().stream()
+                .filter(arg->Objects.nonNull(arg.value))
+                .anyMatch(arg -> arg.value.toString().equals(value));
+    }
+
+    /**
+     * check is any argument with the given name contains non-null value
+     * @param name
+     * @return
+     */
+    public boolean containsArgVal(String name) {
+        return getArguments().stream()
+                .filter(arg->Objects.nonNull(arg.value))
+                .anyMatch(arg -> arg.name.equals(name));
     }
 
     public boolean containsArg(String name) {
@@ -129,6 +148,10 @@ public class DirectiveType {
 
         public String name;
         public Object value;
+
+        public boolean equalsValue(Object o) {
+            return value.equals(o);
+        }
 
         @Override
         public boolean equals(Object o) {

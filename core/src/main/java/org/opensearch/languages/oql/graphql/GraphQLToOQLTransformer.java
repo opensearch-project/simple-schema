@@ -5,11 +5,12 @@ import graphql.ExecutionResult;
 import graphql.GraphQLError;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.Transformer;
-import org.opensearch.languages.oql.graphql.wiring.OQLTraversalWiringFactory;
+import org.opensearch.languages.oql.graphql.wiring.*;
 import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -20,13 +21,14 @@ public class GraphQLToOQLTransformer implements Transformer<Query> {
 
     /**
      * translates graphQL textual query into a OQL ( Ontological Query Language) query
+     *
      * @param accessor
      * @param query
      * @return
      */
-    public synchronized Query transform(Accessor accessor, String query) {
+    public synchronized Query transform(List<QueryTranslationStrategy> translationStrategies, Accessor accessor, String query) {
         Query.Builder instance = Query.Builder.instance();
-        OQLTraversalWiringFactory factory = new OQLTraversalWiringFactory(accessor, instance);
+        OQLTraversalWiringFactory factory = new OQLTraversalWiringFactory(translationStrategies, accessor, instance);
         ExecutionResult execute = GraphQLEngineFactory
                 .generateEngine(
                         GraphQLEngineFactory.generateSchema(factory)
@@ -36,6 +38,14 @@ public class GraphQLToOQLTransformer implements Transformer<Query> {
         // throw error over failed query parsing
         throw new SchemaError.SchemaErrorException("Error Transforming the GQL text query into a OQL query",
                 execute.getErrors().stream().map(GraphQLError::getMessage).collect(Collectors.toList()));
+    }
+
+    public synchronized Query transform(Accessor accessor, String query) {
+        List<QueryTranslationStrategy> translationStrategies = List.of(
+                new EntityWithPredicateTranslation(),
+                new InterfaceTranslation(),
+                new ValuesTranslation());
+        return transform(translationStrategies, accessor, query);
     }
 
 }

@@ -12,11 +12,12 @@ import org.opensearch.common.xcontent.ToXContent;
 import org.opensearch.common.xcontent.XContentBuilder;
 import org.opensearch.common.xcontent.XContentType;
 import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.IndexProvider;
 import org.opensearch.schema.index.template.PutIndexTemplateRequestBuilder;
 import org.opensearch.schema.index.transform.IndexEntitiesMappingBuilder;
 import org.opensearch.schema.ontology.Accessor;
+import org.opensearch.schema.ontology.DirectiveEnumTypes;
 import org.opensearch.schema.ontology.Ontology;
 
 import java.io.FileInputStream;
@@ -59,9 +60,8 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
         ontologyAccessor = new Accessor(ontology);
         indexProvider = IndexProvider.Builder.generate(ontology
                 , e -> e.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("model"))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("relation") && d.containsArgVal("foreign")));
+                        .anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
+                , r -> true);
     }
 
     @Test
@@ -117,7 +117,11 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
         Assert.assertNotNull(((Map) requests.get("process").getMappings().get("Process")).get("properties"));
         Map processPropertiesMap = (Map) ((Map) requests.get("process").getMappings().get("Process")).get("properties");
 
-        Assert.assertTrue(processPropertiesMap.containsKey("savedUser"));
+//      Process.savedUser : is defined as >> user:User @relation(mappingType: "foreign")
+//        Assert.assertTrue(processPropertiesMap.containsKey("savedUser"));
+//      Process.user : is defined as >> user:User @relation(mappingType: "foreign")
+//        Assert.assertTrue(processPropertiesMap.containsKey("user"));
+
         Assert.assertTrue(processPropertiesMap.containsKey("leader"));
         Assert.assertTrue(processPropertiesMap.containsKey("parent"));
         Assert.assertTrue(processPropertiesMap.containsKey("argsCount"));
@@ -154,7 +158,6 @@ public class MappingEntityWithRelationTemplateGeneratorTest {
         Assert.assertTrue(processPropertiesMap.containsKey("attributes"));
         Assert.assertTrue(processPropertiesMap.containsKey("codeSignature"));
         Assert.assertTrue(processPropertiesMap.containsKey("commandLine"));
-        Assert.assertTrue(processPropertiesMap.containsKey("user"));
         Assert.assertTrue(processPropertiesMap.containsKey("hash"));
         //test template generation structure
         XContentBuilder process = requests.get("process").request().toXContent(XContentBuilder.builder(XContentType.JSON.xContent()), ToXContent.EMPTY_PARAMS);

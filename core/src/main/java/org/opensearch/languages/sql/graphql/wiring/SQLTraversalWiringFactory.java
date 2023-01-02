@@ -86,7 +86,7 @@ public class SQLTraversalWiringFactory implements WiringFactory {
         };
     }
 
-    private Object getObject(DataFetchingEnvironment env, GraphQLType fieldType) throws IOException {
+    private Object getObject(DataFetchingEnvironment env, GraphQLType fieldType)  {
         fieldType = extractConcreteFieldType(fieldType);
         // in parent is of type vertex and current query element not quant -> add quant
         ExecutionStepInfo parent = env.getExecutionStepInfo().getParent();
