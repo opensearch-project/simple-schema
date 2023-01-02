@@ -79,7 +79,7 @@ public interface GraphQLSchemaUtils {
                 .findAny();
     }
 
-    static Collection<DirectiveType> formatDirective(Optional<? extends GraphQLDirectiveContainer> element) {
+    static List<DirectiveType> formatDirective(Optional<? extends GraphQLDirectiveContainer> element) {
         return (element.isEmpty() ? Collections.emptyList() :
                 element.get().getAppliedDirectives().stream()
                         .map(d -> new DirectiveType(d.getName(),

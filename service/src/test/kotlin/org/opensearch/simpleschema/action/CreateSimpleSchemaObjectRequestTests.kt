@@ -18,6 +18,7 @@ import org.opensearch.simpleschema.model.SimpleSchemaObjectType
 
 internal class CreateSimpleSchemaObjectRequestTests {
     val entity = "type Author {\n" +
+        "    id: ID!\n" +
         "    name: String!\n" +
         "    born: DateTime!\n" +
         "    died: DateTime\n" +
@@ -47,7 +48,7 @@ internal class CreateSimpleSchemaObjectRequestTests {
     @Test
     fun `Create object should deserialize json object using parser`() {
         val jsonString =
-            "{\"objectId\":\"test-id\",\"schemaEntityType\":{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}}"
+            "{\"objectId\":\"test-id\",\"schemaEntityType\":{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    id: ID!\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}}"
         val recreatedObject = createObjectFromJsonString(jsonString) { CreateSimpleSchemaObjectRequest.parse(it) }
         assertEquals(sample, recreatedObject.objectData)
     }
@@ -63,7 +64,7 @@ internal class CreateSimpleSchemaObjectRequestTests {
     @Test
     fun `Create object should safely ignore extra field in json object`() {
         val jsonString =
-            "{\"objectId\":\"test-id\",\"schemaEntityType\":{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}}"
+            "{\"objectId\":\"test-id\",\"schemaEntityType\":{\"type\":\"test\",\"name\":\"test\",\"catalog\":[\"a\",\"b\"],\"content\":\"type Author {\\n    id: ID!\\n    name: String!\\n    born: DateTime!\\n    died: DateTime\\n    nationality: String!\\n    books: [Book]\\n}\"}}"
         val recreatedObject = createObjectFromJsonString(jsonString) { CreateSimpleSchemaObjectRequest.parse(it) }
         assertEquals(sample, recreatedObject.objectData)
     }

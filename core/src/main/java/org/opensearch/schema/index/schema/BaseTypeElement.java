@@ -4,7 +4,9 @@ package org.opensearch.schema.index.schema;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.opensearch.schema.ontology.DirectiveType;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,6 +16,8 @@ import java.util.Optional;
  * @param <T>
  */
 public interface BaseTypeElement<T> {
+    List<DirectiveType> getDirectives();
+
     Map<String, T> getNested();
 
     Props getProps();

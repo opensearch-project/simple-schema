@@ -35,10 +35,10 @@ public class IndexProjectionMappingBuilder {
         //adding projection related metadata
         Ontology clone = new Ontology(ontology);
         //add projection related metadata
-        clone.getEntityTypes().forEach(e -> e.withMetadata(Collections.singletonList("tag")));
-        clone.getRelationshipTypes().forEach(r -> r.withMetadata(Collections.singletonList("tag")));
-        clone.getRelationshipTypes().forEach(r -> r.withMetadata(Collections.singletonList(OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE)));
-        clone.getRelationshipTypes().forEach(r -> r.withMetadata(Collections.singletonList(OntologyIndexGenerator.EdgeSchemaConfig.DEST_ID)));
+        clone.getEntityTypes().forEach(e -> e.setMetadata(Collections.singletonList("tag")));
+        clone.getRelationshipTypes().forEach(r -> r.setMetadata(Collections.singletonList("tag")));
+        clone.getRelationshipTypes().forEach(r -> r.setMetadata(Collections.singletonList(OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE)));
+        clone.getRelationshipTypes().forEach(r -> r.setMetadata(Collections.singletonList(OntologyIndexGenerator.EdgeSchemaConfig.DEST_ID)));
 
         clone.getProperties().add(new Property("tag", "tag", PrimitiveType.Types.STRING.asType()));
         clone.getProperties().add(new Property(OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE, OntologyIndexGenerator.EdgeSchemaConfig.DEST_TYPE, PrimitiveType.Types.STRING.asType()));
@@ -87,15 +87,16 @@ public class IndexProjectionMappingBuilder {
                     //todo remove nested entities since they already appear as a qualified ontological entity
                     try {
                         //generate entity mapping - each entity should be a nested objects array
+                        entity.setNesting(NestingType.NESTING);
                         Map<String, Object> objectMap = IndexMappingUtils.generateNestedEntityMapping(ontology, rootProperties,
-                                new Tuple2<>(entity.getType().getName(), entity.withNesting(NestingType.NESTED)));
+                                new Tuple2<>(entity.getType().getName(), entity));
                         //generate relation mapping - each entity's relation should be a nested objects array inside the entity
                         List<RelationshipType> relationshipTypes = ontology.relationBySideA(entity.getType().getName());
                         relationshipTypes.forEach(rel -> {
                             Relation relation = this.indexProvider.getRelation(rel.getName()).get();
+                            relation.setNesting(NestingType.NESTING);
                             relationsMappingBuilder.generateNestedRelationMapping(ontology, (Map<String, Object>) objectMap.get(OntologyIndexGenerator.IndexSchemaConfig.PROPERTIES),
-                                    new Tuple2<>(relation.withNesting(NestingType.NESTED).getType().getName(),
-                                            relation.withNesting(NestingType.NESTED)));
+                                    new Tuple2<>(relation.getType().getName(),relation));
                         });
                     } catch (Throwable typeNotFound) {
                         //log error

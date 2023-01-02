@@ -7,14 +7,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
-import org.opensearch.graphql.GraphQLToOntologyTransformer;
+import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
 import org.opensearch.schema.index.schema.BaseTypeElement.Type;
 import org.opensearch.schema.index.schema.Entity;
 import org.opensearch.schema.index.schema.IndexProvider;
-import org.opensearch.schema.ontology.Accessor;
-import org.opensearch.schema.ontology.ObjectType;
-import org.opensearch.schema.ontology.Ontology;
-import org.opensearch.schema.ontology.Property;
+import org.opensearch.schema.ontology.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -76,7 +73,7 @@ public class GraphQLOntologyUserTranslatorTest {
     public void testEntityTranslation() {
         Assertions.assertEquals(ontologyAccessor.entity$("User").isAbstract(), false);
         Assertions.assertEquals(ontologyAccessor.entity$("User").getIdField().size(), 1);
-        Assertions.assertEquals(ontologyAccessor.entity$("User").getIdField().get(0), "id");
+        Assertions.assertEquals(ontologyAccessor.entity$("User").idFieldName(), "id");
         Assertions.assertEquals(ontologyAccessor.entity$("User").geteType(), "User");
         Assertions.assertEquals(ontologyAccessor.entity$("User").getProperties().size(), 8);
         Assertions.assertEquals(ontologyAccessor.entity$("User").getMandatory().size(), 1);
@@ -100,7 +97,7 @@ public class GraphQLOntologyUserTranslatorTest {
 
         Assertions.assertEquals(ontologyAccessor.entity$("Group").geteType(), "Group");
         Assertions.assertEquals(ontologyAccessor.entity$("Group").getIdField().size(), 1);
-        Assertions.assertEquals(ontologyAccessor.entity$("Group").getIdField().get(0), "id");
+        Assertions.assertEquals(ontologyAccessor.entity$("Group").idFieldName(), "id");
         Assertions.assertEquals(ontologyAccessor.entity$("Group").getProperties().size(), 3);
         Assertions.assertEquals(ontologyAccessor.entity$("Group").getMandatory().size(), 1);
     }
@@ -111,9 +108,8 @@ public class GraphQLOntologyUserTranslatorTest {
     @Test
     public void testIndexProviderBuilder() throws Exception {
         IndexProvider provider = IndexProvider.Builder.generate(ontology
-                , e -> e.getDirectives().stream().anyMatch(d -> d.getName().equals("model"))
-                , r -> r.getDirectives().stream()
-                        .anyMatch(d -> d.getName().equals("relation") && d.containsArgVal("foreign")));
+                , e -> e.getDirectives().stream().anyMatch(d -> DirectiveEnumTypes.MODEL.isSame(d.getName()))
+                , r -> true);
 
         String valueAsString = new ObjectMapper().writeValueAsString(provider);
         Assert.assertNotNull(valueAsString);
@@ -125,7 +121,8 @@ public class GraphQLOntologyUserTranslatorTest {
         Map<String, Entity> nested = rootEntities.get(0).getNested();
         Assertions.assertEquals(nested.size(), 1);
         Assertions.assertEquals(nested.get("group").getType(), Type.of("Group"));
-        Assertions.assertEquals(provider.getRelations().size(), 0);
+        Assertions.assertEquals(provider.getRelations().size(), 1);
+        //todo add relations assertions checks
     }
 
 }

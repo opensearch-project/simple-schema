@@ -158,13 +158,15 @@ see - [https://www.elastic.co/guide/en/elasticsearch/reference/current/object.ht
 Nesting is a similar case to the embedding option but it is selected for the case of the relation being one to many. Due to the nature of
 object field mapping in opensearch, has no concept of inner objects. Therefore, it flattens object hierarchies into a simple list of field names and values.
 
-see - [https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html]()
-
 The nesting mapping of the relationship will look very similar to the embedded nature with the additional penalty of document storage per relation.
+Each additional nested document added will cause reindexing of all its sibling documents.
 
 * **Parent-Child**
 
-- **TODO**
+Parent-Child is a similar case to the nesting option but it is selected for the case of the relation being one to many and it differs from the nesting option in that the child documents are not stored inside the same index as of its parent.
+
+The Parent-Child mapping of the relationship will behave similar to the nested option with the additional penalty of document storage per relation.
+It differs from the nested document in that adding a new sibling child doesn't cause reindex of all the siblings.  
 
 * **Referencing**
 
@@ -246,8 +248,28 @@ Mapping of the entity type to a multiple indices where each index is called afte
          }
   ```
 
+##### Unified
+Mapping of all the entities types to form a consolidated index for all types of entities 
+
+ ```json
+        {
+           "type": "Unified",    => this is the name of the physical index
+           "mapping":"Index",
+           "symmetric":true
+           ],
+            "props": {
+              "values": ["unified"]  => this is the name of the physical index
+            }
+         }
+  ```
+
 ##### Nested
-Mapping the entity (sub)type to an index containing as an embedded/nested document
+Mapping the entity (sub)type to an index containing as an embedded/nested/child document
+
+The mapping field can have one of the following nesting options:
+ - Embedded
+ - Nested
+ - Child
 
 In this example the Profession is the nested entity here ...
 
@@ -331,7 +353,7 @@ Lets consider a 'Call' relationship type between two **person** entity
 * **SideA** - is the left Side of the relationship  - a Person
 * **SideB** - is the right Side of the relationship - a Person
 
-  ```json
+```json
     {
         "type": "Call",
         "partition": "time", 

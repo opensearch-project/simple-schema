@@ -2,11 +2,9 @@ package org.opensearch.schema.index.schema;
 
 
 import com.fasterxml.jackson.annotation.*;
+import org.opensearch.schema.ontology.DirectiveType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -21,6 +19,8 @@ import java.util.Objects;
  */
 public class Entity implements BaseTypeElement<Entity> {
 
+    @JsonProperty("directives")
+    protected List<DirectiveType> directives;
     @JsonProperty("type")
     private Type type;
     @JsonProperty("nesting")
@@ -38,17 +38,28 @@ public class Entity implements BaseTypeElement<Entity> {
     public Entity() {
     }
 
-    public Entity(Type type, NestingType nesting, MappingIndexType mapping, Props props, Map<String,Entity> nested, Map<String, Object> additionalProperties) {
+    public Entity(Type type, NestingType nesting, MappingIndexType mapping,List<DirectiveType> directives, Props props, Map<String,Entity> nested, Map<String, Object> additionalProperties) {
         this.type = type;
         this.nesting = nesting;
         this.mapping = mapping;
+        this.directives = directives;
         this.props = props;
         this.nested = nested;
         this.additionalProperties = additionalProperties;
     }
 
     public Entity(Type type, NestingType nestingType, MappingIndexType mapping, Props props) {
-        this(type,nestingType,mapping,props,Collections.EMPTY_MAP,Collections.EMPTY_MAP);
+        this(type,nestingType,mapping,Collections.emptyList(),props,Collections.EMPTY_MAP,Collections.EMPTY_MAP);
+    }
+
+    @Override
+    public List<DirectiveType> getDirectives() {
+        return directives;
+    }
+
+    @JsonProperty("directives")
+    public void setDirectives(List<DirectiveType> directives) {
+        this.directives = directives;
     }
 
     @JsonProperty("nested")
@@ -116,29 +127,13 @@ public class Entity implements BaseTypeElement<Entity> {
         this.additionalProperties.put(name, value);
     }
 
-    @JsonIgnore
-    public Entity withMapping(MappingIndexType mapping) {
-        this.mapping = mapping;
-        return this;
-    }
-
     @Override
     protected Entity clone()  {
-        return new Entity(this.type,this.nesting,this.mapping,this.props.clone(),
+        return new Entity(this.type,this.nesting,this.mapping,
+                this.directives,
+                this.props.clone(),
                 new HashMap<>(this.nested),
                 new HashMap<>(this.additionalProperties));
-    }
-
-    @JsonIgnore
-    public Entity withType(Type type) {
-        this.type = type;
-        return this;
-    }
-
-    @JsonIgnore
-    public Entity withNesting(NestingType nestingType) {
-        this.nesting = nestingType;
-        return this;
     }
 
     @Override
@@ -146,11 +141,13 @@ public class Entity implements BaseTypeElement<Entity> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entity entity = (Entity) o;
-        return Objects.equals(type, entity.type) && Objects.equals(nesting, entity.nesting) && Objects.equals(mapping, entity.mapping) && Objects.equals(props, entity.props) && Objects.equals(nested, entity.nested) && Objects.equals(additionalProperties, entity.additionalProperties);
+        return Objects.equals(type, entity.type) && Objects.equals(nesting, entity.nesting) && Objects.equals(mapping, entity.mapping) &&
+                Objects.equals(directives, entity.directives) && Objects.equals(props, entity.props) &&
+                Objects.equals(nested, entity.nested) && Objects.equals(additionalProperties, entity.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, nesting, mapping, props, nested, additionalProperties);
+        return Objects.hash(type, nesting, mapping,directives, props, nested, additionalProperties);
     }
 }

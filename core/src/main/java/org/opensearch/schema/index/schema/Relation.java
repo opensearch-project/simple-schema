@@ -2,6 +2,7 @@ package org.opensearch.schema.index.schema;
 
 
 import com.fasterxml.jackson.annotation.*;
+import org.opensearch.schema.ontology.DirectiveType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
  */
 public class Relation implements BaseTypeElement<Relation> {
 
+    @JsonProperty("directives")
+    protected List<DirectiveType> directives = new ArrayList<>();
     @JsonProperty("type")
     private Type type;
     @JsonProperty("partition")
@@ -30,7 +33,7 @@ public class Relation implements BaseTypeElement<Relation> {
     @JsonProperty("symmetric")
     private boolean symmetric = false;
     @JsonProperty("nested")
-    private Map<String,Relation> nested = Collections.EMPTY_MAP;
+    private Map<String, Relation> nested = Collections.EMPTY_MAP;
     @JsonProperty("props")
     private Props props;
     @JsonProperty("redundant")
@@ -38,12 +41,14 @@ public class Relation implements BaseTypeElement<Relation> {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    public Relation() {}
+    public Relation() {
+    }
 
-    public Relation(Type type, NestingType nesting, MappingIndexType mapping, boolean symmetric, Map<String,Relation> nested, Props props, Set<Redundant> redundant, Map<String, Object> additionalProperties) {
+    public Relation(Type type, NestingType nesting, MappingIndexType mapping, boolean symmetric, List<DirectiveType> directives, Map<String, Relation> nested, Props props, Set<Redundant> redundant, Map<String, Object> additionalProperties) {
         this.type = type;
         this.nesting = nesting;
         this.mapping = mapping;
+        this.directives = directives;
         this.symmetric = symmetric;
         this.nested = nested;
         this.props = props;
@@ -52,9 +57,18 @@ public class Relation implements BaseTypeElement<Relation> {
     }
 
     public Relation(Type type, NestingType nestingType, MappingIndexType mapping, boolean symmetric, Props props) {
-        this(type,nestingType,mapping,symmetric,Collections.EMPTY_MAP,props,Collections.EMPTY_SET,Collections.EMPTY_MAP);
+        this(type, nestingType, mapping, symmetric, Collections.emptyList(), Collections.EMPTY_MAP, props, Collections.EMPTY_SET, Collections.EMPTY_MAP);
     }
 
+    @Override
+    public List<DirectiveType> getDirectives() {
+        return directives;
+    }
+
+    @JsonProperty("directives")
+    public void setDirectives(List<DirectiveType> directives) {
+        this.directives = directives;
+    }
 
     @JsonProperty("symmetric")
     public boolean isSymmetric() {
@@ -113,15 +127,14 @@ public class Relation implements BaseTypeElement<Relation> {
     }
 
     @JsonProperty("nested")
-    public Map<String,Relation> getNested() {
+    public Map<String, Relation> getNested() {
         return nested;
     }
 
     @JsonProperty("nested")
-    public void setNested(Map<String,Relation> nested) {
+    public void setNested(Map<String, Relation> nested) {
         this.nested = nested;
     }
-
 
     @JsonProperty("redundant")
     public Set<Redundant> getRedundant() {
@@ -145,32 +158,15 @@ public class Relation implements BaseTypeElement<Relation> {
 
     @JsonIgnore
     public List<Redundant> getRedundant(String side) {
-        return getRedundant().stream().filter(r->r.getSide().contains(side)).collect(Collectors.toList());
-    }
-
-    @JsonIgnore
-    public Relation withMapping(MappingIndexType mapping) {
-        this.mapping = mapping;
-        return this;
-    }
-
-    @JsonIgnore
-    public Relation withType(Type type) {
-        this.type = type;
-        return this;
-    }
-
-    @JsonIgnore
-    public Relation withNesting(NestingType nestingType) {
-        this.nesting = nestingType;
-        return this;
+        return getRedundant().stream().filter(r -> r.getSide().contains(side)).collect(Collectors.toList());
     }
 
     @Override
-    protected Relation clone()  {
-        return new Relation(this.type,this.nesting,this.mapping,this.symmetric,
+    protected Relation clone() {
+        return new Relation(this.type, this.nesting, this.mapping, this.symmetric,
+                this.directives,
                 new HashMap<>(this.nested),
-                this.props.clone(),this.redundant.stream().map(Redundant::clone).collect(Collectors.toSet()),
+                this.props.clone(), this.redundant.stream().map(Redundant::clone).collect(Collectors.toSet()),
                 new HashMap<>(this.additionalProperties));
     }
 
@@ -179,11 +175,14 @@ public class Relation implements BaseTypeElement<Relation> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Relation relation = (Relation) o;
-        return symmetric == relation.symmetric && Objects.equals(type, relation.type) && Objects.equals(nesting, relation.nesting) && Objects.equals(mapping, relation.mapping) && Objects.equals(nested, relation.nested) && Objects.equals(props, relation.props) && Objects.equals(redundant, relation.redundant) && Objects.equals(additionalProperties, relation.additionalProperties);
+        return symmetric == relation.symmetric && Objects.equals(type, relation.type) && Objects.equals(nesting, relation.nesting) &&
+                Objects.equals(mapping, relation.mapping) && Objects.equals(directives, relation.directives)&&
+                Objects.equals(nested, relation.nested) && Objects.equals(props, relation.props) &&
+                Objects.equals(redundant, relation.redundant) && Objects.equals(additionalProperties, relation.additionalProperties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, nesting, mapping, symmetric, nested, props, redundant, additionalProperties);
+        return Objects.hash(type, nesting, mapping, directives, symmetric, nested, props, redundant, additionalProperties);
     }
 }
