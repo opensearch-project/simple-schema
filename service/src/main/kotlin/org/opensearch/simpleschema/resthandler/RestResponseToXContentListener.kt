@@ -5,10 +5,10 @@
 
 package org.opensearch.simpleschema.resthandler
 
-import org.opensearch.simpleschema.model.BaseResponse
 import org.opensearch.rest.RestChannel
 import org.opensearch.rest.RestStatus
 import org.opensearch.rest.action.RestToXContentListener
+import org.opensearch.simpleschema.model.BaseResponse
 
 /**
  * Overrides RestToXContentListener REST based action listener that assumes the response is of type
