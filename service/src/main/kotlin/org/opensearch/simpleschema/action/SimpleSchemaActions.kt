@@ -14,6 +14,9 @@ import org.opensearch.simpleschema.security.UserAccessManager
 import org.opensearch.simpleschema.util.logger
 import org.opensearch.rest.RestStatus
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.LOG_PREFIX
+import org.opensearch.simpleschema.domain.DomainRepository
+import org.opensearch.simpleschema.domain.SchemaCompiler
+import org.opensearch.simpleschema.model.SimpleSchemaObjectType
 import java.time.Instant
 
 /**
@@ -45,6 +48,9 @@ internal object SimpleSchemaActions {
             "Object Creation failed",
             RestStatus.INTERNAL_SERVER_ERROR
         )
+        if (objectDoc.type == SimpleSchemaObjectType.SCHEMA_COMPILATION) {
+            SchemaCompiler().compile(objectDoc)
+        }
         return CreateSimpleSchemaObjectResponse(docId)
     }
 

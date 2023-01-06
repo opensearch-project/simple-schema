@@ -10,6 +10,8 @@ import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestStatus
 import org.opensearch.simpleschema.*
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.BASE_SIMPLESCHEMA_URI
+import org.opensearch.simpleschema.domain.DomainRepository
+import org.opensearch.simpleschema.model.SimpleSchemaObjectType
 
 class CreateObjectIT : PluginRestTestCase() {
 
@@ -69,6 +71,30 @@ class CreateObjectIT : PluginRestTestCase() {
             RestStatus.BAD_REQUEST.status
         )
         validateErrorResponse(createResponse, RestStatus.BAD_REQUEST.status, "illegal_argument_exception")
+        Thread.sleep(100)
+    }
+
+    fun `test create schema compilation object`() {
+        val createRequest = """
+            {
+                "schemaCompilationType": {
+                    "name": "testSchemaCompilation",
+                    "type": "${SimpleSchemaObjectType.SCHEMA_COMPILATION}",
+                    "catalog": ["test"],
+                    "content": "type Author { id: ID! \n name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
+                }
+            }
+        """.trimIndent()
+        val createResponse = executeRequest(
+            RestRequest.Method.POST.name,
+            "$BASE_SIMPLESCHEMA_URI/object",
+            createRequest,
+            RestStatus.OK.status
+        )
+        val id = createResponse.get("objectId").asString
+        logger.warn(DomainRepository.domains.toString())
+        // TODO find correct assertion; DomainRepository is not persisted to test instance
+        Assert.assertNotNull(DomainRepository.getDomain("schemaEntityType"))
         Thread.sleep(100)
     }
 }
