@@ -5,7 +5,11 @@ import graphql.ExecutionResult;
 import graphql.GraphQLError;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.Transformer;
+import org.opensearch.languages.QueryTranslationStrategy;
 import org.opensearch.languages.oql.graphql.wiring.*;
+import org.opensearch.languages.oql.graphql.wiring.strategies.EntityWithPredicateTranslation;
+import org.opensearch.languages.oql.graphql.wiring.strategies.InterfaceTranslation;
+import org.opensearch.languages.oql.graphql.wiring.strategies.ValuesTranslation;
 import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
@@ -26,7 +30,7 @@ public class GraphQLToOQLTransformer implements Transformer<Query> {
      * @param query
      * @return
      */
-    public synchronized Query transform(List<QueryTranslationStrategy> translationStrategies, Accessor accessor, String query) {
+    public synchronized Query transform(List<QueryTranslationStrategy<Query.Builder>> translationStrategies, Accessor accessor, String query) {
         Query.Builder instance = Query.Builder.instance();
         OQLTraversalWiringFactory factory = new OQLTraversalWiringFactory(translationStrategies, accessor, instance);
         ExecutionResult execute = GraphQLEngineFactory
@@ -41,7 +45,7 @@ public class GraphQLToOQLTransformer implements Transformer<Query> {
     }
 
     public synchronized Query transform(Accessor accessor, String query) {
-        List<QueryTranslationStrategy> translationStrategies = List.of(
+        List<QueryTranslationStrategy<Query.Builder>> translationStrategies = List.of(
                 new EntityWithPredicateTranslation(),
                 new InterfaceTranslation(),
                 new ValuesTranslation());

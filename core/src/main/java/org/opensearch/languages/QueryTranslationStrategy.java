@@ -1,9 +1,8 @@
-package org.opensearch.languages.oql.graphql.wiring;
+package org.opensearch.languages;
 
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.GraphQLType;
-import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.ontology.Accessor;
 
 import java.util.HashMap;
@@ -17,19 +16,19 @@ import java.util.Optional;
  * <br>
  * A context for graphQL to Ontology Query translation session
  */
-public interface QueryTranslationStrategy {
+public interface QueryTranslationStrategy<T extends QueryBuilder > {
 
-    Optional<Object> translate(QueryTranslatorContext context, GraphQLType fieldType) ;
+    Optional<Object> translate(QueryTranslatorContext<T> context, GraphQLType fieldType) ;
 
-    class QueryTranslatorContext {
+    class QueryTranslatorContext<T extends QueryBuilder> {
         private GraphQLSchema schema;
-        private Query.Builder builder;
+        private T builder;
         private DataFetchingEnvironment env;
         private Accessor accessor;
         private Map<String, Integer> pathContext;
 
 
-        public QueryTranslatorContext(Accessor accessor, Query.Builder builder,GraphQLSchema schema, DataFetchingEnvironment env) {
+        public QueryTranslatorContext(Accessor accessor, T builder,GraphQLSchema schema, DataFetchingEnvironment env) {
             this.accessor = accessor;
             this.builder = builder;
             this.schema = schema;
@@ -37,7 +36,7 @@ public interface QueryTranslationStrategy {
             this.pathContext = new HashMap<>();
         }
 
-        public QueryTranslatorContext(Accessor accessor, Query.Builder builder, GraphQLSchema schema) {
+        public QueryTranslatorContext(Accessor accessor, T builder, GraphQLSchema schema) {
             this(accessor,builder,schema,null);
         }
 
@@ -45,7 +44,7 @@ public interface QueryTranslationStrategy {
             return schema;
         }
 
-        public Query.Builder getBuilder() {
+        public T getBuilder() {
             return builder;
         }
 
