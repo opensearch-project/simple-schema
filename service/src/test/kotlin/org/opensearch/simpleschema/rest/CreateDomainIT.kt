@@ -22,7 +22,25 @@ class CreateDomainIT : PluginRestTestCase() {
         return id
     }
 
-    fun `test create schema domain`() {
+    fun `test create schema retrieve object`() {
+        val createRequest = constructSchemaCompilationTypeRequest()
+        val id = generateSchema(createRequest)
+        val getResponse = executeRequest(
+            RestRequest.Method.GET.name,
+            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/object/$id",
+            "",
+            RestStatus.OK.status
+        )
+        val objectDetails = getResponse.get(RestTag.OBJECT_LIST_FIELD).asJsonArray.get(0).asJsonObject
+        Assert.assertEquals(id, objectDetails.get("objectId").asString)
+        Assert.assertEquals(
+            jsonify(createRequest).get("schemaCompilationType").asJsonObject,
+            objectDetails.get("schemaCompilationType").asJsonObject
+        )
+        Thread.sleep(100)
+    }
+
+    fun `test create schema retrieve domain`() {
         val createRequest = constructSchemaCompilationTypeRequest()
         val id = generateSchema(createRequest)
         val getResponse = executeRequest(
@@ -37,7 +55,6 @@ class CreateDomainIT : PluginRestTestCase() {
             jsonify(createRequest).get("schemaCompilationType").asJsonObject,
             objectDetails.get("schemaCompilationType").asJsonObject
         )
-        logger.info(objectDetails.get("schemaCompilationType").asJsonObject.toString())
         Thread.sleep(100)
     }
 }

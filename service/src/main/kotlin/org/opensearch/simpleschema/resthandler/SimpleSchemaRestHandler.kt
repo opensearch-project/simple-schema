@@ -87,6 +87,13 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
             Route(GET, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
             Route(GET, SIMPLESCHEMA_URL),
             /**
+             * Get a domain for a schema object
+             * Request URL: GET SIMPLESCHEMA_URL/{objectId}/domain
+             * Repuest body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectRequest]
+             * Response body: TODO
+             */
+            Route(GET, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}/domain"),
+            /**
              * Delete object
              * Request URL: DELETE SIMPLESCHEMA_URL/{objectId}
              * Request body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectRequest]
@@ -171,6 +178,45 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
         }
     }
 
+    private fun executeGetDomainRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
+        val objectId: String? = request.param(OBJECT_ID_FIELD)
+        val objectIdListString: String? = request.param(OBJECT_ID_LIST_FIELD)
+        val objectIdList = getObjectIdSet(objectId, objectIdListString)
+        val types: EnumSet<SimpleSchemaObjectType> = getTypesSet(request.param(OBJECT_TYPE_FIELD))
+        val sortField: String? = request.param(SORT_FIELD_FIELD)
+        val sortOrderString: String? = request.param(SORT_ORDER_FIELD)
+        val sortOrder: SortOrder? = if (sortOrderString == null) {
+            null
+        } else {
+            SortOrder.fromString(sortOrderString)
+        }
+        val fromIndex = request.param(FROM_INDEX_FIELD)?.toIntOrNull() ?: 0
+        val maxItems = request.param(MAX_ITEMS_FIELD)?.toIntOrNull() ?: PluginSettings.defaultItemsQueryCount
+        val filterParams = request.params()
+            .filter { SimpleSearchQueryHelper.FILTER_PARAMS.contains(it.key) }
+            .map { Pair(it.key, request.param(it.key)) }
+            .toMap()
+        log.info(
+            "$LOG_PREFIX:executeGetRequest idList:$objectIdList types:$types, from:$fromIndex, maxItems:$maxItems," +
+                " sortField:$sortField, sortOrder=$sortOrder, filters=$filterParams"
+        )
+        return RestChannelConsumer {
+            client.execute(
+                GetSimpleSchemaObjectAction.ACTION_TYPE,
+                GetSimpleSchemaObjectRequest(
+                    objectIdList,
+                    types,
+                    fromIndex,
+                    maxItems,
+                    sortField,
+                    sortOrder,
+                    filterParams
+                ),
+                RestResponseToXContentListener(it)
+            )
+        }
+    }
+
     private fun executeDeleteRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
         val objectId: String? = request.param(OBJECT_ID_FIELD)
         val objectIdSet: Set<String> =
@@ -202,7 +248,13 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
         return when (request.method()) {
             POST -> executePostRequest(request, client)
             PUT -> executePutRequest(request, client)
-            GET -> executeGetRequest(request, client)
+            GET -> when (request.path().endsWith("/domain")) {
+                true -> {
+                    log.warn("domain request hit: $request")
+                    executeGetDomainRequest(request, client)
+                }
+                false -> executeGetRequest(request, client)
+            }
             DELETE -> executeDeleteRequest(request, client)
             else -> RestChannelConsumer {
                 it.sendResponse(BytesRestResponse(RestStatus.METHOD_NOT_ALLOWED, "${request.method()} is not allowed"))

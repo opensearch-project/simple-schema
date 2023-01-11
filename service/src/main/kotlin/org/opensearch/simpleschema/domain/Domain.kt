@@ -11,7 +11,7 @@ class Domain(val name: String) {
     fun toJson(): String {
         return """
             {
-                "schema": "${name.replace("\n", "\\n")}",
+                "schema": "$name",
                 "creation": "$created",
                 "links": {
                     "graphql": "/domain/$encodedName/schema/graphql",
