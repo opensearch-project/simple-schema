@@ -6,15 +6,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensearch.graphql.GraphQLEngineFactory;
 import org.opensearch.graphql.translation.GraphQLToOntologyTransformer;
+import org.opensearch.languages.QueryTranslationStrategy;
 import org.opensearch.languages.oql.graphql.GraphQLToOQLTransformer;
+import org.opensearch.languages.oql.graphql.wiring.strategies.EntityWithPredicateTranslation;
+import org.opensearch.languages.oql.graphql.wiring.strategies.ValuesTranslation;
 import org.opensearch.languages.oql.query.Query;
 import org.opensearch.languages.oql.query.descriptor.QueryDescriptor;
-import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
 import org.opensearch.schema.ontology.Ontology;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +71,7 @@ class EntityWithPredicateTranslationTest {
                 "    }\n" +
                 "}";
 
-        List<QueryTranslationStrategy> translationStrategies = List.of(
+        List<QueryTranslationStrategy<Query.Builder>> translationStrategies = List.of(
                 new EntityWithPredicateTranslation(),
                 new ValuesTranslation()
         );

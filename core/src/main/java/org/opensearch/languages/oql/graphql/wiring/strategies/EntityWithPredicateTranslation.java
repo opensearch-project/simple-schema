@@ -1,22 +1,24 @@
-package org.opensearch.languages.oql.graphql.wiring;
+package org.opensearch.languages.oql.graphql.wiring.strategies;
 
 import graphql.execution.ExecutionStepInfo;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLType;
+import org.opensearch.languages.QueryTranslationStrategy;
+import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.EntityType;
 
 import java.util.Optional;
 
-import static org.opensearch.languages.oql.graphql.wiring.TranslationUtils.*;
+import static org.opensearch.languages.oql.graphql.wiring.strategies.TranslationUtils.*;
 
 /**
  * this translator is responsible of adding an entity with its predicates to the next query steps
  */
-public class EntityWithPredicateTranslation implements QueryTranslationStrategy {
+public class EntityWithPredicateTranslation implements QueryTranslationStrategy<Query.Builder> {
 
     @Override
-    public Optional<Object> translate(QueryTranslatorContext context, GraphQLType fieldType) {
+    public Optional<Object> translate(QueryTranslatorContext<Query.Builder> context, GraphQLType fieldType) {
         ExecutionStepInfo parent = context.getEnv().getExecutionStepInfo().getParent();
         fieldType = extractConcreteFieldType(fieldType);
         if (fieldType instanceof GraphQLObjectType) {

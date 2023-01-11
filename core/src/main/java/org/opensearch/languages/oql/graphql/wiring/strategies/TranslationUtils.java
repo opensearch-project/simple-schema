@@ -1,10 +1,13 @@
-package org.opensearch.languages.oql.graphql.wiring;
+package org.opensearch.languages.oql.graphql.wiring.strategies;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.*;
 import javaslang.Tuple2;
 import org.opensearch.graphql.wiring.InputTypeConstraint;
 import org.opensearch.graphql.wiring.InputTypeWhereClause;
+import org.opensearch.languages.QueryTranslationStrategy;
+import org.opensearch.languages.QueryTranslationStrategy.QueryTranslatorContext;
+import org.opensearch.languages.oql.query.Query;
 import org.opensearch.languages.oql.query.Rel;
 import org.opensearch.languages.oql.query.properties.constraint.Constraint;
 import org.opensearch.languages.oql.query.properties.constraint.ConstraintOp;
@@ -81,7 +84,7 @@ public class TranslationUtils {
      * @param typeName
      * @return
      */
-    public static Optional<EntityType> populateGraphObject(QueryTranslationStrategy.QueryTranslatorContext context, String typeName) {
+    public static Optional<EntityType> populateGraphObject(QueryTranslatorContext<Query.Builder> context, String typeName) {
 
         //pop to the correct index according to path
         if (context.getPathContext().containsKey(context.getEnv().getExecutionStepInfo().getParent().getPath().getPathWithoutListEnd().toString())) {
@@ -114,7 +117,7 @@ public class TranslationUtils {
      * @param realType
      * @throws IOException
      */
-    public static void addWhereClause(QueryTranslationStrategy.QueryTranslatorContext context, Optional<EntityType> realType) throws Throwable {
+    public static void addWhereClause(QueryTranslatorContext<Query.Builder> context, Optional<EntityType> realType) throws Throwable {
         //arguments
         if (realType.isPresent() && context.getEnv().getArguments().containsKey(WHERE)) {
             Object argument = context.getEnv().getArguments().get(WHERE);
@@ -151,7 +154,7 @@ public class TranslationUtils {
      * @param context
      * @return
      */
-    public static String populateGraphValue(QueryTranslationStrategy.QueryTranslatorContext context) {
+    public static String populateGraphValue(QueryTranslatorContext<Query.Builder> context) {
         //pop to the correct index according to path
         if (context.getPathContext().containsKey(context.getEnv().getExecutionStepInfo().getParent().getPath().getPathWithoutListEnd().toString())) {
             context.getBuilder().currentIndex(context.getPathContext().get(context.getEnv().getExecutionStepInfo().getParent().getPath().getPathWithoutListEnd().toString()));

@@ -1,21 +1,23 @@
-package org.opensearch.languages.oql.graphql.wiring;
+package org.opensearch.languages.oql.graphql.wiring.strategies;
 
 import graphql.execution.ExecutionStepInfo;
 import graphql.execution.ResultPath;
 import graphql.schema.GraphQLType;
+import org.opensearch.languages.QueryTranslationStrategy;
+import org.opensearch.languages.oql.query.Query;
 import org.opensearch.languages.oql.query.quant.QuantBase;
 import org.opensearch.languages.oql.query.quant.QuantType;
 
 import java.util.Optional;
 
-import static org.opensearch.languages.oql.graphql.wiring.TranslationUtils.isParentObjectType;
+import static org.opensearch.languages.oql.graphql.wiring.strategies.TranslationUtils.isParentObjectType;
 
 /**
  * this translator is responsible of adding a quantifier prior to the next query steps
  */
-public class QuantifierTranslation implements QueryTranslationStrategy{
+public class QuantifierTranslation implements QueryTranslationStrategy<Query.Builder> {
     @Override
-    public Optional<Object> translate(QueryTranslatorContext context, GraphQLType fieldType) {
+    public Optional<Object> translate(QueryTranslatorContext<Query.Builder> context, GraphQLType fieldType) {
         // if parent is of type vertex and current query element not quant -> add quant
         ExecutionStepInfo parent = context.getEnv().getExecutionStepInfo().getParent();
         if (parent.getFieldDefinition() != null) {
