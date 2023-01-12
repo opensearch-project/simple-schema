@@ -8,6 +8,8 @@ import graphql.schema.idl.InterfaceWiringEnvironment;
 import graphql.schema.idl.UnionWiringEnvironment;
 import graphql.schema.idl.WiringFactory;
 import org.opensearch.graphql.GraphQLEngineFactory;
+import org.opensearch.languages.QueryTranslationStrategy;
+import org.opensearch.languages.oql.graphql.wiring.strategies.QuantifierTranslation;
 import org.opensearch.languages.oql.query.Query;
 import org.opensearch.schema.SchemaError;
 import org.opensearch.schema.ontology.Accessor;
@@ -23,14 +25,14 @@ import java.util.Optional;
 public class OQLTraversalWiringFactory implements WiringFactory {
     private GraphQLSchema schema;
 
-    private QueryTranslationStrategy.QueryTranslatorContext context;
-    private List<QueryTranslationStrategy> strategies;
+    private QueryTranslationStrategy.QueryTranslatorContext<Query.Builder> context;
+    private List<QueryTranslationStrategy<Query.Builder>> strategies;
 
-    public OQLTraversalWiringFactory(List<QueryTranslationStrategy> strategies, Accessor accessor, Query.Builder builder) {
+    public OQLTraversalWiringFactory(List<QueryTranslationStrategy<Query.Builder>> strategies, Accessor accessor, Query.Builder builder) {
         this.strategies = strategies;
         this.schema = GraphQLEngineFactory.schema()
                 .orElseThrow(() -> new SchemaError.SchemaErrorException("GraphQL schema not present", "Expecting the GraphQL schema to be created during this stage"));
-        this.context = new QueryTranslationStrategy.QueryTranslatorContext(accessor,builder,schema);
+        this.context = new QueryTranslationStrategy.QueryTranslatorContext<>(accessor,builder,schema);
     }
 
 
