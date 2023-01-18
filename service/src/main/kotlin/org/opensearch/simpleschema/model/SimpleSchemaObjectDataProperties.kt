@@ -7,6 +7,7 @@ package org.opensearch.simpleschema.model
 
 import org.opensearch.common.io.stream.Writeable
 import org.opensearch.common.xcontent.XContentParser
+import org.opensearch.simpleschema.domain.Domain
 
 internal object SimpleSchemaObjectDataProperties {
     /**
@@ -40,6 +41,7 @@ internal object SimpleSchemaObjectDataProperties {
         return when (objectType) {
             SimpleSchemaObjectType.SCHEMA_ENTITY -> objectData is SchemaEntityType
             SimpleSchemaObjectType.INDEX_PROVIDER -> objectData is IndexProvider
+            SimpleSchemaObjectType.SCHEMA_DOMAIN -> objectData is Domain
             SimpleSchemaObjectType.NONE -> true
         }
     }

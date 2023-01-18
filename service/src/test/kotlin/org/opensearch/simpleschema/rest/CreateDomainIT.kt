@@ -8,7 +8,7 @@ import org.opensearch.simpleschema.model.RestTag
 
 class CreateDomainIT : PluginRestTestCase() {
     fun `test create schema domain type`() {
-        val createRequest = constructSchemaEntityTypeRequest()
+        val createRequest = constructSchemaDomainRequest("sampleSchema")
         val createResponse = executeRequest(
             RestRequest.Method.POST.name,
             "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain",
@@ -16,7 +16,7 @@ class CreateDomainIT : PluginRestTestCase() {
             RestStatus.OK.status
         )
         val id = createResponse.get("objectId").asString
-        Assert.assertNotNull("Id should be generated", id)
+        Assert.assertEquals("Id should be present", "sampleSchema", id)
         Thread.sleep(100)
     }
 }

@@ -71,19 +71,15 @@ fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): Strin
     """.trimIndent()
 }
 
-// TODO fix
-//fun constructSchemaCompilationTypeRequest(name: String = "test schema compilation"): String {
-//    return """
-//        {
-//            "schemaCompilationType":{
-//                "name" : "$name",
-//                "type" : "${SimpleSchemaObjectType.SCHEMA_COMPILATION}",
-//                "catalog" : ["test"],
-//                "content" : "type Author { id: ID! \nname: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
-//                }
-//            }
-//    """.trimIndent()
-//}
+fun constructSchemaDomainRequest(name: String = "test schema compilation"): String {
+    return """
+        {
+            "objectId" : "$name",
+            "catalog" : ["test"],
+            "entityList" : ["Book", "Author"]
+        }
+    """.trimIndent()
+}
 
 
 fun constructIndexProviderRequest(name: String = "test Index Provider", content: String = indexProvider): String {
