@@ -58,15 +58,15 @@ internal class SimpleSchemaDomainRestHandler : BaseRestHandler() {
             /**
              * Create a new object
              * Request URL: POST SIMPLESCHEMA_URL
-             * Request body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaObjectResponse]
+             * Request body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaDomainRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.CreateSimpleSchemaDomainResponse]
              */
             Route(POST, SIMPLESCHEMA_URL),
             /**
              * Get an object
              * Request URL: GET SIMPLESCHEMA_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectResponse]
+             * Request body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaDomainRequest]
+             * Response body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemadomainResponse]
              */
             Route(GET, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
             Route(GET, SIMPLESCHEMA_URL)
@@ -92,7 +92,7 @@ internal class SimpleSchemaDomainRestHandler : BaseRestHandler() {
         return RestChannelConsumer {
             client.execute(
                 CreateSimpleSchemaDomainAction.ACTION_TYPE,
-       CreateSimpleSchemaDomainRequest.parse(request.contentParserNextToken()),
+                CreateSimpleSchemaDomainRequest.parse(request.contentParserNextToken()),
                 RestResponseToXContentListener(it)
             )
         }
