@@ -21,7 +21,7 @@ internal class CreateSimpleSchemaDomainAction @Inject constructor(
     ::CreateSimpleSchemaDomainRequest
 ) {
     companion object {
-        private const val NAME = "cluster:admin/opensearch/simpleschema/create"
+        private const val NAME = "cluster:admin/opensearch/simpleschema/domain/create"
         internal val ACTION_TYPE = ActionType(NAME, ::CreateSimpleSchemaDomainResponse)
     }
 

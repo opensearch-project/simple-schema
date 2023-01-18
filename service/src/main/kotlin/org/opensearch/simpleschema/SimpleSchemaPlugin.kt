@@ -26,10 +26,6 @@ import org.opensearch.repositories.RepositoriesService
 import org.opensearch.rest.RestController
 import org.opensearch.rest.RestHandler
 import org.opensearch.script.ScriptService
-import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.GetSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.index.SimpleSearchIndex
 import org.opensearch.simpleschema.resthandler.SimpleSchemaRestHandler
 import org.opensearch.simpleschema.settings.PluginSettings
@@ -38,6 +34,11 @@ import org.opensearch.watcher.ResourceWatcherService
 import java.util.function.Supplier
 import org.opensearch.jobscheduler.spi.ScheduledJobParser
 import org.opensearch.jobscheduler.spi.ScheduledJobRunner
+import org.opensearch.simpleschema.action.*
+import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
+import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectAction
+import org.opensearch.simpleschema.action.GetSimpleSchemaObjectAction
+import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.scheduler.SimpleSearchJobParser
 import org.opensearch.simpleschema.scheduler.SimpleSearchJobRunner
 import org.opensearch.simpleschema.resthandler.SchedulerRestHandler
@@ -122,6 +123,10 @@ class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
             ActionPlugin.ActionHandler(
                 UpdateSimpleSchemaObjectAction.ACTION_TYPE,
                 UpdateSimpleSchemaObjectAction::class.java
+            ),
+            ActionPlugin.ActionHandler(
+                CreateSimpleSchemaDomainAction.ACTION_TYPE,
+                CreateSimpleSchemaDomainAction::class.java
             )
         )
     }

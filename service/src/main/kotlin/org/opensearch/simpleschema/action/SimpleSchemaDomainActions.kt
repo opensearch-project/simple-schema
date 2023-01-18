@@ -28,13 +28,16 @@ internal object SimpleSchemaDomainActions {
             SimpleSchemaObjectType.SCHEMA_DOMAIN,
             request.entitiesAsObjectData()
         )
-        SimpleSearchIndex.getSimpleSchemaObject(request.objectId) ?: throw OpenSearchStatusException(
-            "Object with provided ID already exists",
-            RestStatus.BAD_REQUEST
-        )
+        if (SimpleSearchIndex.getSimpleSchemaObject(request.objectId) != null) {
+            log.info("attempted to recreate existing schema: ${request.objectId}")
+            throw OpenSearchStatusException(
+                "Creation failed: Schema ID already exists",
+                RestStatus.BAD_REQUEST
+            )
+        }
         val docId = SimpleSearchIndex.createSimpleSchemaObject(objectDoc, request.objectId)
         docId ?: throw OpenSearchStatusException(
-            "Object Creation failed",
+            "Object creation failed",
             RestStatus.INTERNAL_SERVER_ERROR
         )
         SchemaCompiler().compile(objectDoc)
