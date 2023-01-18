@@ -48,9 +48,10 @@ internal object SimpleSchemaActions {
             "Object Creation failed",
             RestStatus.INTERNAL_SERVER_ERROR
         )
-        if (objectDoc.type == SimpleSchemaObjectType.SCHEMA_COMPILATION) {
-            SchemaCompiler().compile(objectDoc)
-        }
+        // TODO move
+//        if (objectDoc.type == SimpleSchemaObjectType.SCHEMA_COMPILATION) {
+//            SchemaCompiler().compile(objectDoc)
+//        }
         return CreateSimpleSchemaObjectResponse(docId)
     }
 

@@ -53,19 +53,6 @@ class CreateObjectIT : PluginRestTestCase() {
         Thread.sleep(100)
     }
 
-    fun `test create schema compilation type`() {
-        val createRequest = constructSchemaCompilationTypeRequest()
-        val createResponse = executeRequest(
-            RestRequest.Method.POST.name,
-            "$BASE_SIMPLESCHEMA_URI/object",
-            createRequest,
-            RestStatus.OK.status
-        )
-        val id = createResponse.get("objectId").asString
-        Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
-    }
-
     fun `test create object with invalid fields`() {
         val createRequest = """
             {

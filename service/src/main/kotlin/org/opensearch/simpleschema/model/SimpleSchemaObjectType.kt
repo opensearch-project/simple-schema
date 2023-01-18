@@ -8,7 +8,6 @@ package org.opensearch.simpleschema.model
 import org.opensearch.commons.utils.EnumParser
 import org.opensearch.simpleschema.model.RestTag.INDEX_PROVIDER_FIELD
 import org.opensearch.simpleschema.model.RestTag.SCHEMA_ENTITY_FIELD
-import org.opensearch.simpleschema.model.RestTag.SCHEMA_COMPILATION_FIELD
 import java.util.*
 
 /**
@@ -21,11 +20,6 @@ enum class SimpleSchemaObjectType(val tag: String) {
         }
     },
     SCHEMA_ENTITY(SCHEMA_ENTITY_FIELD) {
-        override fun toString(): String {
-            return tag
-        }
-    },
-    SCHEMA_COMPILATION(SCHEMA_COMPILATION_FIELD) {
         override fun toString(): String {
             return tag
         }

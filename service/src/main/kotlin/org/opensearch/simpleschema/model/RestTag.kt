@@ -30,7 +30,6 @@ internal object RestTag {
 
     const val INDEX_PROVIDER_FIELD = "indexProvider"
     const val SCHEMA_ENTITY_FIELD = "schemaEntityType"
-    const val SCHEMA_COMPILATION_FIELD = "schemaCompilationType"
 
     const val SCHEDULE_INFO_TAG = "schedule"
     const val SCHEDULED_JOB_TYPE_TAG = "jobType"

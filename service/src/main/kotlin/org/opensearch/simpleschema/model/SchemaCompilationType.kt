@@ -19,20 +19,18 @@ import org.opensearch.simpleschema.util.stringList
  * The catalog represent the general belonging of this specific entity - this entity may belong to multiple catalogs
  */
 internal data class SchemaCompilationType(
-    val type: String,
     val name: String?,//nullable
     val description: String?,//nullable
     val catalog: List<String>?,//nullable
-    val content: String,
+    val entities: List<String>?,
 ) : BaseObjectData {
 
     internal companion object {
         private val log by logger(SchemaCompilationType::class.java)
-        private const val TYPE_TAG = "type"
         private const val NAME_TAG = "name"
         private const val DESCRIPTION_TAG = "description"
         private const val CATALOG_TAG = "catalog"
-        private const val CONTENT_TAG = "content"
+        private const val ENTITIES_TAG = "entities"
 
         /**
          * reader to create instance of class from writable.
@@ -50,8 +48,7 @@ internal data class SchemaCompilationType(
          * @return created SchemaCompilation object
          */
         fun parse(parser: XContentParser): SchemaCompilationType {
-            var type = "Undefined"
-            var content = "{}"
+            var entities: List<String>? = null
             var description: String? = null //nullable
             var catalog: List<String>? = null //nullable
             var name: String? = null //nullable
@@ -64,18 +61,17 @@ internal data class SchemaCompilationType(
                 val fieldName = parser.currentName()
                 parser.nextToken()
                 when (fieldName) {
-                    TYPE_TAG -> type = parser.text()
                     NAME_TAG -> name = parser.text()
                     DESCRIPTION_TAG -> description = parser.text()
                     CATALOG_TAG -> catalog = parser.stringList()
-                    CONTENT_TAG -> content = parser.text()
+                    ENTITIES_TAG -> entities = parser.stringList()
                     else -> {
                         parser.skipChildren()
                         log.info("$LOG_PREFIX:SchemaType Skipping Unknown field $fieldName")
                     }
                 }
             }
-            return SchemaCompilationType(type, name, description, catalog, content)
+            return SchemaCompilationType(name, description, catalog, entities)
         }
     }
 
@@ -94,22 +90,20 @@ internal data class SchemaCompilationType(
      * @param input StreamInput stream to deserialize data from.
      */
     constructor(input: StreamInput) : this(
-        type = input.readString(),
         name = input.readOptionalString(), //nullable
         description = input.readOptionalString(), //nullable
         catalog = input.readOptionalStringList(), //nullable
-        content = input.readString(),
+        entities = input.readStringList(),
     )
 
     /**
      * {@inheritDoc}
      */
     override fun writeTo(output: StreamOutput) {
-        output.writeString(type)
         output.writeOptionalString(name) //nullable
         output.writeOptionalString(description) //nullable
         output.writeOptionalStringCollection(catalog) //nullable
-        output.writeString(content)
+        output.writeOptionalStringCollection(entities)
     }
 
     /**
@@ -118,11 +112,10 @@ internal data class SchemaCompilationType(
     override fun toXContent(builder: XContentBuilder?, params: ToXContent.Params?): XContentBuilder {
         builder!!
         builder.startObject()
-            .field(TYPE_TAG, type)
             .fieldIfNotNull(NAME_TAG, name) //nullable
             .fieldIfNotNull(DESCRIPTION_TAG, description) //nullable
             .fieldIfNotNull(CATALOG_TAG, catalog) //nullable
-            .field(CONTENT_TAG, content)
+            .fieldIfNotNull(ENTITIES_TAG, entities)
         return builder.endObject()
     }
 }

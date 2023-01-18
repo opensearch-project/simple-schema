@@ -41,6 +41,7 @@ import org.opensearch.jobscheduler.spi.ScheduledJobRunner
 import org.opensearch.simpleschema.scheduler.SimpleSearchJobParser
 import org.opensearch.simpleschema.scheduler.SimpleSearchJobRunner
 import org.opensearch.simpleschema.resthandler.SchedulerRestHandler
+import org.opensearch.simpleschema.resthandler.SimpleSchemaDomainRestHandler
 
 
 /**
@@ -97,6 +98,7 @@ class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
     ): List<RestHandler> {
         return listOf(
             SimpleSchemaRestHandler(),
+            SimpleSchemaDomainRestHandler(),
         )
     }
 

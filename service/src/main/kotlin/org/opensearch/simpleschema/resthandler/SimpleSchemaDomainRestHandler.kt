@@ -24,32 +24,25 @@ import org.opensearch.rest.BaseRestHandler.RestChannelConsumer
 import org.opensearch.rest.BytesRestResponse
 import org.opensearch.rest.RestHandler.Route
 import org.opensearch.rest.RestRequest
-import org.opensearch.rest.RestRequest.Method.DELETE
 import org.opensearch.rest.RestRequest.Method.GET
 import org.opensearch.rest.RestRequest.Method.POST
-import org.opensearch.rest.RestRequest.Method.PUT
 import org.opensearch.rest.RestStatus
 import org.opensearch.search.sort.SortOrder
 import org.opensearch.simpleschema.action.GetSimpleSchemaObjectRequest
 import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectRequest
 import org.opensearch.simpleschema.action.GetSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.UpdateSimpleSchemaObjectRequest
-import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectAction
-import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectRequest
-import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectResponse
 import java.util.EnumSet
 
 /**
  * Rest handler for SimpleSchema object lifecycle management.
  * This handler uses [SimpleSchemaActions].
  */
-internal class SimpleSchemaRestHandler : BaseRestHandler() {
+internal class SimpleSchemaDomainRestHandler : BaseRestHandler() {
     companion object {
-        private const val SIMPLESCHEMA_ACTION = "simpleschema_actions"
-        private const val SIMPLESCHEMA_URL = "$BASE_SIMPLESCHEMA_URI/object"
-        private val log by logger(SimpleSchemaRestHandler::class.java)
+        private const val SIMPLESCHEMA_ACTION = "simpleschema_domain_actions"
+        private const val SIMPLESCHEMA_URL = "$BASE_SIMPLESCHEMA_URI/domain"
+        private val log by logger(SimpleSchemaDomainRestHandler::class.java)
     }
 
     /**
@@ -72,28 +65,13 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
              */
             Route(POST, SIMPLESCHEMA_URL),
             /**
-             * Update object
-             * Request URL: PUT SIMPLESCHEMA_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.UpdateSimpleSchemaObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.UpdateSimpleSchemaObjectResponse]
-             */
-            Route(PUT, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
-            /**
-             * Get a object
+             * Get an object
              * Request URL: GET SIMPLESCHEMA_URL/{objectId}
              * Request body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectRequest]
              * Response body: Ref [org.opensearch.simpleschema.model.GetSimpleSchemaObjectResponse]
              */
             Route(GET, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
-            Route(GET, SIMPLESCHEMA_URL),
-            /**
-             * Delete object
-             * Request URL: DELETE SIMPLESCHEMA_URL/{objectId}
-             * Request body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectRequest]
-             * Response body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectResponse]
-             */
-            Route(DELETE, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
-            Route(DELETE, "$SIMPLESCHEMA_URL")
+            Route(GET, SIMPLESCHEMA_URL)
         )
     }
 
@@ -117,16 +95,6 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
             client.execute(
                 CreateSimpleSchemaObjectAction.ACTION_TYPE,
                 CreateSimpleSchemaObjectRequest.parse(request.contentParserNextToken()),
-                RestResponseToXContentListener(it)
-            )
-        }
-    }
-
-    private fun executePutRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
-        return RestChannelConsumer {
-            client.execute(
-                UpdateSimpleSchemaObjectAction.ACTION_TYPE,
-                UpdateSimpleSchemaObjectRequest.parse(request.contentParserNextToken(), request.param(OBJECT_ID_FIELD)),
                 RestResponseToXContentListener(it)
             )
         }
@@ -171,39 +139,13 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
         }
     }
 
-    private fun executeDeleteRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
-        val objectId: String? = request.param(OBJECT_ID_FIELD)
-        val objectIdSet: Set<String> =
-            request.paramAsStringArray(OBJECT_ID_LIST_FIELD, arrayOf(objectId))
-                .filter { s -> !s.isNullOrBlank() }
-                .toSet()
-        return RestChannelConsumer {
-            if (objectIdSet.isEmpty()) {
-                it.sendResponse(
-                    BytesRestResponse(
-                        RestStatus.BAD_REQUEST,
-                        "either $OBJECT_ID_FIELD or $OBJECT_ID_LIST_FIELD is required"
-                    )
-                )
-            } else {
-                client.execute(
-                    DeleteSimpleSchemaObjectAction.ACTION_TYPE,
-                    DeleteSimpleSchemaObjectRequest(objectIdSet),
-                    RestResponseToXContentListener(it)
-                )
-            }
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     override fun prepareRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
         return when (request.method()) {
             POST -> executePostRequest(request, client)
-            PUT -> executePutRequest(request, client)
             GET -> executeGetRequest(request, client)
-            DELETE -> executeDeleteRequest(request, client)
             else -> RestChannelConsumer {
                 it.sendResponse(BytesRestResponse(RestStatus.METHOD_NOT_ALLOWED, "${request.method()} is not allowed"))
             }

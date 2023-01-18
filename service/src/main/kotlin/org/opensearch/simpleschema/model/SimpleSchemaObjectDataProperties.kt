@@ -21,7 +21,6 @@ internal object SimpleSchemaObjectDataProperties {
     private val OBJECT_PROPERTIES_MAP = mapOf(
         Pair(SimpleSchemaObjectType.SCHEMA_ENTITY, ObjectProperty(SchemaEntityType.reader, SchemaEntityType.xParser)),
         Pair(SimpleSchemaObjectType.INDEX_PROVIDER, ObjectProperty(IndexProvider.reader, IndexProvider.xParser)),
-        Pair(SimpleSchemaObjectType.SCHEMA_COMPILATION, ObjectProperty(SchemaCompilationType.reader, SchemaCompilationType.xParser))
     )
 
     /**
@@ -41,7 +40,6 @@ internal object SimpleSchemaObjectDataProperties {
         return when (objectType) {
             SimpleSchemaObjectType.SCHEMA_ENTITY -> objectData is SchemaEntityType
             SimpleSchemaObjectType.INDEX_PROVIDER -> objectData is IndexProvider
-            SimpleSchemaObjectType.SCHEMA_COMPILATION -> objectData is SchemaCompilationType
             SimpleSchemaObjectType.NONE -> true
         }
     }
