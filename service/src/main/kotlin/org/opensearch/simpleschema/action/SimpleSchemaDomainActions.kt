@@ -19,6 +19,7 @@ internal object SimpleSchemaDomainActions {
         log.info("${SimpleSchemaPlugin.LOG_PREFIX}:SimpleSchemaDomain-create")
         UserAccessManager.validateUser(user)
         val currentTime = Instant.now()
+        val requestObjectData = request.toObjectData()
         val objectDoc = SimpleSchemaObjectDoc(
             request.objectId,
             currentTime,
@@ -26,7 +27,7 @@ internal object SimpleSchemaDomainActions {
             UserAccessManager.getUserTenant(user),
             UserAccessManager.getAllAccessInfo(user),
             SimpleSchemaObjectType.SCHEMA_DOMAIN,
-            request.entitiesAsObjectData()
+            requestObjectData
         )
         if (SimpleSearchIndex.getSimpleSchemaObject(request.objectId) != null) {
             log.info("attempted to recreate existing schema: ${request.objectId}")
@@ -41,7 +42,7 @@ internal object SimpleSchemaDomainActions {
             RestStatus.INTERNAL_SERVER_ERROR
         )
         SchemaCompiler().compile(objectDoc)
-        return CreateSimpleSchemaDomainResponse(docId)
+        return CreateSimpleSchemaDomainResponse(docId, requestObjectData.entities)
     }
 
     fun get(request: GetSimpleSchemaDomainRequest, user: User?): GetSimpleSchemaDomainResponse {

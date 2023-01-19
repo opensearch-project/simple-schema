@@ -7,7 +7,6 @@ package org.opensearch.simpleschema.model
 
 import org.opensearch.common.io.stream.Writeable
 import org.opensearch.common.xcontent.XContentParser
-import org.opensearch.simpleschema.domain.Domain
 
 internal object SimpleSchemaObjectDataProperties {
     /**
@@ -22,7 +21,7 @@ internal object SimpleSchemaObjectDataProperties {
     private val OBJECT_PROPERTIES_MAP = mapOf(
         Pair(SimpleSchemaObjectType.SCHEMA_ENTITY, ObjectProperty(SchemaEntityType.reader, SchemaEntityType.xParser)),
         Pair(SimpleSchemaObjectType.INDEX_PROVIDER, ObjectProperty(IndexProvider.reader, IndexProvider.xParser)),
-        Pair(SimpleSchemaObjectType.SCHEMA_DOMAIN, ObjectProperty(Domain.reader, Domain.xParser))
+        Pair(SimpleSchemaObjectType.SCHEMA_DOMAIN, ObjectProperty(SchemaCompilationType.reader, SchemaCompilationType.xParser))
     )
 
     /**
@@ -42,7 +41,7 @@ internal object SimpleSchemaObjectDataProperties {
         return when (objectType) {
             SimpleSchemaObjectType.SCHEMA_ENTITY -> objectData is SchemaEntityType
             SimpleSchemaObjectType.INDEX_PROVIDER -> objectData is IndexProvider
-            SimpleSchemaObjectType.SCHEMA_DOMAIN -> objectData is Domain
+            SimpleSchemaObjectType.SCHEMA_DOMAIN -> objectData is SchemaCompilationType
             SimpleSchemaObjectType.NONE -> true
         }
     }

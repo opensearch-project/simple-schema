@@ -5,17 +5,15 @@ import org.opensearch.action.ActionRequestValidationException
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.Writeable
 import org.opensearch.common.xcontent.*
-import org.opensearch.commons.utils.fieldIfNotNull
 import org.opensearch.commons.utils.logger
 import org.opensearch.commons.utils.stringList
-import org.opensearch.simpleschema.domain.Domain
-import org.opensearch.simpleschema.model.BaseObjectData
 import org.opensearch.simpleschema.model.RestTag
+import org.opensearch.simpleschema.model.SchemaCompilationType
 import java.io.IOException
 
 internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject {
     val objectId: String
-    private var entities: List<String>? = null
+    val entities: List<String>
 
     companion object {
         private val log by logger(CreateSimpleSchemaDomainRequest::class.java)
@@ -52,12 +50,13 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
                     }
                 }
             }
-            objectId ?: throw IllegalArgumentException("${RestTag.OBJECT_ID_FIELD} field absent")
+            objectId ?: throw IllegalArgumentException("Required field '${RestTag.OBJECT_ID_FIELD}' is absent")
+            entities ?: throw IllegalArgumentException("Required field '${RestTag.ENTITY_LIST_FIELD}' is absent")
             return CreateSimpleSchemaDomainRequest(objectId, entities)
         }
     }
 
-    constructor(objectId: String, entities: List<String>? = null) {
+    constructor(objectId: String, entities: List<String>) {
         this.objectId = objectId
         this.entities = entities
     }
@@ -68,6 +67,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
     @Throws(IOException::class)
     constructor(input: StreamInput) : super(input) {
         objectId = input.readString()
+        entities = input.readStringList()
     }
 
     /**
@@ -88,8 +88,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
             .endObject()
     }
 
-    fun entitiesAsObjectData(): BaseObjectData {
-        // TODO add default behavior
-        return Domain(objectId, entities!!)
+    fun toObjectData(): SchemaCompilationType {
+        return SchemaCompilationType(objectId, entities, null, null)
     }
 }

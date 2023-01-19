@@ -8,21 +8,22 @@ import org.opensearch.common.xcontent.XContentBuilder
 import org.opensearch.common.xcontent.XContentParser
 import org.opensearch.common.xcontent.XContentParserUtils
 import org.opensearch.commons.utils.logger
+import org.opensearch.simpleschema.domain.DomainRepository
 import org.opensearch.simpleschema.model.BaseResponse
 import org.opensearch.simpleschema.model.RestTag
 import java.io.IOException
 
 internal class CreateSimpleSchemaDomainResponse : BaseResponse {
-
-
     private var objectId: String
+    private var entities: List<String>
 
     /**
      * constructor for creating the class
      * @param id the id of the created Object
      */
-    constructor(id: String) {
+    constructor(id: String, entities: List<String>) {
         this.objectId = id
+        this.entities = entities
     }
 
     /**
@@ -31,6 +32,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
     @Throws(IOException::class)
     constructor(input: StreamInput) : super(input) {
         objectId = input.readString()
+        entities = input.readStringList()
     }
 
     /**
@@ -39,6 +41,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
     @Throws(IOException::class)
     override fun writeTo(output: StreamOutput) {
         output.writeString(objectId)
+        output.writeStringArray(entities.toTypedArray())
     }
 
     /**
@@ -48,6 +51,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
         builder!!
         return builder.startObject()
             .field(RestTag.OBJECT_ID_FIELD, objectId)
+            .field(RestTag.ENTITY_LIST_FIELD, entities)
             .endObject()
     }
 }

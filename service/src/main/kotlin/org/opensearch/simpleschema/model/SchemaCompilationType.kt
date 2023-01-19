@@ -19,10 +19,10 @@ import org.opensearch.simpleschema.util.stringList
  * The catalog represent the general belonging of this specific entity - this entity may belong to multiple catalogs
  */
 internal data class SchemaCompilationType(
-    val name: String?,//nullable
+    val name: String,
+    val entities: List<String>,
     val description: String?,//nullable
     val catalog: List<String>?,//nullable
-    val entities: List<String>?,
 ) : BaseObjectData {
 
     internal companion object {
@@ -71,7 +71,9 @@ internal data class SchemaCompilationType(
                     }
                 }
             }
-            return SchemaCompilationType(name, description, catalog, entities)
+            name ?: throw IllegalArgumentException("Required field '$NAME_TAG' is absent")
+            entities ?: throw java.lang.IllegalArgumentException("Required field '$ENTITIES_TAG' is absent")
+            return SchemaCompilationType(name, entities, description, catalog)
         }
     }
 
@@ -90,20 +92,20 @@ internal data class SchemaCompilationType(
      * @param input StreamInput stream to deserialize data from.
      */
     constructor(input: StreamInput) : this(
-        name = input.readOptionalString(), //nullable
+        name = input.readString(),
         description = input.readOptionalString(), //nullable
-        catalog = input.readOptionalStringList(), //nullable
         entities = input.readStringList(),
+        catalog = input.readOptionalStringList(), //nullable
     )
 
     /**
      * {@inheritDoc}
      */
     override fun writeTo(output: StreamOutput) {
-        output.writeOptionalString(name) //nullable
+        output.writeString(name) //nullable
         output.writeOptionalString(description) //nullable
+        output.writeStringCollection(entities)
         output.writeOptionalStringCollection(catalog) //nullable
-        output.writeOptionalStringCollection(entities)
     }
 
     /**

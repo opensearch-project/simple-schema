@@ -5,11 +5,7 @@ import org.opensearch.action.ActionRequestValidationException
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.Writeable
 import org.opensearch.common.xcontent.*
-import org.opensearch.commons.utils.fieldIfNotNull
 import org.opensearch.commons.utils.logger
-import org.opensearch.commons.utils.stringList
-import org.opensearch.simpleschema.domain.Domain
-import org.opensearch.simpleschema.model.BaseObjectData
 import org.opensearch.simpleschema.model.RestTag
 import java.io.IOException
 

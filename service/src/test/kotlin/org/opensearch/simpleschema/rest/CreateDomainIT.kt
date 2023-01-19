@@ -35,4 +35,21 @@ class CreateDomainIT : PluginRestTestCase() {
         )
         Thread.sleep(100)
     }
+
+    fun `test domain compilation uses correct entities`() {
+        val typeId = executeRequest(
+            RestRequest.Method.POST.name,
+            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/object",
+            constructSchemaEntityTypeRequest(),
+            RestStatus.OK.status
+        ).get("objectId").asString
+        val entities = executeRequest(
+            RestRequest.Method.POST.name,
+            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain",
+            constructSchemaDomainRequest(entities = "\"$typeId\""),
+            RestStatus.OK.status
+        ).get("entityList").asJsonArray.map { it.asString }.toList()
+        Assert.assertEquals("Schema contains correct entities", entities, listOf(typeId))
+        Thread.sleep(100)
+    }
 }
