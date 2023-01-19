@@ -43,4 +43,15 @@ internal object SimpleSchemaDomainActions {
         SchemaCompiler().compile(objectDoc)
         return CreateSimpleSchemaDomainResponse(docId)
     }
+
+    fun get(request: GetSimpleSchemaDomainRequest, user: User?): GetSimpleSchemaDomainResponse {
+        log.info("${SimpleSchemaPlugin.LOG_PREFIX}:SimpleSchemaDomain-get")
+        UserAccessManager.validateUser(user)
+        val result = SimpleSearchIndex.getSimpleSchemaObject(request.objectId)
+        result ?: throw OpenSearchStatusException(
+            "Schema not found",
+            RestStatus.NOT_FOUND
+        )
+        return GetSimpleSchemaDomainResponse(result.simpleSchemaObjectDoc.objectId)
+    }
 }

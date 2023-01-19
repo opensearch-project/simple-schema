@@ -73,11 +73,11 @@ fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): Strin
 
 fun constructSchemaDomainRequest(name: String = "test schema compilation"): String {
     return """
-        {
-            "objectId" : "$name",
-            "catalog" : ["test"],
-            "entityList" : ["Book", "Author"]
-        }
+     {
+         "objectId" : "$name",
+         "catalog" : ["test"],
+         "entityList" : ["Book", "Author"]
+     }
     """.trimIndent()
 }
 

@@ -127,6 +127,10 @@ class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
             ActionPlugin.ActionHandler(
                 CreateSimpleSchemaDomainAction.ACTION_TYPE,
                 CreateSimpleSchemaDomainAction::class.java
+            ),
+            ActionPlugin.ActionHandler(
+                GetSimpleSchemaDomainAction.ACTION_TYPE,
+                GetSimpleSchemaDomainAction::class.java
             )
         )
     }

@@ -22,6 +22,7 @@ internal object SimpleSchemaObjectDataProperties {
     private val OBJECT_PROPERTIES_MAP = mapOf(
         Pair(SimpleSchemaObjectType.SCHEMA_ENTITY, ObjectProperty(SchemaEntityType.reader, SchemaEntityType.xParser)),
         Pair(SimpleSchemaObjectType.INDEX_PROVIDER, ObjectProperty(IndexProvider.reader, IndexProvider.xParser)),
+        Pair(SimpleSchemaObjectType.SCHEMA_DOMAIN, ObjectProperty(Domain.reader, Domain.xParser))
     )
 
     /**

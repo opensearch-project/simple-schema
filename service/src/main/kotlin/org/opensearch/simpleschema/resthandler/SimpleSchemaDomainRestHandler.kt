@@ -30,6 +30,8 @@ import org.opensearch.rest.RestStatus
 import org.opensearch.search.sort.SortOrder
 import org.opensearch.simpleschema.action.CreateSimpleSchemaDomainRequest
 import org.opensearch.simpleschema.action.CreateSimpleSchemaDomainAction
+import org.opensearch.simpleschema.action.GetSimpleSchemaDomainAction
+import org.opensearch.simpleschema.action.GetSimpleSchemaDomainRequest
 import java.util.EnumSet
 
 /**
@@ -98,45 +100,19 @@ internal class SimpleSchemaDomainRestHandler : BaseRestHandler() {
         }
     }
 
-    // TODO
-//    private fun executeGetRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
-//        val objectId: String? = request.param(OBJECT_ID_FIELD)
-//        val objectIdListString: String? = request.param(OBJECT_ID_LIST_FIELD)
-//        val objectIdList = getObjectIdSet(objectId, objectIdListString)
-//        val types: EnumSet<SimpleSchemaObjectType> = getTypesSet(request.param(OBJECT_TYPE_FIELD))
-//        val sortField: String? = request.param(SORT_FIELD_FIELD)
-//        val sortOrderString: String? = request.param(SORT_ORDER_FIELD)
-//        val sortOrder: SortOrder? = if (sortOrderString == null) {
-//            null
-//        } else {
-//            SortOrder.fromString(sortOrderString)
-//        }
-//        val fromIndex = request.param(FROM_INDEX_FIELD)?.toIntOrNull() ?: 0
-//        val maxItems = request.param(MAX_ITEMS_FIELD)?.toIntOrNull() ?: PluginSettings.defaultItemsQueryCount
-//        val filterParams = request.params()
-//            .filter { SimpleSearchQueryHelper.FILTER_PARAMS.contains(it.key) }
-//            .map { Pair(it.key, request.param(it.key)) }
-//            .toMap()
-//        log.info(
-//            "$LOG_PREFIX:executeGetRequest idList:$objectIdList types:$types, from:$fromIndex, maxItems:$maxItems," +
-//                " sortField:$sortField, sortOrder=$sortOrder, filters=$filterParams"
-//        )
-//        return RestChannelConsumer {
-//            client.execute(
-//                GetSimpleSchemaDomainAction.ACTION_TYPE,
-//                GetSimpleSchemaDomainRequest(
-//                    objectIdList,
-//                    types,
-//                    fromIndex,
-//                    maxItems,
-//                    sortField,
-//                    sortOrder,
-//                    filterParams
-//                ),
-//                RestResponseToXContentListener(it)
-//            )
-//        }
-//    }
+    private fun executeGetRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
+        val objectId: String = request.param(OBJECT_ID_FIELD)
+        log.info(
+            "$LOG_PREFIX:executeGetRequest $objectId"
+        )
+        return RestChannelConsumer {
+            client.execute(
+                GetSimpleSchemaDomainAction.ACTION_TYPE,
+                GetSimpleSchemaDomainRequest(objectId),
+                RestResponseToXContentListener(it)
+            )
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -144,7 +120,7 @@ internal class SimpleSchemaDomainRestHandler : BaseRestHandler() {
     override fun prepareRequest(request: RestRequest, client: NodeClient): RestChannelConsumer {
         return when (request.method()) {
             POST -> executePostRequest(request, client)
-//            GET -> executeGetRequest(request, client)
+            GET -> executeGetRequest(request, client)
             else -> RestChannelConsumer {
                 it.sendResponse(BytesRestResponse(RestStatus.METHOD_NOT_ALLOWED, "${request.method()} is not allowed"))
             }
