@@ -52,4 +52,13 @@ class CreateDomainIT : PluginRestTestCase() {
         Assert.assertEquals("Schema contains correct entities", entities, listOf(typeId))
         Thread.sleep(100)
     }
+
+    fun `test domain compilation with missing entities fails`() {
+        executeRequest(
+            RestRequest.Method.POST.name,
+            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain",
+            constructSchemaDomainRequest(entities = "\"invalidEntity\""),
+            RestStatus.NOT_FOUND.status
+        )
+    }
 }

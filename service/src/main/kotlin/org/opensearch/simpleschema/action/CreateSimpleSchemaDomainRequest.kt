@@ -4,7 +4,11 @@ import org.opensearch.action.ActionRequest
 import org.opensearch.action.ActionRequestValidationException
 import org.opensearch.common.io.stream.StreamInput
 import org.opensearch.common.io.stream.Writeable
-import org.opensearch.common.xcontent.*
+import org.opensearch.common.xcontent.ToXContentObject
+import org.opensearch.common.xcontent.XContentParser
+import org.opensearch.common.xcontent.XContentBuilder
+import org.opensearch.common.xcontent.ToXContent
+import org.opensearch.common.xcontent.XContentParserUtils
 import org.opensearch.commons.utils.logger
 import org.opensearch.commons.utils.stringList
 import org.opensearch.simpleschema.model.RestTag

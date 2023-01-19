@@ -1,6 +1,8 @@
 package org.opensearch.simpleschema.domain
 
-import org.opensearch.common.xcontent.*
+import org.opensearch.common.xcontent.ToXContentObject
+import org.opensearch.common.xcontent.XContentBuilder
+import org.opensearch.common.xcontent.ToXContent
 import java.net.URLEncoder
 import java.time.Instant
 
