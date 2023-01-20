@@ -37,20 +37,6 @@ This endpoint offers the next functionality :
 
 This url is the domain specific schema access point which is auto generated once the former create API for schema was called.
 
-- GET `…/domain/schema`
-  - Response:
-```
-{
-    "schema": "sample name",
-    "creation": "1970-01-01T00:00",
-    "links": {
-        "graphql": "/domain/sample%20name/schema/graphql",
-        "index": "/domain/sample%20name/schema/index",
-        "ontology": "/domain/sample%20name/schema/ontology"
-    }
-}
-```
-
 #### _Note_
    _Once a schema url is created it is immutable and its structure and type cannot be changed, for updating the schema we will provide a schema evolution utilities._
 
