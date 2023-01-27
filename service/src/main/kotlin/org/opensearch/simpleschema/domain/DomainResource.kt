@@ -10,7 +10,7 @@ class DomainResource(val name: String, val entities: List<String>?) : ToXContent
     val created: Instant = Instant.now()
     private val encodedName: String = URLEncoder.encode(name, "utf-8")
 
-    override fun toXContent(builder: XContentBuilder?, params: ToXContent.Params): XContentBuilder {
+    override fun toXContent(builder: XContentBuilder?, params: ToXContent.Params?): XContentBuilder {
         builder!!
         builder.startObject()
         builder.field("schema", name)

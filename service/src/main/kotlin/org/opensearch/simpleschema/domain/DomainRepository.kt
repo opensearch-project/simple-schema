@@ -1,18 +1,22 @@
 package org.opensearch.simpleschema.domain
 
+import org.opensearch.simpleschema.util.logger
+import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentHashMap
 
 object DomainRepository {
+    private val log by logger(DomainRepository::class.java)
     var domains: ConcurrentHashMap<String, DomainResource> = ConcurrentHashMap()
 
     /**
      * Adds a [domain] to the repository if the name is not already present,
-     * otherwise return the existing domain.
-     *
-     * @return The domain associated with the same name if already present, otherwise null.
+     * otherwise throws an IllegalArgumentException
      */
-    fun createDomain(domain: DomainResource): DomainResource? {
-        return domains.putIfAbsent(domain.name, domain)
+    fun createDomain(domain: DomainResource) {
+        if (domains.containsKey(domain.name)) {
+            throw IllegalArgumentException("Attempted to create duplicate domain `${domain.name}`")
+        }
+        domains[domain.name] = domain
     }
 
     fun getDomain(name: String): DomainResource? {

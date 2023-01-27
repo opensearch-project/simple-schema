@@ -74,7 +74,7 @@ fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): Strin
 fun constructSchemaDomainRequest(name: String = "test schema compilation", entities: String = ""): String {
     return """
      {
-         "objectId" : "$name",
+         "name" : "$name",
          "catalog" : ["test"],
          "entityList" : [$entities]
      }

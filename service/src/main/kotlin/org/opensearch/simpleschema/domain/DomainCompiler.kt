@@ -11,6 +11,13 @@ import org.opensearch.simpleschema.model.SimpleSchemaObjectType
 import java.lang.IllegalArgumentException
 
 object DomainCompiler {
+    /**
+     * Provided a SimpleSchemaObjectDoc, this method generates the compiled Domain object.
+     * If compilation is accessible, the Domain is accessible through the DomainRepository.
+     * Otherwise, an exception will be thrown.
+     *
+     * The provided User object should have access to the entities being referenced by the SimpleSchemaObjectDoc.
+     */
     fun compile(objectDoc: SimpleSchemaObjectDoc, user: User?) {
         if (objectDoc.type != SimpleSchemaObjectType.SCHEMA_DOMAIN) {
             throw IllegalArgumentException("Attempted to domain-compile a non-domain object doc: " +

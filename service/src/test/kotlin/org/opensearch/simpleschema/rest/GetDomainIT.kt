@@ -7,22 +7,21 @@ import org.opensearch.simpleschema.*
 
 class GetDomainIT : PluginRestTestCase() {
     fun `test get domain`() {
-        val createRequest = constructSchemaDomainRequest("sampleSchema")
-        executeRequest(
+        val createRequest = constructSchemaDomainRequest("testGetSchema")
+        val objectId = executeRequest(
             RestRequest.Method.POST.name,
             "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain",
             createRequest,
             RestStatus.OK.status
-        )
+        ).get("objectId").asString
         val getResponse = executeRequest(
             RestRequest.Method.GET.name,
-            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain/sampleSchema",
+            "${SimpleSchemaPlugin.BASE_SIMPLESCHEMA_URI}/domain/$objectId",
             "",
             RestStatus.OK.status
         )
-        logger.warn(getResponse.toString())
-        val id = getResponse.get("objectId").asString
-        Assert.assertEquals("Id should be present", "sampleSchema", id)
+        val name = getResponse.get("name").asString
+        Assert.assertEquals("Name should be present", "testGetSchema", name)
         Thread.sleep(100)
     }
 }

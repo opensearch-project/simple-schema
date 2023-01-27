@@ -15,14 +15,16 @@ import java.io.IOException
 
 internal class CreateSimpleSchemaDomainResponse : BaseResponse {
     private var objectId: String
+    private var name: String
     private var entities: List<String>
 
     /**
      * constructor for creating the class
      * @param id the id of the created Object
      */
-    constructor(id: String, entities: List<String>) {
-        this.objectId = id
+    constructor(objectId: String, name: String, entities: List<String>) {
+        this.objectId = objectId
+        this.name = name
         this.entities = entities
     }
 
@@ -32,6 +34,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
     @Throws(IOException::class)
     constructor(input: StreamInput) : super(input) {
         objectId = input.readString()
+        name = input.readString()
         entities = input.readStringList()
     }
 
@@ -41,6 +44,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
     @Throws(IOException::class)
     override fun writeTo(output: StreamOutput) {
         output.writeString(objectId)
+        output.writeString(name)
         output.writeStringArray(entities.toTypedArray())
     }
 
@@ -51,6 +55,7 @@ internal class CreateSimpleSchemaDomainResponse : BaseResponse {
         builder!!
         return builder.startObject()
             .field(RestTag.OBJECT_ID_FIELD, objectId)
+            .field(RestTag.NAME_FIELD, name)
             .field(RestTag.ENTITY_LIST_FIELD, entities)
             .endObject()
     }

@@ -18,7 +18,7 @@ The object must have a `type` of `schemaEntityType`.
     "objectId": "testAuthorObject",
     "type": "schemaEntityType",
     "catalog": ["library"],
-    "content": "GraphQL defining the Author type"
+    "content": "type Author { id: ID! \n name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
   }
 }
 ```

@@ -25,7 +25,7 @@ internal object SimpleSchemaDomainActions {
         val currentTime = Instant.now()
         val requestObjectData = request.toObjectData()
         val objectDoc = SimpleSchemaObjectDoc(
-            request.objectId,
+            "ignore",
             currentTime,
             currentTime,
             UserAccessManager.getUserTenant(user),
@@ -33,21 +33,14 @@ internal object SimpleSchemaDomainActions {
             SimpleSchemaObjectType.SCHEMA_DOMAIN,
             requestObjectData
         )
-        if (SimpleSearchIndex.getSimpleSchemaObject(request.objectId) != null) {
-            log.info("attempted to recreate existing schema: ${request.objectId}")
-            throw OpenSearchStatusException(
-                "Creation failed: Schema ID already exists",
-                RestStatus.BAD_REQUEST
-            )
-        }
         // TODO unaddressed edge case where compilation is successful but storage fails
         DomainCompiler.compile(objectDoc, user)
-        val docId = SimpleSearchIndex.createSimpleSchemaObject(objectDoc, request.objectId)
+        val docId = SimpleSearchIndex.createSimpleSchemaObject(objectDoc)
         docId ?: throw OpenSearchStatusException(
             "Object creation failed",
             RestStatus.INTERNAL_SERVER_ERROR
         )
-        return CreateSimpleSchemaDomainResponse(docId, requestObjectData.entities)
+        return CreateSimpleSchemaDomainResponse(docId, requestObjectData.name, requestObjectData.entities)
     }
 
     fun get(request: GetSimpleSchemaDomainRequest, user: User?): GetSimpleSchemaDomainResponse {
@@ -58,7 +51,7 @@ internal object SimpleSchemaDomainActions {
             "Schema not found",
             RestStatus.NOT_FOUND
         )
-        return GetSimpleSchemaDomainResponse(result.simpleSchemaObjectDoc.objectId)
+        return GetSimpleSchemaDomainResponse(result.simpleSchemaObjectDoc.objectId, result.simpleSchemaObjectDoc.objectData as SchemaCompilationType)
     }
 
 

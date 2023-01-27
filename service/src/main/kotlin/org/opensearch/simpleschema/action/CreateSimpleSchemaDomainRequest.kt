@@ -11,12 +11,14 @@ import org.opensearch.common.xcontent.ToXContent
 import org.opensearch.common.xcontent.XContentParserUtils
 import org.opensearch.commons.utils.logger
 import org.opensearch.commons.utils.stringList
+import org.opensearch.simpleschema.domain.DomainRepository
+import org.opensearch.simpleschema.domain.DomainResource
 import org.opensearch.simpleschema.model.RestTag
 import org.opensearch.simpleschema.model.SchemaCompilationType
 import java.io.IOException
 
 internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject {
-    val objectId: String
+    val name: String
     val entities: List<String>
 
     companion object {
@@ -34,7 +36,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
         @JvmStatic
         @Throws(IOException::class)
         fun parse(parser: XContentParser): CreateSimpleSchemaDomainRequest {
-            var objectId: String? = null
+            var name: String? = null
             var entities: List<String>? = null
 
             XContentParserUtils.ensureExpectedToken(
@@ -46,7 +48,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
                 val fieldName = parser.currentName()
                 parser.nextToken()
                 when (fieldName) {
-                    RestTag.OBJECT_ID_FIELD -> objectId = parser.text()
+                    RestTag.NAME_FIELD -> name = parser.text()
                     RestTag.ENTITY_LIST_FIELD -> entities = parser.stringList()
                     else -> {
                         parser.skipChildren()
@@ -54,14 +56,14 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
                     }
                 }
             }
-            objectId ?: throw IllegalArgumentException("Required field '${RestTag.OBJECT_ID_FIELD}' is absent")
+            name ?: throw IllegalArgumentException("Required field '${RestTag.NAME_FIELD}' is absent")
             entities ?: throw IllegalArgumentException("Required field '${RestTag.ENTITY_LIST_FIELD}' is absent")
-            return CreateSimpleSchemaDomainRequest(objectId, entities)
+            return CreateSimpleSchemaDomainRequest(name, entities)
         }
     }
 
-    constructor(objectId: String, entities: List<String>) {
-        this.objectId = objectId
+    constructor(name: String, entities: List<String>) {
+        this.name = name
         this.entities = entities
     }
 
@@ -70,7 +72,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
      */
     @Throws(IOException::class)
     constructor(input: StreamInput) : super(input) {
-        objectId = input.readString()
+        name = input.readString()
         entities = input.readStringList()
     }
 
@@ -78,6 +80,7 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
      * {@inheritDoc}
      */
     override fun validate(): ActionRequestValidationException? {
+        // TODO currently no validation
         return null
     }
 
@@ -86,13 +89,18 @@ internal class CreateSimpleSchemaDomainRequest : ActionRequest, ToXContentObject
      */
     override fun toXContent(builder: XContentBuilder?, params: ToXContent.Params?): XContentBuilder {
         builder!!
-        return builder.startObject()
-            .field(RestTag.OBJECT_ID_FIELD, objectId)
+        builder.startObject()
+            .field(RestTag.NAME_FIELD, name)
             .field(RestTag.ENTITY_LIST_FIELD, entities)
-            .endObject()
+        val domain = DomainRepository.getDomain(name)
+        if (domain != null) {
+            builder.field("domain")
+            domain.toXContent(builder, params)
+        }
+        return builder.endObject()
     }
 
     fun toObjectData(): SchemaCompilationType {
-        return SchemaCompilationType(objectId, entities, null, null)
+        return SchemaCompilationType(name, entities, null, null)
     }
 }

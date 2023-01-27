@@ -16,6 +16,14 @@ import org.opensearch.simpleschema.util.stringList
 /**
  * This element represents a schema entity which is stored as a document in the DB
  * The entity has a type, name, catalog, description and the actual GraphQL SDL as content
+ *
+ * Content is stored as object IDs in the entities list, which references GraphQL components such as:
+ * - Types
+ * - Mutations
+ * - Queries
+ * - Subscriptions
+ * Compilation and transformation generally will involve retrieving this data.
+ *
  * The catalog represent the general belonging of this specific entity - this entity may belong to multiple catalogs
  */
 internal data class SchemaCompilationType(
