@@ -65,9 +65,19 @@ fun constructSchemaEntityTypeRequest(name: String = "test schema entity"): Strin
                 "name" : "$name",
                 "type" : "${SimpleSchemaObjectType.SCHEMA_ENTITY}",
                 "catalog" : ["test"],
-                "content" : "type Author { id: ID! \nname: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
+                "content" : "type Author { id: ID! \n name: String! \n born: DateTime! \n died: DateTime \n nationality: String! \n books: [Book] \n }"
                 }
             }
+    """.trimIndent()
+}
+
+fun constructSchemaDomainRequest(name: String = "test schema compilation", entities: String = ""): String {
+    return """
+     {
+         "name" : "$name",
+         "catalog" : ["test"],
+         "entityList" : [$entities]
+     }
     """.trimIndent()
 }
 

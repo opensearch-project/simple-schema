@@ -10,9 +10,10 @@ import org.opensearch.rest.RestRequest
 import org.opensearch.rest.RestStatus
 import org.opensearch.simpleschema.*
 import org.opensearch.simpleschema.SimpleSchemaPlugin.Companion.BASE_SIMPLESCHEMA_URI
+import org.opensearch.simpleschema.domain.DomainRepository
+import org.opensearch.simpleschema.model.SimpleSchemaObjectType
 
 class CreateObjectIT : PluginRestTestCase() {
-
     fun `test create schema fail`() {
         val invalidCreateResponse = executeRequest(
             RestRequest.Method.POST.name,
@@ -23,7 +24,6 @@ class CreateObjectIT : PluginRestTestCase() {
         validateErrorResponse(invalidCreateResponse, RestStatus.BAD_REQUEST.status, "parse_exception")
         Thread.sleep(100)
     }
-
 
     fun `test create index provider`() {
         val createRequest = jsonify(constructIndexProviderRequest())
@@ -52,7 +52,6 @@ class CreateObjectIT : PluginRestTestCase() {
         Assert.assertNotNull("Id should be generated", id)
         Thread.sleep(100)
     }
-
 
     fun `test create object with invalid fields`() {
         val createRequest = """
