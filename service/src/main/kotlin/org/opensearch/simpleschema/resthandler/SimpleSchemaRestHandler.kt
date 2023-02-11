@@ -93,7 +93,7 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
              * Response body: Ref [org.opensearch.simpleschema.model.DeleteSimpleSchemaObjectResponse]
              */
             Route(DELETE, "$SIMPLESCHEMA_URL/{$OBJECT_ID_FIELD}"),
-            Route(DELETE, "$SIMPLESCHEMA_URL")
+            Route(DELETE, SIMPLESCHEMA_URL)
         )
     }
 
@@ -108,7 +108,7 @@ internal class SimpleSchemaRestHandler : BaseRestHandler() {
             SORT_FIELD_FIELD,
             SORT_ORDER_FIELD,
             FROM_INDEX_FIELD,
-            MAX_ITEMS_FIELD
+            MAX_ITEMS_FIELD,
         )
     }
 

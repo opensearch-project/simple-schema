@@ -17,6 +17,7 @@ internal object RestTag {
     const val OBJECT_TYPE_FIELD = "objectType"
     const val OBJECT_ID_FIELD = "objectId"
     const val OBJECT_ID_LIST_FIELD = "objectIdList"
+    const val ENTITY_LIST_FIELD = "entityList"
     const val UPDATED_TIME_FIELD = "lastUpdatedTimeMs"
     const val CREATED_TIME_FIELD = "createdTimeMs"
     const val TENANT_FIELD = "tenant"
@@ -30,6 +31,7 @@ internal object RestTag {
 
     const val INDEX_PROVIDER_FIELD = "indexProvider"
     const val SCHEMA_ENTITY_FIELD = "schemaEntityType"
+    const val SCHEMA_DOMAIN_FIELD = "schemaDomainType"
 
     const val SCHEDULE_INFO_TAG = "schedule"
     const val SCHEDULED_JOB_TYPE_TAG = "jobType"
