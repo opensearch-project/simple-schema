@@ -22,7 +22,7 @@ class CreateObjectIT : PluginRestTestCase() {
             RestStatus.BAD_REQUEST.status
         )
         validateErrorResponse(invalidCreateResponse, RestStatus.BAD_REQUEST.status, "parse_exception")
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test create index provider`() {
@@ -37,7 +37,7 @@ class CreateObjectIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertEquals("testId", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test create schema entity type`() {
@@ -50,7 +50,7 @@ class CreateObjectIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test create object with invalid fields`() {
@@ -68,6 +68,6 @@ class CreateObjectIT : PluginRestTestCase() {
             RestStatus.BAD_REQUEST.status
         )
         validateErrorResponse(createResponse, RestStatus.BAD_REQUEST.status, "illegal_argument_exception")
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 }

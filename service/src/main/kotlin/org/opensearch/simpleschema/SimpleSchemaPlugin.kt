@@ -4,6 +4,7 @@
  */
 package org.opensearch.simpleschema
 
+import org.opensearch.simpleschema.util.logger
 import org.opensearch.action.ActionRequest
 import org.opensearch.action.ActionResponse
 import org.opensearch.client.Client
@@ -34,6 +35,7 @@ import org.opensearch.watcher.ResourceWatcherService
 import java.util.function.Supplier
 import org.opensearch.jobscheduler.spi.ScheduledJobParser
 import org.opensearch.jobscheduler.spi.ScheduledJobRunner
+import org.opensearch.plugins.ClusterPlugin
 import org.opensearch.simpleschema.action.CreateSimpleSchemaObjectAction
 import org.opensearch.simpleschema.action.DeleteSimpleSchemaObjectAction
 import org.opensearch.simpleschema.action.GetSimpleSchemaObjectAction
@@ -50,9 +52,10 @@ import org.opensearch.simpleschema.resthandler.SimpleSchemaDomainRestHandler
  * Entry point of the OpenSearch simple schema plugin.
  * This class initializes the rest handlers.
  */
-class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
+class SimpleSchemaPlugin : Plugin(), ActionPlugin, ClusterPlugin, JobSchedulerExtension {
 
     companion object {
+        private val log by logger(SimpleSchemaPlugin::class.java)
         const val PLUGIN_NAME = "opensearch-simple-schema"
         const val LOG_PREFIX = "simpleschema"
         const val BASE_SIMPLESCHEMA_URI = "/_plugins/_simpleschema"
@@ -84,6 +87,11 @@ class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
         PluginSettings.addSettingsUpdateConsumer(clusterService)
         SimpleSearchIndex.initialize(client, clusterService)
         return emptyList()
+    }
+
+    override fun onNodeStarted() {
+        super.onNodeStarted()
+        SimpleSearchIndex.afterStart()
     }
 
     /**

@@ -118,7 +118,7 @@ class TABackwardCompatibilityIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     private fun createIndexProvider() {
@@ -131,7 +131,7 @@ class TABackwardCompatibilityIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
 
