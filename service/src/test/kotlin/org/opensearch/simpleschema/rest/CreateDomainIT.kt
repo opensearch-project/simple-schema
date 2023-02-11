@@ -16,7 +16,7 @@ class CreateDomainIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId")
         Assert.assertNotNull("Id should be present", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test duplicate domain creation detection`() {
@@ -32,7 +32,7 @@ class CreateDomainIT : PluginRestTestCase() {
             constructSchemaDomainRequest("duplicateSchema"),
             RestStatus.BAD_REQUEST.status
         )
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test domain compilation uses correct entities`() {
@@ -49,7 +49,7 @@ class CreateDomainIT : PluginRestTestCase() {
             RestStatus.OK.status
         ).get("entityList").asJsonArray.map { it.asString }.toList()
         Assert.assertEquals("Schema contains correct entities", entities, listOf(typeId))
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test domain compilation with missing entities fails`() {

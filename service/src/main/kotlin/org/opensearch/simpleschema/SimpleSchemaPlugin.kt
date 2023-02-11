@@ -4,6 +4,7 @@
  */
 package org.opensearch.simpleschema
 
+import org.opensearch.simpleschema.util.logger
 import org.opensearch.action.ActionRequest
 import org.opensearch.action.ActionResponse
 import org.opensearch.client.Client
@@ -53,6 +54,7 @@ import org.opensearch.simpleschema.resthandler.SimpleSchemaDomainRestHandler
 class SimpleSchemaPlugin : Plugin(), ActionPlugin, JobSchedulerExtension {
 
     companion object {
+        private val log by logger(SimpleSchemaPlugin::class.java)
         const val PLUGIN_NAME = "opensearch-simple-schema"
         const val LOG_PREFIX = "simpleschema"
         const val BASE_SIMPLESCHEMA_URI = "/_plugins/_simpleschema"
