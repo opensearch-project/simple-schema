@@ -25,7 +25,7 @@ class UpdateObjectIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
         return id
     }
 
@@ -52,7 +52,7 @@ class UpdateObjectIT : PluginRestTestCase() {
             RestStatus.OK.status
         )
         Assert.assertNotNull(id, updateResponse.get("objectId").asString)
-        Thread.sleep(100)
+        Thread.sleep(200)
 
         val getResponse = executeRequest(
             RestRequest.Method.GET.name,
@@ -66,7 +66,7 @@ class UpdateObjectIT : PluginRestTestCase() {
             newName,
             objectDetails.get("schemaEntityType").asJsonObject.get("name").asString
         )
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test update object with invalid request`() {
@@ -86,6 +86,6 @@ class UpdateObjectIT : PluginRestTestCase() {
             RestStatus.BAD_REQUEST.status
         )
         validateErrorResponse(updateResponse, RestStatus.BAD_REQUEST.status, "illegal_argument_exception")
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 }

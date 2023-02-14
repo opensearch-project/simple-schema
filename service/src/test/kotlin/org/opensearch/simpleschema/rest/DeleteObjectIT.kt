@@ -24,11 +24,12 @@ class DeleteObjectIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
         return id
     }
 
     fun `test delete invalid ids`() {
+        Thread.sleep(200)
         val invalidDeleteIdResponse = executeRequest(
             RestRequest.Method.DELETE.name,
             "$BASE_SIMPLESCHEMA_URI/object/unknown",
@@ -36,7 +37,7 @@ class DeleteObjectIT : PluginRestTestCase() {
             RestStatus.NOT_FOUND.status
         )
         validateErrorResponse(invalidDeleteIdResponse, RestStatus.NOT_FOUND.status)
-        Thread.sleep(100)
+        Thread.sleep(200)
 
         val invalidDeleteIdsResponse = executeRequest(
             RestRequest.Method.DELETE.name,
@@ -45,7 +46,7 @@ class DeleteObjectIT : PluginRestTestCase() {
             RestStatus.NOT_FOUND.status
         )
         validateErrorResponse(invalidDeleteIdsResponse, RestStatus.NOT_FOUND.status)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test delete single object`() {
@@ -61,7 +62,7 @@ class DeleteObjectIT : PluginRestTestCase() {
             "OK",
             deleteResponse.get("deleteResponseList").asJsonObject.get(id).asString
         )
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test delete multiple objects`() {
@@ -77,6 +78,6 @@ class DeleteObjectIT : PluginRestTestCase() {
         ids.forEach {
             Assert.assertEquals("OK", deletedObject.get(it).asString)
         }
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 }

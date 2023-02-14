@@ -23,11 +23,12 @@ class GetObjectIT : PluginRestTestCase() {
         )
         val id = createResponse.get("objectId").asString
         Assert.assertNotNull("Id should be generated", id)
-        Thread.sleep(100)
+        Thread.sleep(200)
         return id
     }
 
     fun `test get invalid ids`() {
+        Thread.sleep(200)
         val getResponse = executeRequest(
             RestRequest.Method.GET.name,
             "$BASE_SIMPLESCHEMA_URI/object/invalid-id",
@@ -35,7 +36,7 @@ class GetObjectIT : PluginRestTestCase() {
             RestStatus.NOT_FOUND.status
         )
         validateErrorResponse(getResponse, RestStatus.NOT_FOUND.status)
-        Thread.sleep(100)
+        Thread.sleep(200)
 
         val getIdsResponse = executeRequest(
             RestRequest.Method.GET.name,
@@ -44,7 +45,7 @@ class GetObjectIT : PluginRestTestCase() {
             RestStatus.NOT_FOUND.status
         )
         validateErrorResponse(getIdsResponse, RestStatus.NOT_FOUND.status)
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test get single object`() {
@@ -63,10 +64,11 @@ class GetObjectIT : PluginRestTestCase() {
             jsonify(createRequest).get("schemaEntityType").asJsonObject,
             objectDetails.get("schemaEntityType").asJsonObject
         )
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     fun `test get multiple objects`() {
+        Thread.sleep(200)
         val emptyResponse = executeRequest(
             RestRequest.Method.GET.name,
             "$BASE_SIMPLESCHEMA_URI/object",
