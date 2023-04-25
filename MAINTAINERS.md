@@ -4,8 +4,27 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 
 ## Current Maintainers
 
-| Maintainer            | GitHub ID                               | Affiliation |
-| --------------------- | --------------------------------------- | ----------- |
-| Anirudha (Ani) Jadhav | [anirudha](https://github.com/anirudha) | Amazon      |
-| Lior Perry            | [yangdb](https://github.com/yang-db)    | Amazon      |
-| Simeon Widdis         | [swiddis](https://github.com/swiddis)   | Amazon      |
+| Maintainer        | GitHub ID                                         | Affiliation |
+| ----------------- | ------------------------------------------------- | ----------- |
+| Eric Wei          | [mengweieric](https://github.com/mengweieric)     | Amazon      |
+| Joshua Li         | [joshuali925](https://github.com/joshuali925)     | Amazon      |
+| Shenoy Pratik     | [ps48](https://github.com/ps48)                   | Amazon      |
+| Kavitha Mohan     | [kavithacm](https://github.com/kavithacm)         | Amazon      |
+| Rupal Mahajan     | [rupal-bq](https://github.com/rupal-bq)           | Amazon      |
+| Derek Ho          | [derek-ho](https://github.com/derek-ho)           | Amazon      |
+| Lior Perry        | [YANG-DB](https://github.com/YANG-DB)             | Amazon      |
+| Peter Fitzgibbons | [pjfitzgibbons](https://github.com/pjfitzgibbons) | Amazon      |
+| Simeon Widdis     | [swiddis](https://github.com/swiddis)             | Amazon      |
+| Chen Dai          | [dai-chen](https://github.com/dai-chen)           | Amazon      |
+| Vamsi Manohar     | [vamsi-amazon](https://github.com/vamsi-amazon)   | Amazon      |
+| Peng Huo          | [penghuo](https://github.com/penghuo)             | Amazon      |
+| Sean Kao          | [seankao-az](https://github.com/seankao-az)       | Amazon      |
+
+
+## Emeritus Maintainers
+
+| Maintainer        | GitHub ID                                               | Affiliation |
+| ----------------- | ------------------------------------------------------- | ----------- |
+| Charlotte Henkle  | [CEHENKLE](https://github.com/CEHENKLE)                 | Amazon      |
+| Anirudha Jadhav   | [anirudha](https://github.com/anirudha)                 | Amazon      |
+| Nick Knize        | [nknize](https://github.com/nknize)                     | Amazon      |
