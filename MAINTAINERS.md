@@ -6,7 +6,6 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 
 | Maintainer        | GitHub ID                                         | Affiliation |
 | ----------------- | ------------------------------------------------- | ----------- |
-| Eric Wei          | [mengweieric](https://github.com/mengweieric)     | Amazon      |
 | Joshua Li         | [joshuali925](https://github.com/joshuali925)     | Amazon      |
 | Shenoy Pratik     | [ps48](https://github.com/ps48)                   | Amazon      |
 | Rupal Mahajan     | [rupal-bq](https://github.com/rupal-bq)           | Amazon      |
@@ -28,3 +27,4 @@ This document contains a list of maintainers in this repo. See [opensearch-proje
 | Charlotte Henkle  | [CEHENKLE](https://github.com/CEHENKLE)                 | Amazon      |
 | Nick Knize        | [nknize](https://github.com/nknize)                     | Amazon      |
 | Kavitha Mohan     | [kavithacm](https://github.com/kavithacm)               | Amazon      |
+| Eric Wei          | [mengweieric](https://github.com/mengweieric)           | Amazon      |
